@@ -1,0 +1,3 @@
+This is my personal config. It's really long! Most of the configurations are re-used from
+other sources. I tried my best to credit them via comments and links but I might
+have missed some.
