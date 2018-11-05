@@ -1,0 +1,41 @@
+#+TITLE: Noorul's Emacs configuration
+#+OPTIONS: toc:4 h:4
+#+STARTUP: showeverything
+#+PROPERTY: header-args:emacs-lisp :tangle "~/.emacs.d/noorul.el"
+
+* Configuration
+** About this file
+This is my personal configuration. Most of the configurations are re-used from
+other sources. I tried my best to credit them via comments and links but I might
+have missed some.
+
+My =~/.emacs.d/init.el= is now a symlink to =noorul.el=, which is what =M-x
+org-babel-tangle= (=C-c C-v t=) produces.
+** Starting up
+#+begin_src emacs-lisp
+;;;; Starting up
+(package-initialize)
+(setq use-package-always-ensure t)
+(add-to-list 'load-path "~/projects/elisp/org-mode/lisp")
+(add-to-list 'load-path "~/projects/elisp/org-mode/contrib/lisp")
+(setq custom-file "~/.emacs.d/custom-settings.el")
+(load custom-file t)
+#+end_src
+
+** Personal information
+#+begin_src emacs-lisp 
+(setq user-full-name "Noorul Islam K M"
+      user-mail-address "noorul@noorul.com")
+#+end_src
+
+** Emacs initialization
+*** Add package sources
+ #+begin_src emacs-lisp
+ (unless (assoc-default "melpa" package-archives)
+   (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+   )
+ (unless (assoc-default "melpa-stable" package-archives)
+   (add-to-list 'package-archives
+		'("melpa-stable" . "https://stable.melpa.org/packages/") t)
+   )
+ #+end_src
