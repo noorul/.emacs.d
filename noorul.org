@@ -50,3 +50,18 @@ org-babel-tangle= (=C-c C-v t=) produces.
   :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
 #+end_src
+
+** General configuration
+*** Reload
+
+#+begin_src emacs-lisp
+(defun my/reload-emacs-configuration ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
+#+end_src
+*** Libraries
+
+#+begin_src emacs-lisp 
+(use-package dash :ensure t)
+(use-package diminish :ensure t)
+#+end_src
