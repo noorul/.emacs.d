@@ -1,3 +1,5 @@
 This is my personal config. It's really long! Most of the configurations are re-used from
 other sources. I tried my best to credit them via comments and links but I might
 have missed some.
+
+The structure of the document is inspired mostly from [[http://github.com/sachac/.emacs.d/][Sacha Chua's emacs configuration]].
