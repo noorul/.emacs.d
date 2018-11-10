@@ -69,15 +69,15 @@ org-babel-tangle= (=C-c C-v t=) produces.
 
 This is one of the things people usually want to change right away. By default, Emacs saves backup files in the current directory. These are the files ending in =~= that are cluttering up your directory lists. The following code stashes them all in =~/.emacs.d/backups=, where I can find them with =C-x C-f= (=find-file=) if I really need to.
 
-#+BEGIN_SRC emacs-lisp 
+#+begin_src emacs-lisp 
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-#+END_SRC
+#+end_src
 
 Disk space is cheap. Save lots.
 
-#+BEGIN_SRC emacs-lisp 
+#+begin_src emacs-lisp 
 (setq delete-old-versions -1)
 (setq version-control t)
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
-#+END_SRC
+#+end_src
