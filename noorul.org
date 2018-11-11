@@ -81,3 +81,18 @@ Disk space is cheap. Save lots.
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 #+end_src
+
+*** Windows configuration
+I am not a fan of tool bar as I prefer command line.
+
+#+begin_src emacs-lisp
+(tool-bar-mode -1)
+#+end_src
+
+*** Time in the modeline
+
+I like having the clock.
+
+#+begin_src emacs-lisp
+(display-time-mode 1)
+#+end_src
