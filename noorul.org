@@ -23,7 +23,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+end_src
 
 ** Personal information
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq user-full-name "Noorul Islam K M"
       user-mail-address "noorul@noorul.com")
 #+end_src
@@ -40,7 +40,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
    )
  #+end_src
 *** Setup use-package
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (setq use-package-verbose t)
@@ -61,7 +61,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+end_src
 *** Libraries
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (use-package dash :ensure t)
 (use-package diminish :ensure t)
 #+end_src
@@ -69,13 +69,13 @@ org-babel-tangle= (=C-c C-v t=) produces.
 
 This is one of the things people usually want to change right away. By default, Emacs saves backup files in the current directory. These are the files ending in =~= that are cluttering up your directory lists. The following code stashes them all in =~/.emacs.d/backups=, where I can find them with =C-x C-f= (=find-file=) if I really need to.
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+end_src
 
 Disk space is cheap. Save lots.
 
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp
 (setq delete-old-versions -1)
 (setq version-control t)
 (setq vc-make-backup-files t)
