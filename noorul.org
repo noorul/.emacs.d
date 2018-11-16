@@ -103,3 +103,7 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
   :defer t)
 #+end_src
 
+*** Sentences end with a single space
+#+begin_src emacs-lisp
+(setq sentence-end-double-space nil)
+#+end_src
