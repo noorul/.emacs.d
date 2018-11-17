@@ -107,3 +107,8 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 #+begin_src emacs-lisp
 (setq sentence-end-double-space nil)
 #+end_src
+*** I hate typing full 'yes', just 'y' is enough.
+#+begin_src emacs-lisp
+;; I hate typing full 'yes', just 'y' is enough.
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
