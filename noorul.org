@@ -59,6 +59,10 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (interactive)
   (load-file "~/.emacs.d/init.el"))
 #+end_src
+*** Locale
+#+begin_src emacs-lisp
+(setenv "LC_ALL" "en_US.UTF-8")
+#+end_src
 *** Libraries
 
 #+begin_src emacs-lisp
