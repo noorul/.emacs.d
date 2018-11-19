@@ -63,6 +63,11 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+begin_src emacs-lisp
 (setenv "LC_ALL" "en_US.UTF-8")
 #+end_src
+*** Define some useful constants
+#+begin_src emacs-lisp
+(defconst user-data-directory
+  (expand-file-name "data/" user-emacs-directory))
+#+end_src
 *** Libraries
 
 #+begin_src emacs-lisp
