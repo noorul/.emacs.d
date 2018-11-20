@@ -121,3 +121,12 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 ;; I hate typing full 'yes', just 'y' is enough.
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
+*** Hide tool bar, scroll bar and menu bar
+#+begin_src emacs-lisp
+;; I don't need tool bar, scroll bar and menu bar
+;; I get lots of real estate without them.
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+#+end_src
+
