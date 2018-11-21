@@ -130,3 +130,11 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 #+end_src
 
+*** I not a fan of splash screen and startup message
+#+begin_src emacs-lisp
+;; I don't need splash screen everytime
+(setq inhibit-splash-screen t)
+
+;; Don't show the startup screen
+(setq inhibit-startup-message t)
+#+end_src
