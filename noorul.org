@@ -59,9 +59,15 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (interactive)
   (load-file "~/.emacs.d/init.el"))
 #+end_src
-*** Locale
-#+begin_src emacs-lisp
+*** UTF-8
+
+From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
+
+#+begin_src
 (setenv "LC_ALL" "en_US.UTF-8")
+(prefer-coding-system 'utf-8)
+(when (display-graphic-p)
+  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
 *** Define some useful constants
 #+begin_src emacs-lisp
