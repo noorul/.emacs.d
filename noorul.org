@@ -144,6 +144,11 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 ;; Don't show the startup screen
 (setq inhibit-startup-message t)
 #+end_src
+*** No tabs, only space.
+;; Not tabs only space.
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
