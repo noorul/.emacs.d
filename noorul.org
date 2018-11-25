@@ -149,6 +149,12 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
 #+end_src
+*** Syntax highlighting
+#+begin_src emacs-lisp
+;; Syntax highlighting is must
+(setq global-font-lock-mode t)
+#+end_src
+
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
