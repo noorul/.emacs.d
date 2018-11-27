@@ -1,4 +1,4 @@
-#+TITLE: Noorul's Emacs configuration
+#+TITLE: Noorul Islam's Emacs configuration
 #+OPTIONS: toc:4 h:4
 #+STARTUP: showeverything
 #+PROPERTY: header-args:emacs-lisp :tangle "~/.emacs.d/noorul.el"
