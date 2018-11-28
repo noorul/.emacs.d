@@ -155,6 +155,61 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 (setq global-font-lock-mode t)
 #+end_src
 
+*** Helm - Interactive completion
+#+begin_src emacs-lisp
+
+(use-package helm
+  :ensure t
+  :diminish helm-mode
+  :init
+  (progn
+    (require 'helm-config)
+    (setq helm-candidate-number-limit 100)
+    ;; From https://gist.github.com/antifuchs/9238468
+    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+          helm-input-idle-delay 0.01  ; this actually updates things
+                                        ; reeeelatively quickly.
+          helm-yas-display-key-on-candidate t
+          helm-quick-update t
+          helm-M-x-requires-pattern nil
+          helm-ff-skip-boring-files t)
+    (setq helm-delete-minibuffer-contents-from-point t)
+    (setq helm-ff-file-name-history-use-recentf t)
+    (setq helm-ff-search-library-in-sexp t)
+    (setq helm-ff-skip-boring-files t)
+    (setq helm-ls-git-show-abs-or-relative (quote relative))
+    (setq helm-quick-update t)
+    (setq helm-recentf-fuzzy-match t)
+    (setq helm-M-x-fuzzy-match t)
+    (setq helm-for-files-preferred-list
+          (quote
+           (helm-source-files-in-current-dir helm-source-recentf helm-source-bookmarks helm-source-file-cache helm-source-buffers-list helm-source-locate helm-source-ls-git))))
+  :bind (("C-c h" . helm-mini)
+         ("C-h a" . helm-apropos)
+         ;; ("C-x C-b" . helm-buffers-list)
+         ;; ("C-x b" . helm-buffers-list)
+         ("M-y" . helm-show-kill-ring)
+         ("M-x" . helm-M-x)
+         ("C-x f" . counsel-recentf)
+         ("C-x c o" . helm-occur)
+         ("C-x c s" . helm-swoop)
+         ("C-x c y" . helm-yas-complete)
+         ("C-x c Y" . helm-yas-create-snippet-on-region)
+         ("C-x c b" . my/helm-do-grep-book-notes)
+         ("C-x c SPC" . helm-all-mark-rings))
+  :config
+  (use-package helm-ls-git
+    :ensure t))
+(ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
+
+(use-package helm-descbinds
+  :ensure t
+  :bind ("C-h b" . helm-descbinds)
+  :init
+  (fset 'describe-bindings 'helm-descbinds)
+  :config
+  (require 'helm-config))
+#+end_src
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
