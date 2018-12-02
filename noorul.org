@@ -340,7 +340,7 @@ People often struggle with the Emacs undo model, where there's really no concept
 #
 This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the changes you've made, undo back to a certain point (or redo), and go down different branches.
 
-#+BEGIN_SRC emacs-lisp 
+#+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :diminish undo-tree-mode
   :config
