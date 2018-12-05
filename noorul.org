@@ -349,6 +349,15 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
     (setq undo-tree-visualizer-timestamps t)
     (setq undo-tree-visualizer-diff t)))
 #+end_src
+*** Persistent scratch
+#+begin_src emacs-lisp
+(use-package persistent-scratch
+  :ensure t
+  :init
+  (progn
+    (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
+    (persistent-scratch-setup-default)))
+#+end_src
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
