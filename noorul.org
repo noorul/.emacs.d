@@ -358,6 +358,10 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
     (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
     (persistent-scratch-setup-default)))
 #+end_src
+*** Server start
+#+begin_src emacs-lisp
+(server-start)
+#+end_src
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
