@@ -362,6 +362,16 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 #+begin_src emacs-lisp
 (server-start)
 #+end_src
+*** Edit server
+#+begin_src emacs-lisp
+(use-package edit-server
+  :ensure t
+  :config (setq edit-server-new-frame nil)
+  :init
+  (progn
+    (setq edit-server-port 10202)
+    (edit-server-start)))
+#+end_src
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
