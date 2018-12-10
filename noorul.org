@@ -372,6 +372,14 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
     (setq edit-server-port 10202)
     (edit-server-start)))
 #+end_src
+*** Help - which-key
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :init
+  (which-key-mode))
+#+end_src emacs-lisp
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
