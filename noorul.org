@@ -362,6 +362,10 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 #+begin_src emacs-lisp
 (server-start)
 #+end_src
+*** EDITOR environment variable
+#+begin_src emacs-lisp
+(setenv "EDITOR" "emacsclient")
+#+end_src
 *** Edit server
 #+begin_src emacs-lisp
 (use-package edit-server
