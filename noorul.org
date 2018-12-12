@@ -384,6 +384,15 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :init
   (which-key-mode))
 #+end_src emacs-lisp
+*** GnuPG
+#+begin_src emacs-lisp
+;; add allow-emacs-pinentry to ~/.gnupg/gpg-agent.conf
+;; and restart gpg-agent
+(use-package pinentry
+  :ensure t 
+  :init (setq epa-pinentry-mode 'loopback)
+  :config (pinentry-start))
+#+end_src
 ** Startup
 #+begin_src emacs-lisp
 (org-agenda nil " ")
