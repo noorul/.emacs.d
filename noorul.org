@@ -389,7 +389,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 ;; add allow-emacs-pinentry to ~/.gnupg/gpg-agent.conf
 ;; and restart gpg-agent
 (use-package pinentry
-  :ensure t 
+  :ensure t
   :init (setq epa-pinentry-mode 'loopback)
   :config (pinentry-start))
 #+end_src
