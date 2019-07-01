@@ -1,0 +1,11 @@
+abbrev_defs
+auto-save-list/
+backups/
+custom-settings.el
+data/
+elpa/
+eshell/
+init.el
+noorul.el
+org-clock-save.el
+transient/
