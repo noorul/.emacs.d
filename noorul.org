@@ -16,12 +16,11 @@ org-babel-tangle= (=C-c C-v t=) produces.
 ;;;; Starting up
 (package-initialize)
 (setq use-package-always-ensure t)
-(add-to-list 'load-path "~/projects/elisp/org-mode/lisp")
-(add-to-list 'load-path "~/projects/elisp/org-mode/contrib/lisp")
+(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
+(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp")
 (setq custom-file "~/.emacs.d/custom-settings.el")
 (load custom-file t)
 #+end_src
-
 ** Personal information
 #+begin_src emacs-lisp
 (setq user-full-name "Noorul Islam K M"
