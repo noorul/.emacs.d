@@ -9,3 +9,6 @@ init.el
 noorul.el
 org-clock-save.el
 transient/
+recentf
+ac-comphist.dat
+elpy/
