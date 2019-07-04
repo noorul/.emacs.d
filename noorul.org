@@ -21,6 +21,12 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (setq custom-file "~/.emacs.d/custom-settings.el")
 (load custom-file t)
 #+end_src
+** System information
+#+begin_src emacs-lisp
+(defun my/macbookpro ()
+  (interactive)
+  (string-equal system-type "darwin"))
+#+end_src
 ** Personal information
 #+begin_src emacs-lisp
 (setq user-full-name "Noorul Islam K M"
