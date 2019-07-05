@@ -74,6 +74,26 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
+*** Mac OS X specific configuration
+#+BEGIN_SRC emacs-lisp
+(require 'cl)
+(use-package exec-path-from-shell
+  :ensure t)
+
+(when (memq window-system '(mac ns))
+  (require 'exec-path-from-shell)
+  (exec-path-from-shell-initialize))
+
+(if (my/macbookpro)
+    (progn
+      (setq ns-command-modifier 'meta)
+      (setq insert-directory-program (executable-find "gls"))
+      ;; Upgraded to El Capitan. Facing problem described here
+      ;; http://stuff-things.net/2015/10/05/emacs-visible-bell-work-around-on-os-x-el-capitan/
+      (setq visible-bell nil) ;; The default
+      (setq ring-bell-function 'ignore)))
+#+END_SRC
+
 *** Define some useful constants
 #+begin_src emacs-lisp
 (defconst user-data-directory
