@@ -349,10 +349,33 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :config (pinentry-start))
 #+end_src
 ** Startup
+** Coding
 #+begin_src emacs-lisp
 (org-agenda nil " ")
 (if (system-is-mac)
     (progn
       (toggle-frame-fullscreen)
       (toggle-frame-fullscreen)))
+*** Scala
+#+begin_src emacs-lisp
+(use-package ensime
+  :ensure t
+  :pin melpa-stable
+  :init (setq ensime-startup-snapshot-notification nil
+              ensime-startup-notification nil)
+  )
+
+(use-package sbt-mode
+  :pin melpa)
+
+(use-package scala-mode
+  :pin melpa)
+
+(defun noorul/ensime-sbt-do-assembly ()
+  (interactive)
+  (sbt-command "assembly"))
+
+(define-key ensime-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
+(define-key ensime-mode-map (kbd "C-c C-b h") 'sbt-hydra)
+#+end_src
 #+end_src
