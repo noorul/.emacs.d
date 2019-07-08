@@ -12,3 +12,5 @@ transient/
 recentf
 ac-comphist.dat
 elpy/
+.mc-lists.el
+.python-environments/
