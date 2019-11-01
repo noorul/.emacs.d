@@ -379,3 +379,12 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (define-key ensime-mode-map (kbd "C-c C-b h") 'sbt-hydra)
 #+end_src
 #+end_src
+
+** Startup
+ #+begin_src emacs-lisp
+ (org-agenda "" "c")
+ (if (my/macbookpro)
+     (progn
+       (toggle-frame-fullscreen)
+       (toggle-frame-fullscreen)))
+ #+end_src
