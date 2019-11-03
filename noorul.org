@@ -348,7 +348,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :init (setq epa-pinentry-mode 'loopback)
   :config (pinentry-start))
 #+end_src
-** Startup
 ** Coding
 #+begin_src emacs-lisp
 *** Scala
