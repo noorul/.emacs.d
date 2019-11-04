@@ -349,7 +349,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :config (pinentry-start))
 #+end_src
 ** Coding
-#+begin_src emacs-lisp
 *** Scala
 #+begin_src emacs-lisp
 (use-package ensime
@@ -372,8 +371,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (define-key ensime-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
 (define-key ensime-mode-map (kbd "C-c C-b h") 'sbt-hydra)
 #+end_src
-#+end_src
-
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
