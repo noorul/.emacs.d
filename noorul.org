@@ -138,7 +138,7 @@ I like having the clock.
 #+end_src
 *** Winner mode - undo and redo window configuration
 winner-mode lets you use C-c <left> and C-c <right> to switch between window configurations. This is handy when something has popped up a buffer that you want to look at briefly before returning to whatever you were working on. When you're done, press C-c <left>.
-#+begin_src
+#+begin_src emacs-lisp
 (use-package winner
   :defer t)
 #+end_src
