@@ -356,6 +356,10 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :diminish whole-line-or-region-local-mode
   :init (whole-line-or-region-global-mode))
 #+end_src
+*** Show paren
+#+begin_src emacs-lisp
+(show-paren-mode 1)
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
