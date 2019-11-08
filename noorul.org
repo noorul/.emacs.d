@@ -360,6 +360,11 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 #+begin_src emacs-lisp
 (show-paren-mode 1)
 #+end_src
+*** Pop to mark
+#+begin_src emacs-lisp
+(bind-key "C-x p" 'pop-to-mark-command)
+(setq set-mark-command-repeat-pop t)
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
