@@ -365,6 +365,13 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (bind-key "C-x p" 'pop-to-mark-command)
 (setq set-mark-command-repeat-pop t)
 #+end_src
+*** Smartscan
+#+begin_src emacs-lisp
+(use-package smartscan
+  :defer t
+  :ensure t
+  :config (global-smartscan-mode t))
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
