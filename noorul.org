@@ -372,6 +372,20 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :ensure t
   :config (global-smartscan-mode t))
 #+end_src
+*** Helm-swoop - quickly finding lines
+#+begin_src emacs-lisp
+(use-package helm-swoop
+ :ensure t
+ :bind
+ (("C-S-s" . helm-swoop)
+  ("M-s s" . helm-swoop)
+  ("M-s M-s" . helm-swoop)
+  ("M-I" . helm-swoop-back-to-last-point)
+  ("C-c M-i" . helm-multi-swoop)
+  ("C-x M-i" . helm-multi-swoop-all)
+  )
+)
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
