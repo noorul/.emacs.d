@@ -386,6 +386,16 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   )
 )
 #+end_src
+*** Avy - Qickly move around buffer
+#+begin_src emacs-lisp
+(use-package avy
+  :ensure t
+  :bind
+  (("C-:" . avy-goto-char)
+   ("M-g g" . avy-goto-line)
+   ("M-g e" . avy-goto-word-0)
+   ("M-g w" . avy-goto-word-1)))
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
