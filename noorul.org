@@ -396,6 +396,10 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
    ("M-g e" . avy-goto-word-0)
    ("M-g w" . avy-goto-word-1)))
 #+end_src
+*** Bookmarks
+#+begin_src emacs-lisp
+(setq bookmark-default-file (concat user-data-directory "bookmarks"))
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
