@@ -400,6 +400,12 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 #+begin_src emacs-lisp
 (setq bookmark-default-file (concat user-data-directory "bookmarks"))
 #+end_src
+*** More window movement
+#+begin_src emacs-lisp
+(use-package switch-window
+  :ensure t
+  :bind (("C-x o" . switch-window)))
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
