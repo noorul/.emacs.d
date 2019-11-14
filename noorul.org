@@ -406,6 +406,13 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :ensure t
   :bind (("C-x o" . switch-window)))
 #+end_src
+*** Recent files
+#+begin_src emacs-lisp
+(require 'recentf)
+(setq recentf-max-saved-items 200
+      recentf-max-menu-items 15)
+(recentf-mode)
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
