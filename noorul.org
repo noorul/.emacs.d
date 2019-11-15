@@ -413,6 +413,23 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
       recentf-max-menu-items 15)
 (recentf-mode)
 #+end_src
+*** Copy filename to clipboard
+
+http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
+https://github.com/bbatsov/prelude
+
+#+begin_src emacs-lisp
+(defun prelude-copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+#+end_src
+
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
