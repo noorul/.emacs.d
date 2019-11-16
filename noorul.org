@@ -430,6 +430,10 @@ https://github.com/bbatsov/prelude
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+end_src
 
+*** Dired-X
+#+begin_src emacs-lisp
+(require 'dired-x)
+#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
