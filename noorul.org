@@ -2338,3 +2338,10 @@ https://github.com/bbatsov/prelude
        (toggle-frame-fullscreen)
        (toggle-frame-fullscreen)))
  #+end_src
+*** Expand region
+#+begin_src emacs-lisp
+(use-package expand-region
+  :ensure t
+  :defer t
+  :bind ("C-=" . er/expand-region))
+#+end_src
