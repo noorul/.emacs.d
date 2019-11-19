@@ -2330,6 +2330,13 @@ https://github.com/bbatsov/prelude
 (define-key ensime-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
 (define-key ensime-mode-map (kbd "C-c C-b h") 'sbt-hydra)
 #+end_src
+*** Expand region
+#+begin_src emacs-lisp
+(use-package expand-region
+  :ensure t
+  :defer t
+  :bind ("C-=" . er/expand-region))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
@@ -2338,10 +2345,3 @@ https://github.com/bbatsov/prelude
        (toggle-frame-fullscreen)
        (toggle-frame-fullscreen)))
  #+end_src
-*** Expand region
-#+begin_src emacs-lisp
-(use-package expand-region
-  :ensure t
-  :defer t
-  :bind ("C-=" . er/expand-region))
-#+end_src
