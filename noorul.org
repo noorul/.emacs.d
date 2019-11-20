@@ -2337,6 +2337,33 @@ https://github.com/bbatsov/prelude
   :defer t
   :bind ("C-=" . er/expand-region))
 #+end_src
+*** Magit - A Git Porcelain inside Emacs
+#+begin_src emacs-lisp
+(use-package magit
+  :pin melpa-stable
+  :ensure t
+  :bind (("C-x g" . magit-status)
+         ("C-x G" . magit-status-with-prefix))
+  :init
+  (defun magit-status-with-prefix ()
+    (interactive)
+    (let ((current-prefix-arg '(4)))
+      (call-interactively 'magit-status))))
+
+(add-hook
+ 'magit-mode-hook
+ (lambda ()
+   ;; Hide "Recent Commits"
+   ;; https://github.com/magit/magit/issues/3230
+   (magit-add-section-hook 'magit-status-sections-hook
+                           'magit-insert-unpushed-to-upstream
+                           'magit-insert-unpushed-to-upstream-or-recent
+                           'replace)))
+
+(use-package git-timemachine
+  :ensure t)
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
