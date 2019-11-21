@@ -2364,6 +2364,40 @@ https://github.com/bbatsov/prelude
   :ensure t)
 #+end_src
 
+*** Projects
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :diminish
+  :defer 5
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init
+  (setq projectile-cache-file "~/.emacs.d/data/projectile.cache")
+  (setq projectile-known-projects-file "~/.emacs.d/data/projectile-bookmarks.eld")
+  :config
+  (setq projectile-enable-caching t)
+  (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
+  (setq projectile-use-git-grep t)
+  (projectile-global-mode))
+
+(use-package helm-projectile
+  :ensure t
+  :disabled t
+  :config
+  (setq projectile-completion-system 'helm)
+  (setq projectile-switch-project-action (quote helm-projectile))
+  (helm-projectile-on))
+
+(use-package helm-ag
+  :disabled t
+  :ensure t)
+
+(use-package counsel-projectile
+  :after (counsel projectile)
+  :config
+  (counsel-projectile-mode 1))
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
