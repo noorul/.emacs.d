@@ -2398,6 +2398,14 @@ https://github.com/bbatsov/prelude
   (counsel-projectile-mode 1))
 #+end_src
 
+*** git-messenger - shows commit message
+#+begin_src emacs-lisp
+(use-package git-messenger
+  :ensure t :defer t
+  :bind (("C-x v m" . git-messenger:popup-message))
+  :init (setq git-messenger:show-detail t))
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
