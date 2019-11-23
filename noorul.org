@@ -2406,6 +2406,68 @@ https://github.com/bbatsov/prelude
   :init (setq git-messenger:show-detail t))
 #+end_src
 
+*** Python
+#+begin_src emacs-lisp
+(setenv "PYTHONPATH"
+        (concat
+         (if (getenv "PYTHONPATH") path-separator "")
+         (getenv "PYTHONPATH")))
+(use-package jedi
+  :ensure t
+  :config (add-hook 'python-mode-hook 'jedi:setup))
+(setq yas-snippet-dirs (quote ("~/.emacs.d/snippets")))
+(use-package elpy
+  :ensure t
+  :config
+  (progn
+    (setq elpy-modules '(elpy-module-sane-defaults
+                         elpy-module-company
+                         elpy-module-eldoc
+                         elpy-module-flymake
+                         elpy-module-pyvenv
+                         elpy-module-yasnippet))
+    (setq elpy-test-nose-runner-command '("lockutils-wrapper" "nosetests" "-v" "--nocapture"))
+    (setq elpy-project-root-finder-functions
+          '(elpy-project-find-git-root
+            elpy-project-find-projectile-root
+            elpy-project-find-python-root
+            elpy-project-find-hg-root
+            elpy-project-find-svn-root))
+    (setq elpy-test-runner 'elpy-test-nose-runner)
+    (setq elpy-rpc-backend "jedi")
+    (setq elpy-syntax-check-command "pycheckers"))
+  :init
+  (elpy-enable))
+
+(defun flymake-get-file-name-mode-and-masks (file-name)
+  "Return the corresponding entry from `flymake-allowed-file-name-masks'."
+  (unless (stringp file-name)
+    (error "Invalid file-name"))
+  (let ((fnm flymake-allowed-file-name-masks)
+        (mode-and-masks nil)
+        (matcher nil))
+    (while (and (not mode-and-masks) fnm)
+      (setq matcher (car (car fnm)))
+      (if (or (and (stringp matcher) (string-match matcher file-name))
+              (and (symbolp matcher) (equal matcher major-mode)))
+          (setq mode-and-masks (cdr (car fnm))))
+      (setq fnm (cdr fnm)))
+    (flymake-log 3 "file %s, init=%s" file-name (car mode-and-masks))
+    mode-and-masks))
+
+(add-to-list 'flymake-allowed-file-name-masks '(python-mode elpy-flymake-python-init))
+(setq python-check-command "pycheckers")
+(add-hook 'python-mode-hook 'auto-complete-mode)
+
+(use-package python-pytest
+  :ensure t
+  :after projectile
+  :bind ("C-c C-p C-t" . python-pytest-popup)
+  :custom
+  (python-pytest-executable "pytestwrapper"))
+
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
