@@ -2468,6 +2468,10 @@ https://github.com/bbatsov/prelude
 
 #+end_src
 
+*** Version control
+#+begin_src emacs-lisp
+(setq vc-follow-symlinks t)
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
