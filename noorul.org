@@ -2472,6 +2472,38 @@ https://github.com/bbatsov/prelude
 #+begin_src emacs-lisp
 (setq vc-follow-symlinks t)
 #+end_src
+*** Ediff
+#+begin_src emacs-lisp
+(use-package ediff
+  :init
+  (defvar ctl-period-equals-map)
+  (define-prefix-command 'ctl-period-equals-map)
+  (bind-key "C-. =" #'ctl-period-equals-map)
+  (setq ediff-combination-pattern
+        (quote
+         ("<<<<<<< A: HEAD" A "||||||| Ancestor" Ancestor "=======" B ">>>>>>> B: Incoming")))
+  (setq ediff-diff-options "-w")
+  (setq ediff-highlight-all-diffs nil)
+  (setq ediff-show-clashes-only t)
+  (setq ediff-window-setup-function (quote ediff-setup-windows-plain))
+
+  :bind (("C-. = b" . ediff-buffers)
+         ("C-. = B" . ediff-buffers3)
+         ("C-. = c" . compare-windows)
+         ("C-. = =" . ediff-files)
+         ("C-. = f" . ediff-files)
+         ("C-. = F" . ediff-files3)
+         ("C-. = r" . ediff-revision)
+         ("C-. = p" . ediff-patch-file)
+         ("C-. = P" . ediff-patch-buffer)
+         ("C-. = l" . ediff-regions-linewise)
+         ("C-. = w" . ediff-regions-wordwise))
+
+  :config
+  (use-package ediff-keep
+    :load-path "~/github.com/jwiegley/dot-emacs/lisp"))
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
