@@ -2504,6 +2504,12 @@ https://github.com/bbatsov/prelude
     :load-path "~/github.com/jwiegley/dot-emacs/lisp"))
 #+end_src
 
+*** Yaml
+#+begin_src emacs-lisp
+(use-package yaml-mode
+  :ensure t)
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
