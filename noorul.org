@@ -2509,6 +2509,12 @@ https://github.com/bbatsov/prelude
 (use-package yaml-mode
   :ensure t)
 #+end_src
+*** Docker
+#+begin_src emacs-lisp
+(use-package dockerfile-mode
+  :ensure t
+  :mode ("\\`Dockerfile" . dockerfile-mode))
+#+end_src
 
 ** Startup
  #+begin_src emacs-lisp
