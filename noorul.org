@@ -2516,6 +2516,19 @@ https://github.com/bbatsov/prelude
   :mode ("\\`Dockerfile" . dockerfile-mode))
 #+end_src
 
+*** Emacs Lisp
+#+begin_src emacs-lisp
+(defun my-elisp-indent-or-complete (&optional arg)
+        (interactive "p")
+        (call-interactively 'lisp-indent-line)
+        (unless (or (looking-back "^\\s-*")
+                    (bolp)
+                    (not (looking-back "[-A-Za-z0-9_*+/=<>!?]+")))
+          (call-interactively 'completion-at-point)))
+
+(bind-key "<tab>" #'my-elisp-indent-or-complete emacs-lisp-mode-map)
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
