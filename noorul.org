@@ -2529,6 +2529,16 @@ https://github.com/bbatsov/prelude
 (bind-key "<tab>" #'my-elisp-indent-or-complete emacs-lisp-mode-map)
 #+end_src
 
+*** Kubernetes
+#+begin_src emacs-lisp
+(use-package kubernetes
+  :load-path "~/github.com/noorul/kubernetes-el"
+  :ensure t
+  :commands (kubernetes-overview
+             kubernetes-display-pods
+             kubernetes-display-configmaps
+             kubernetes-display-secrets))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
