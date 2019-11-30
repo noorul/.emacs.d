@@ -2539,6 +2539,13 @@ https://github.com/bbatsov/prelude
              kubernetes-display-configmaps
              kubernetes-display-secrets))
 #+end_src
+*** Color identifiers mode
+#+begin_src emacs-lisp
+(use-package color-identifiers-mode
+  :ensure t
+  :diminish color-identifiers-mode
+  :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
