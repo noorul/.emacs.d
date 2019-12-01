@@ -2546,6 +2546,25 @@ https://github.com/bbatsov/prelude
   :diminish color-identifiers-mode
   :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
 #+end_src
+** Eshell
+#+begin_src emacs-lisp
+(use-package esh-toggle
+  :load-path "~/github.com/jwiegley/dot-emacs/lisp"
+  :bind ("C-x C-z" . eshell-toggle))
+
+(use-package eshell-git-prompt
+  :ensure t
+  :config
+  (eshell-git-prompt-use-theme 'robbyrussell))
+
+(use-package eshell
+  :no-require t
+  :config
+  (add-hook 'eshell-mode-hook
+           '(lambda () (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history))))
+#+end_src
+
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
