@@ -2565,6 +2565,33 @@ https://github.com/bbatsov/prelude
 #+end_src
 
 
+** Key bindings
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :init
+  (which-key-mode))
+
+(bind-key "C-c ;" 'comment-or-uncomment-region)
+
+(defun duplicate-line ()
+  "Duplicate the line containing point."
+  (interactive)
+  (save-excursion
+    (let (line-text)
+      (goto-char (line-beginning-position))
+      (let ((beg (point)))
+        (goto-char (line-end-position))
+        (setq line-text (buffer-substring beg (point))))
+      (if (eobp)
+          (insert ?\n)
+        (forward-line))
+      (open-line 1)
+      (insert line-text))))
+
+(bind-key "C-x C-d" 'duplicate-line)
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
