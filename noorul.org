@@ -2592,6 +2592,42 @@ https://github.com/bbatsov/prelude
 
 (bind-key "C-x C-d" 'duplicate-line)
 #+end_src
+** Ledger personal finance
+#+begin_src emacs-lisp
+;;;_ , ledger
+
+(use-package "ledger-mode"
+  :ensure t
+  :pin melpa-stable
+  :commands ledger-mode
+  :mode ("/personal/finance/accounts\\.dat" . ledger-mode)
+  :config
+  (progn
+    (ledger-reports-add "monthly budget" "ledger -y '%a %e %b %Y' --budget -M -p \"this month\" register Expenses Assets:LivretA")
+    (ledger-reports-add "monthly unbudgeted" "ledger -y '%a %e %b %Y'  --unbudgeted -M -p \"this month\"  register Expenses Income")
+    (ledger-reports-add "by Payee" "ledger -y '%a %e %b %Y' register -P")
+    (ledger-reports-add "uncleared" "ledger -y '%a %e %b %Y' register -U")
+    (ledger-reports-add "bal" "ledger -y '%a %e %b %Y' cleared")
+    (ledger-reports-add "monthly expenses" "ledger -y '%b %Y' -M -n reg Expenses")
+    (ledger-reports-add "monthly expenses weekly" "ledger -y '%a %e %b %Y' -W -n reg Expenses -p \"this month\"")
+    (ledger-reports-add "monthly expenses daily" "ledger -y '%a %e %b %Y' -D -n reg Expenses -p \"this month\"")
+    (ledger-reports-add "net worth" "ledger -X INR balance ^Assets ^Liabilities")
+    (ledger-reports-add "wallet" "ledger balance ^Assets:Wallet ^Assets:Sajida:Wallet")
+    (ledger-reports-add "sajida" "ledger reg -p 'this month' Assets:Sajida:Wallet")
+    (ledger-reports-add "current month expenses" "ledger --aux-date -p 'this month' -S -a reg Expenses"))
+  :init
+  (progn
+    (setq ledger-file "~/bitbucket.org/noorul/personal/finance/accounts.dat")
+    (setq ledger-post-use-ido t)
+
+    (defun my-ledger-open (&optional arg)
+      (interactive "p")
+      (find-file-other-window ledger-file)
+      (goto-char (point-max)))
+
+    (bind-key "C-c L" 'my-ledger-open)))
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
