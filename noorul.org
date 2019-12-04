@@ -2628,6 +2628,66 @@ https://github.com/bbatsov/prelude
     (bind-key "C-c L" 'my-ledger-open)))
 #+end_src
 
+** Internet Relay Chat
+#+begin_src emacs-lisp
+;;;_ , erc
+
+(use-package erc
+  :config
+  (progn
+    (setq erc-log-channels t)
+    (setq erc-log-channels-directory "~/erclog")
+    (setq erc-save-buffer-on-part t)
+    (setq erc-autojoin-channels-alist
+          '((".freenode.net$" . ("#zuul")))))
+  :init
+  (progn
+    (erc-spelling-mode 1)
+    (add-hook 'erc-insert-post-hook 'erc-save-buffer-in-logs)
+
+    (load "~/.erc-auth")
+
+    (defun noorul/xml-escape (s)
+      (setq s (replace-regexp-in-string "'" "&apos;"
+      (replace-regexp-in-string "\"" "&quot;"
+      (replace-regexp-in-string "&" "&amp;"
+      (replace-regexp-in-string "<" "&lt"
+      (replace-regexp-in-string ">" "&gt" s)))))))
+
+    (defun noorul/erc-notify ()
+      (let ((output) (emacs-icon) (notify-command))
+           (setq output (buffer-substring (point-min) (point-max)))
+           (setq emacs-icon
+                 "/usr/local/share/icons/hicolor/32x32/apps/emacs.png")
+           (setq notify-command "/usr/local/bin/e-notify-send")
+           (if (> (length output) 250)
+               (setq output (substring output 0 249)))
+           (save-window-excursion
+             (cond ((and
+                     (file-exists-p notify-command)
+                     (not (string-match "changed mode" output))
+                     (not (string-match "has joined" output))
+                     (not (string-match "now known as" output))
+                     (not (string-match "has quit" output)))
+                    (shell-command (format
+                                    "%s -i %s 'ERC' '%s'"
+                                    notify-command
+                                    emacs-icon
+                                    (noorul/xml-escape output)
+                                    ) "*erc-notify-output*"))))))
+
+    ;; (if (or (eq window-system 'X) (eq window-system 'x))
+    ;;     (add-hook 'erc-insert-post-hook 'noorul/erc-notify))
+
+    (add-hook 'erc-insert-post-hook 'noorul/erc-notify)
+
+    (add-hook 'erc-mode-hook
+              '(lambda ()
+                 (define-key erc-mode-map "<tab>" 'erc-complete-word)))))
+
+#+end_src
+
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
