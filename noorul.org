@@ -2688,6 +2688,15 @@ https://github.com/bbatsov/prelude
 #+end_src
 
 
+** Internet
+*** Google
+#+begin_src emacs-lisp
+(use-package google-this
+  :ensure t
+  :diminish google-this-mode
+  :config (google-this-mode 1))
+#+end_src
+
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
