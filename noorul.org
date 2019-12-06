@@ -2697,6 +2697,15 @@ https://github.com/bbatsov/prelude
   :config (google-this-mode 1))
 #+end_src
 
+*** TLS
+#+begin_src emacs-lisp
+(use-package tls
+  :config
+  (setq tls-program
+        '("openssl s_client -connect %h:%p -no_ssl2 -ign_eof"
+          "gnutls-cli --x509cafile %t -p %p %h"
+          "gnutls-cli --x509cafile %t -p %p %h --protocols ssl3")))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
