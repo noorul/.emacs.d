@@ -2706,6 +2706,14 @@ https://github.com/bbatsov/prelude
           "gnutls-cli --x509cafile %t -p %p %h"
           "gnutls-cli --x509cafile %t -p %p %h --protocols ssl3")))
 #+end_src
+*** Restclient
+#+begin_src emacs-lisp
+(use-package restclient
+  :ensure t)
+
+(use-package ob-restclient
+  :ensure t)
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
