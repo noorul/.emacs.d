@@ -2714,6 +2714,19 @@ https://github.com/bbatsov/prelude
 (use-package ob-restclient
   :ensure t)
 #+end_src
+** Diminish
+#+begin_src emacs-lisp
+(use-package diminish
+  :ensure t
+  :init
+  (diminish 'flycheck-mode)
+  (diminish 'ivy-mode)
+  (diminish 'elpy-mode)
+  (diminish 'company-mode)
+  (diminish 'auto-complete-mode)
+  (diminish 'which-key-mode)
+  (diminish 'yas-minor-mode))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
