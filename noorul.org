@@ -2546,6 +2546,399 @@ https://github.com/bbatsov/prelude
   :diminish color-identifiers-mode
   :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
 #+end_src
+** Mail
+*** Gnus
+#+begin_src emacs-lisp
+(use-package async
+  :ensure t)
+#+end_src
+#+begin_src emacs-lisp
+(require 'gnus)
+(gnus-delay-initialize)
+
+;; (require 'gnus-load)
+;; (require 'gnus-util)
+;; (load "gnus")
+(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+
+;; Save some startup time
+(setq gnus-check-new-newsgroups nil)
+
+;; I do not want gnus to use full window
+(setq gnus-use-full-window nil)
+
+;; To save some time on exit. I don't use any other news reader.
+(setq gnus-save-newsrc-file nil)
+
+(setq gnus-group-line-format "%M%S%p%P%(%-40,40g%)%-5uy %ud\n")
+(setq gnus-sum-thread-tree-single-indent "* ")
+(setq gnus-sum-thread-tree-single-leaf "+-> ")
+
+;; which email addresses to detect for special highlighting
+(defvar noorul/mail-addresses "")
+
+(defun gnus-user-format-function-j (headers)
+  ;; prefix each post depending on whether to, cc or Bcc to
+  (let ((to (gnus-extra-header 'To headers)))
+    (if (string-match noorul/mail-addresses to)
+        (if (string-match "," to) "~" "»")
+      (if (or (string-match noorul/mail-addresses
+                            (gnus-extra-header 'Cc headers))
+              (string-match noorul/mail-addresses
+                            (gnus-extra-header 'BCc headers)))
+          "~"
+        " "))))
+(defun gnus-user-format-function-y (headers)
+  (if (string-match "^nnfolder" gnus-tmp-group)
+      ""
+    (concat "(" gnus-tmp-number-of-unread ")")
+    )
+  )
+
+(defun gnus-user-format-function-d (headers)
+  (let ((time (gnus-group-timestamp gnus-tmp-group)))
+    (if time
+        (format-time-string "%b %d  %H:%M" time)
+      ""
+      )
+    )
+  )
+
+(setq gnus-summary-line-format "%U%R%z%-2,2uj|%-12,12&user-date; |%-15,15f |%-12,12B %s\n"
+      gnus-sum-thread-tree-false-root "  "
+      gnus-sum-thread-tree-indent " "
+      gnus-sum-thread-tree-root "☢"
+      gnus-sum-thread-tree-leaf-with-other "├► "
+      gnus-sum-thread-tree-single-leaf "╰► "
+      gnus-sum-thread-tree-vertical "│")
+(setq gnus-extra-headers '(To X-NextAction X-Waiting))
+(setq nnmail-extra-headers gnus-extra-headers)
+(setq nntp-nov-is-evil t)
+(setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date)
+(setq gnus-summary-check-current t)
+(setq gnus-auto-center-summary nil)
+(setq gnus-thread-indent-level 1)
+(add-hook 'gnus-summary-mode-hook 'turn-on-gnus-mailing-list-mode)
+
+;; Fetch only part of the article if we can.  I saw this in someone
+;; else's .gnus
+(setq gnus-read-active-file 'some)
+
+;; Tree view for groups.  I like the organisational feel this has.
+(add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+
+;; Threads!  I hate reading un-threaded email -- especially mailing
+;; lists.  This helps a ton!
+(setq gnus-summary-thread-gathering-function
+      'gnus-gather-threads-by-subject)
+
+;; Also, I prefer to see only the top level message.  If a message has
+;; several replies or is part of a thread, only show the first
+;; message.  'gnus-thread-ignore-subject' will ignore the subject and
+;; look at 'In-Reply-To:' and 'References:' headers.
+;;(setq gnus-thread-hide-subtree t)
+(setq gnus-thread-ignore-subject t)
+
+;; 20030627: Changed kill mark to just -1
+;; I find adaptive scoring very useful for keeping killed (boring)
+;; threads out of sight. I do have some keyword scoring rules that
+;; can bring some threads back up, though.
+
+(setq gnus-use-adaptive-scoring t)
+(setq gnus-default-adaptive-score-alist
+      '((gnus-unread-mark)
+        (gnus-ticked-mark (subject 5))
+        (gnus-dormant-mark (subject 5))
+        (gnus-del-mark (subject -1))
+        (gnus-killed-mark (subject -1))
+        (gnus-catchup-mark (subject -1))))
+(setq gnus-gcc-mark-as-read t)
+
+;; Inline images?
+(setq mm-attachment-override-types '("image/.*"))
+
+;; don't like html or richtext
+(when (boundp 'mm-automatic-display)
+  (setq mm-discouraged-alternatives '("text/html" "text/richtext")
+        mm-automatic-display (remove "text/html" mm-automatic-display)))
+
+(defun my-async-short-unread-p (data)
+  "Return non-nil for short, unread articles."
+  (and (gnus-data-unread-p data)
+       (< (mail-header-lines (gnus-data-header data))
+          100)))
+(setq gnus-visible-headers "^From:\\|^To:\\|^Subject:\\|^Date:")
+
+(setq gnus-summary-exit-hook 'gnus-summary-bubble-group)
+
+;(setq nnmail-treat-duplicates 'delete)
+(setq nnmail-treat-duplicates nil)
+(setq gnus-save-duplicate-list t)
+
+(setq gnus-message-archive-method
+      '(nnimap "hpe"))
+
+;; Store sent mails
+;; For an exchange server, we need this
+;; Gmail does this by default.
+ (setq gnus-message-archive-group
+       '((".*hpe.*" "Sent Items")
+         ("Sent Items" "Sent Items")
+         (".*" nil)))
+
+;; Lots of things I can twiddle depending on how much I feel
+;; like pretending other people observe netiquette. =)
+(setq gnus-treat-fill-article nil)
+(setq gnus-treat-fill-long-lines nil)
+(setq gnus-treat-capitalize-sentences nil)
+(setq gnus-treat-date-local 'head)
+(setq gnus-treat-hide-headers 'head)
+(setq gnus-treat-hide-boring-headers 'head)
+(setq gnus-treat-date-english t)
+
+(setq gnus-boring-article-headers '(empty followup-to reply-to to-address date long-to many-to))
+
+;; I browse by thread, so I tend to remember thread context; if I need
+;; more info, I can just unhide cited text.
+(setq gnus-treat-hide-citation t)
+
+(add-hook 'nnmail-prepare-incoming-header-hook
+          'nnmail-remove-list-identifiers)
+(setq nnmail-list-identifiers '("[.*] "))
+(setq gnus-list-identifiers '("\\[.*\\] "))
+
+(setq nnslashdot-threshold 4)
+(setq nnslashdot-threaded nil)
+
+(setq gnus-always-read-dribble-file t)
+
+(setq gnus-activate-foreign-newsgroups nil)
+(setq gnus-summary-display-while-building 10)
+(setq gnus-gcc-mark-as-read t)
+
+;;;_+ GTD action hack - Stolen from Sacha Chua
+
+(defun sacha/gnus-next-action (header)
+  "Given a Gnus message header, returns priority mark.
+If I am the only recipient, return \"!\".
+If I am one of a few recipients, but I'm listed in To:, return \"*\".
+If I am one of a few recipients, return \"/\".
+If I am one of many recipients, return \".\".
+Else, return \" \"."
+  (let ((my-action (cdr (assoc 'X-NextAction (mail-header-extra header))))
+        (waiting (cdr (assoc 'X-Waiting (mail-header-extra header)))))
+    (cond
+     (my-action "<")
+     (waiting ">")
+     (t " "))))
+
+(defalias 'gnus-user-format-function-A 'sacha/gnus-next-action)
+
+(add-to-list 'nnmail-extra-headers 'To)
+(add-to-list 'nnmail-extra-headers 'Cc)
+
+(defun sacha/gnus-count-recipients (header)
+  "Given a Gnus message header, returns priority mark.
+If I am the only recipient, return \"!\".
+If I am one of a few recipients, but I'm listed in To:, return \"*\".
+If I am one of a few recipients, return \"/\".
+If I am one of many recipients, return \".\".
+Else, return \" \"."
+  (let* ((to (or (cdr (assoc 'To (mail-header-extra header))) ""))
+         (cc (or (cdr (assoc 'Cc (mail-header-extra header))) ""))
+         (threshold 5))
+    (cond
+     ((string-match gnus-ignored-from-addresses to)
+      (let ((len (length (bbdb-split to ","))))
+        (cond
+         ((= len 1) "!")
+         ((< len threshold) "*")
+         (t "/"))))
+     ((string-match gnus-ignored-from-addresses
+                    (concat to ", " cc))
+      (if (< (length (bbdb-split (concat to ", " cc) ","))
+             threshold)
+          "-"
+        "."))
+     (t " "))))
+
+;(defalias 'gnus-user-format-function-s 'sacha/gnus-count-recipients)
+
+(setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
+(setq gnus-ignored-newsgroups "")
+
+(setq gnus-select-method
+ '(nnimap "work"
+          (nnimap-address "work")
+          (nnimap-server-port 143)
+          (nnimap-stream network)
+          (nnimap-authinfo-file "~/.authinfo")))
+
+(add-to-list
+ 'gnus-secondary-select-methods
+ '(nnimap "noorul"
+          (nnimap-address "personal")
+          (nnimap-server-port 143)
+          (nnimap-stream network)
+          (nnimap-authinfo-file "~/.authinfo")))
+
+;; Change email address for work folder.  This is one of the most
+;; interesting features of Gnus.  I plan on adding custom .sigs soon
+;; for different mailing lists.
+
+;; (setq gnus-posting-styles
+;;       '((".*"
+;;          (name "Mark A. Hershberger")
+;;          ("X-URL" "http://mah.everybody.org/"))
+;;         ("work"
+;;          (address "mhershb@mcdermott.com"))
+;;         ("everybody.org"
+;;          (address "mah@everybody.org"))))
+;; Let Gnus change the "From:" line by looking at current group we are in.
+
+;; Available SMTP accounts.
+(defun noorul/get-smtp-accounts ()
+  (let ((result))
+    (with-temp-buffer
+      (insert-file-contents "~/.smtp-accounts")
+      (goto-char (point-min))
+      (while (not (eobp))
+        (push (split-string (thing-at-point 'line)) result)
+        (forward-line 1))
+      result)))
+
+(setq smtp-accounts (funcall 'noorul/get-smtp-accounts))
+
+(setq send-mail-function 'smtpmail-send-it
+      message-send-mail-function 'smtpmail-send-it
+      smtpmail-local-domain      nil
+      smtpmail-debug-info t
+      smtpmail-debug-verb t)
+
+(defun set-smtp-plain (server port user password)
+  "Set related SMTP variables for supplied parameters."
+  (message "Setting SMTP server to `%s:%s' for user `%s'."
+           server port user)
+  (setq smtpmail-smtp-server server
+        smtpmail-smtp-service port
+        smtpmail-auth-credentials (list (list server port user password))
+        smtpmail-starttls-credentials nil)
+  (message "Setting SMTP server to `%s:%s' for user `%s'."
+           server port user))
+
+(defun set-smtp-ssl (server port user password key cert)
+  "Set related SMTP and SSL variables for supplied parameters."
+  (message "`%s:%s:%s:%s:%s:%s'" server port user password key cert)
+  (setq starttls-use-gnutls t
+        starttls-gnutls-program "gnutls-cli"
+        starttls-extra-arguments nil
+        smtpmail-smtp-server server
+        smtpmail-smtp-user user
+        smtpmail-smtp-service port
+        smtpmail-auth-credentials (list (list server port user password))
+        smtpmail-starttls-credentials (list (list server port key cert)))
+  (message
+   "Setting SMTP server to `%s:%s' for user `%s'. (SSL enabled.)"
+   server port user))
+
+(defun change-smtp ()
+  "Change the SMTP server according to the current from line."
+  (save-excursion
+    (loop with from = (save-restriction
+                        (message-narrow-to-headers)
+                        (message-fetch-field "from"))
+          for (acc-type address . auth-spec) in smtp-accounts
+          when (string-match address from)
+          do (cond
+              ((string= acc-type "plain")
+               (return (apply 'set-smtp-plain auth-spec)))
+              ((string= acc-type "ssl")
+               (return (apply 'set-smtp-ssl auth-spec)))
+              (t (error "Unrecognized SMTP account type: `%s'." acc-type)))
+          finally (error "Cannot interfere SMTP information."))))
+
+(add-hook 'message-send-hook 'change-smtp)
+;;(gnus-demon-add-handler 'gnus-group-get-new-news 15 t)
+;;(gnus-demon-init)
+
+(setq gnus-large-newsgroup nil)
+
+(defun noorul/move-to-gmail-trash ()
+  (interactive)
+  (let ((prefix (funcall gnus-move-group-prefix-function
+                         gnus-newsgroup-name)))
+    (let ((trash (concat prefix "Trash")))
+      (gnus-summary-move-article nil trash))))
+
+(gnus-define-keys gnus-summary-mode-map
+    "\C-c\C-g" noorul/move-to-gmail-trash)
+
+(gnus-define-keys gnus-summary-mode-map
+    "\C-c\C-o" noorul/archive-office-inbox)
+
+(defun noorul/gnus-goto-personal-inbox ()
+  (interactive)
+  (gnus-group-read-group t t "nnimap+noorul:GmailInbox"))
+
+(defun noorul/gnus-goto-gmail-inbox ()
+  (interactive)
+  (gnus-group-read-group t t "nnimap+gmail:INBOX"))
+
+(defun noorul/compose-personal-mail ()
+  (interactive)
+  (gnus-group-mail 1))
+
+(setq gnus-list-identifiers nil)
+
+(defun noorul/gnus-jump-to-group ()
+  (interactive)
+  (let
+      ((collection gnus-active-hashtb)
+    choices group)
+    (if (listp collection)
+        (dolist (symbol collection)
+          (setq group (symbol-name symbol))
+          (push (if (string-match "[^\000-\177]" group)
+                    (gnus-group-decoded-name group)
+                  group)
+                choices))
+      (mapatoms (lambda (symbol)
+                  (setq group (symbol-name symbol))
+                  (push (if (string-match "[^\000-\177]" group)
+                            (gnus-group-decoded-name group)
+                          group)
+                        choices))
+                collection))
+      (gnus-group-jump-to-group
+       (ido-completing-read
+        "Group: " choices nil t))))
+
+(defun noorul/switch-to-gnus ()
+  (interactive)
+  (if (get-buffer "*Group*")
+      (progn (switch-to-buffer "*Group*"))
+    (gnus)))
+
+(gnus-define-keys gnus-group-mode-map
+    "j" noorul/gnus-jump-to-group)
+
+(require 'smtpmail-async)
+(setq send-mail-function 'async-smtpmail-send-it
+      message-send-mail-function 'async-smtpmail-send-it)
+;;; Notification
+;; (add-hook 'gnus-after-getting-new-news-hook 'gnus-notifications)
+;; (setq gnus-notifications-minimum-level 5)
+
+;;; .gnus.el ends here
+
+#+end_src
+*** offlineimap
+#+begin_src emacs-lisp
+(use-package offlineimap
+  :ensure t
+  :config (setq offlineimap-command "/usr/local/bin/offlineimap -u machineui"))
+#+end_src
+
 ** Eshell
 #+begin_src emacs-lisp
 (use-package esh-toggle
@@ -2563,8 +2956,6 @@ https://github.com/bbatsov/prelude
   (add-hook 'eshell-mode-hook
            '(lambda () (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history))))
 #+end_src
-
-
 ** Key bindings
 #+begin_src emacs-lisp
 (use-package which-key
