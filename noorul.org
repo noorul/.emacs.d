@@ -472,6 +472,19 @@ https://github.com/bbatsov/prelude
 #+begin_src emacs-lisp
 (require 'dired-x)
 #+end_src
+** Advanced editing
+*** Multiple cursors
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :ensure t
+  :bind
+   (("C->" . mc/mark-next-like-this)
+    ("C-<" . mc/mark-previous-like-this)
+    ("C-|" . mc/skip-to-next-like-this)
+    ("C-*" . mc/mark-all-like-this))
+   :config
+   (setq mc/list-file (expand-file-name "mc-lists.el" user-data-directory)))
+#+end_src
 ** Org
 *** Getting started with org-mode
 **** Org-mode setup
