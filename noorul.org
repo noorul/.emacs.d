@@ -3169,6 +3169,12 @@ Else, return \" \"."
   (diminish 'which-key-mode)
   (diminish 'yas-minor-mode))
 #+end_src
+** Work configuration
+#+begin_src emacs-lisp
+(let ((work-config-file "~/dropbox-work/.emacs.d/work.org"))
+ (if (file-exists-p work-config-file)
+     (org-babel-load-file work-config-file)))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
