@@ -3175,6 +3175,12 @@ Else, return \" \"."
  (if (file-exists-p work-config-file)
      (org-babel-load-file work-config-file)))
 #+end_src
+** Personal configuration
+#+begin_src emacs-lisp
+(let ((personal-config-file "~/dropbox-personal/.emacs.d/personal.org"))
+ (if (file-exists-p personal-config-file)
+     (org-babel-load-file personal-config-file)))
+#+end_src
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
