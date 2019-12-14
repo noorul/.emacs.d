@@ -541,7 +541,7 @@ https://github.com/bbatsov/prelude
 
 **** Agenda Setup
  #+begin_src emacs-lisp
- ;; Every .org file under ~/git/personal/notebook should be part of agenda.
+ ;; Every .org file under ~/bitbucket.org/noorul/personal/notebook should be part of agenda.
  (setq org-agenda-files (quote ("~/bitbucket.org/noorul/personal/notebook")))
  #+end_src
 
@@ -1604,7 +1604,7 @@ https://github.com/bbatsov/prelude
 **** Use the diary for holidays and appointments
  #+begin_src emacs-lisp
  (setq org-agenda-include-diary nil)
- (setq org-agenda-diary-file "~/git/personal/notebook/organizer.org")
+ (setq org-agenda-diary-file "~/bitbucket.org/noorul/personal/notebook/organizer.org")
  (setq org-agenda-insert-diary-extract-time t)
  #+end_src
 **** Searches include archive files
@@ -2137,7 +2137,7 @@ https://github.com/bbatsov/prelude
  #+begin_src emacs-lisp
  (require 'org-contacts)
  (custom-set-variables
-  '(org-contacts-files (quote ("~/git/personal/notebook/contacts.org")))
+  '(org-contacts-files (quote ("~/bitbucket.org/noorul/personal/notebook/contacts.org")))
   '(calendar-mark-holidays-flag t))
  #+end_src
 *** Automatic hourly commits
