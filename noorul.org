@@ -3062,6 +3062,12 @@ Else, return \" \"."
     (setq ledger-file "~/bitbucket.org/noorul/personal/finance/accounts.dat")
     (setq ledger-post-use-ido t)
 
+    (add-hook 'ledger-mode-hook
+          (lambda ()
+            (setq-local tab-always-indent 'complete)
+            (setq-local completion-cycle-threshold t)
+            (setq-local ledger-complete-in-steps t)))
+
     (defun my-ledger-open (&optional arg)
       (interactive "p")
       (find-file-other-window ledger-file)
