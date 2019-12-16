@@ -2070,17 +2070,6 @@ https://github.com/bbatsov/prelude
  (setq org-alphabetical-lists t)
  #+end_src
 
-**** Using orgstruct mode for mail
- #+begin_src emacs-lisp
- (add-hook 'message-mode-hook 'orgstruct++-mode 'append)
- (add-hook 'message-mode-hook 'turn-on-auto-fill 'append)
- (add-hook 'message-mode-hook 'orgtbl-mode 'append)
- (add-hook 'message-mode-hook 'turn-on-flyspell 'append)
- (add-hook 'message-mode-hook
-           '(lambda () (setq fill-column 72))
-           'append)
- #+end_src
-
 **** Using flyspell mode to reduce spelling errors
  #+begin_src emacs-lisp
  ;; flyspell mode for spell checking everywhere
