@@ -14,3 +14,5 @@ ac-comphist.dat
 elpy/
 .mc-lists.el
 .python-environments/
+network-security.data
+tramp
