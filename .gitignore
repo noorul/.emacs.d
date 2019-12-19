@@ -16,3 +16,4 @@ elpy/
 .python-environments/
 network-security.data
 tramp
+request/
