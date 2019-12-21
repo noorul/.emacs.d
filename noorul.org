@@ -2317,11 +2317,6 @@ https://github.com/bbatsov/prelude
      (shell-command-on-region startPos endPos scriptName "*Weekly Report*"
                               nil nil t)))
  #+end_src
-*** COMMENT Mediawiki export support
- #+begin_src emacs-lisp
- (use-package ox-mediawiki
-   :load-path "~/projects/elisp/ox-mediawiki")
- #+end_src
 *** Misc
  #+begin_src emacs-lisp
  (setq org-id-locations-file (convert-standard-filename
