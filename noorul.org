@@ -2322,7 +2322,6 @@ https://github.com/bbatsov/prelude
  (setq org-id-locations-file (convert-standard-filename
                                    (concat user-data-directory ".org-id-locations")))
  #+end_src
- [2016-03-19 Sat 15:02]
 
 ** Coding
 *** Scala
