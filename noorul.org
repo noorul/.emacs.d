@@ -58,7 +58,6 @@ org-babel-tangle= (=C-c C-v t=) produces.
 
 ** General configuration
 *** Reload
-
 #+begin_src emacs-lisp
 (defun my/reload-emacs-configuration ()
   (interactive)
@@ -100,7 +99,6 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
   (expand-file-name "data/" user-emacs-directory))
 #+end_src
 *** Libraries
-
 #+begin_src emacs-lisp
 (use-package dash :ensure t)
 (use-package diminish :ensure t)
