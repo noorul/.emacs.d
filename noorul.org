@@ -2564,6 +2564,12 @@ https://github.com/bbatsov/prelude
   :diminish color-identifiers-mode
   :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
 #+end_src
+*** Flycheck
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+end_src
 ** Mail
 *** Gnus
 #+begin_src emacs-lisp
