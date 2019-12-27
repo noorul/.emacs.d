@@ -2806,19 +2806,8 @@ Else, return \" \"."
           (nnimap-stream network)
           (nnimap-authinfo-file "~/.authinfo")))
 
-;; Change email address for work folder.  This is one of the most
-;; interesting features of Gnus.  I plan on adding custom .sigs soon
-;; for different mailing lists.
-
-;; (setq gnus-posting-styles
-;;       '((".*"
-;;          (name "Mark A. Hershberger")
-;;          ("X-URL" "http://mah.everybody.org/"))
-;;         ("work"
-;;          (address "mhershb@mcdermott.com"))
-;;         ("everybody.org"
-;;          (address "mah@everybody.org"))))
-;; Let Gnus change the "From:" line by looking at current group we are in.
+;; gnus-posting-styles are present in work.org and personal.org
+;; because they contain sensitive information like e-mail address
 
 ;; Available SMTP accounts.
 (defun noorul/get-smtp-accounts ()
