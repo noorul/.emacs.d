@@ -2568,6 +2568,7 @@ https://github.com/bbatsov/prelude
 #+begin_src emacs-lisp
 (use-package flycheck
   :ensure t
+  :diminish
   :init (global-flycheck-mode))
 #+end_src
 ** Mail
@@ -3121,7 +3122,6 @@ Else, return \" \"."
 (use-package diminish
   :ensure t
   :init
-  (diminish 'flycheck-mode)
   (diminish 'ivy-mode)
   (diminish 'elpy-mode)
   (diminish 'company-mode)
