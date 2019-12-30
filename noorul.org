@@ -2328,25 +2328,20 @@ https://github.com/bbatsov/prelude
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
-(use-package ensime
-  :ensure t
-  :pin melpa-stable
-  :init (setq ensime-startup-snapshot-notification nil
-              ensime-startup-notification nil)
-  )
-
 (use-package sbt-mode
+  :ensure t
   :pin melpa)
 
 (use-package scala-mode
+  :ensure t
   :pin melpa)
 
 (defun noorul/ensime-sbt-do-assembly ()
   (interactive)
   (sbt-command "assembly"))
 
-(define-key ensime-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
-(define-key ensime-mode-map (kbd "C-c C-b h") 'sbt-hydra)
+(define-key scala-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
+(define-key scala-mode-map (kbd "C-c C-b h") 'sbt-hydra)
 #+end_src
 *** Expand region
 #+begin_src emacs-lisp
