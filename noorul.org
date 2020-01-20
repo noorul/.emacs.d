@@ -350,6 +350,11 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :init (setq epa-pinentry-mode 'loopback)
   :config (pinentry-start))
 #+end_src
+*** Spellcheck is great
+#+begin_src emacs-lisp
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+end_src
 ** Navigation
 *** Kill whole line or region
 #+begin_src emacs-lisp
