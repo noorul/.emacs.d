@@ -2703,14 +2703,6 @@ https://github.com/bbatsov/prelude
 (setq gnus-message-archive-method
       '(nnimap "hpe"))
 
-;; Store sent mails
-;; For an exchange server, we need this
-;; Gmail does this by default.
- (setq gnus-message-archive-group
-       '((".*hpe.*" "Sent Items")
-         ("Sent Items" "Sent Items")
-         (".*" nil)))
-
 ;; Lots of things I can twiddle depending on how much I feel
 ;; like pretending other people observe netiquette. =)
 (setq gnus-treat-fill-article nil)
