@@ -2700,9 +2700,6 @@ https://github.com/bbatsov/prelude
 (setq nnmail-treat-duplicates nil)
 (setq gnus-save-duplicate-list t)
 
-(setq gnus-message-archive-method
-      '(nnimap "hpe"))
-
 ;; Lots of things I can twiddle depending on how much I feel
 ;; like pretending other people observe netiquette. =)
 (setq gnus-treat-fill-article nil)
