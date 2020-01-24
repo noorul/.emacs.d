@@ -2933,6 +2933,18 @@ Else, return \" \"."
   :ensure t
   :config (setq offlineimap-command "/usr/local/bin/offlineimap -u machineui"))
 #+end_src
+*** Org msg
+#+begin_src emacs-lisp
+(use-package org-msg
+  :ensure t
+
+  :init (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil"
+              org-msg-startup "hidestars indent inlineimages"
+              org-msg-greeting-fmt "\nHi *%s*,\n\n"
+              org-msg-greeting-name-limit 3)
+  :config (org-msg-mode))
+
+#+end_src
 
 ** Eshell
 #+begin_src emacs-lisp
