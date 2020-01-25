@@ -2933,7 +2933,7 @@ Else, return \" \"."
   :ensure t
   :config (setq offlineimap-command "/usr/local/bin/offlineimap -u machineui"))
 #+end_src
-*** Org msg
+*** COMMENT Org msg
 #+begin_src emacs-lisp
 (use-package org-msg
   :ensure t
