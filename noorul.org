@@ -2959,6 +2959,8 @@ Else, return \" \"."
 
 (use-package eshell
   :no-require t
+  :init (setq eshell-hist-ignoredups t
+              eshell-history-size 50000)
   :config
   (add-hook 'eshell-mode-hook
            '(lambda () (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history))))
