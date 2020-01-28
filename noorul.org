@@ -67,7 +67,8 @@ org-babel-tangle= (=C-c C-v t=) produces.
 
 From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 
-#+begin_src
+#+begin_src emacs-lisp
+(setenv "LC_TYPE" "en_US.UTF-8")
 (setenv "LC_ALL" "en_US.UTF-8")
 (prefer-coding-system 'utf-8)
 (when (display-graphic-p)
