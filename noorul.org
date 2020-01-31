@@ -2243,6 +2243,7 @@ https://github.com/bbatsov/prelude
  (require 'ox-html)
  (require 'ox-latex)
  (require 'ox-ascii)
+ (require 'ox-md)
  (setq org-publish-project-alist
        '(
          ("noorul-blog"
