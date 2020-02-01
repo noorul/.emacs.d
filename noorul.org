@@ -2398,6 +2398,7 @@ https://github.com/bbatsov/prelude
   (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
   (setq projectile-use-git-grep t)
+  (setq projectile-completion-system 'ivy)
   (projectile-global-mode))
 
 (use-package helm-projectile
