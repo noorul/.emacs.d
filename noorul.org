@@ -481,6 +481,10 @@ I always want file listing to be sorted by time. This helps a lot.
 #+begin_src emacs-lisp
 (setq dired-listing-switches "-alt")
 #+end_src
+It is better to always copy to location at other window
+#+begin_src emacs-lisp
+(setq dired-dwim-target t)
+#+end_src
 *** Dired-X
 #+begin_src emacs-lisp
 (require 'dired-x)
