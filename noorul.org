@@ -47,6 +47,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 *** Setup use-package
 #+begin_src emacs-lisp
 (unless (package-installed-p 'use-package)
+  (package-refresh-contents)
   (package-install 'use-package))
 (setq use-package-verbose t)
 (setq use-package-always-ensure t)
