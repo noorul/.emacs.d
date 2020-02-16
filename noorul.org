@@ -2065,8 +2065,13 @@ It is better to always copy to location at other window
            (when (member (nth 2 (org-heading-components)) (list "NEXT"))
              (org-todo "TODO")))))))
 
+ (defun noorul/store-org-clocked-tags ()
+   (setq noorul/org-clocked-tags (nth 5 (org-heading-components))))
+
+
  (add-hook 'org-after-todo-state-change-hook 'bh/mark-next-parent-tasks-todo 'append)
  (add-hook 'org-clock-in-hook 'bh/mark-next-parent-tasks-todo 'append)
+ (add-hook 'org-clock-in-hook 'noorul/store-org-clocked-tags 'append)
  #+end_src
 
 **** Startup in folded view
