@@ -2867,20 +2867,20 @@ Else, return \" \"."
 (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 (setq gnus-ignored-newsgroups "")
 
-(setq gnus-select-method
- '(nnimap "work"
-          (nnimap-address "work")
-          (nnimap-server-port 143)
-          (nnimap-stream network)
-          (nnimap-authinfo-file "~/.authinfo")))
+(setq gnus-select-method '(nnnil))
 
-(add-to-list
- 'gnus-secondary-select-methods
- '(nnimap "noorul"
-          (nnimap-address "personal")
-          (nnimap-server-port 143)
-          (nnimap-stream network)
-          (nnimap-authinfo-file "~/.authinfo")))
+(setq gnus-secondary-select-methods
+      '((nntp "news.gwene.org")
+        (nnimap "work"
+                (nnimap-address "work")
+                (nnimap-server-port 143)
+                (nnimap-stream network)
+                (nnimap-authinfo-file "~/.authinfo"))
+        (nnimap "noorul"
+                (nnimap-address "personal")
+                (nnimap-server-port 143)
+                (nnimap-stream network)
+                (nnimap-authinfo-file "~/.authinfo"))))
 
 ;; gnus-posting-styles are present in work.org and personal.org
 ;; because they contain sensitive information like e-mail address
