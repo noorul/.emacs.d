@@ -18,3 +18,5 @@ network-security.data
 tramp
 request/
 url/
+.dap-breakpoints
+.lsp-session-v1
