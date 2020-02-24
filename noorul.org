@@ -1979,18 +1979,19 @@ It is better to always copy to location at other window
  #+end_src
 **** Automatically change list bullets
  #+begin_src emacs-lisp
- (setq org-list-demote-modify-bullet (quote (("+" . "-")
-                                             ("*" . "-")
-                                             ("1." . "-")
-                                             ("1)" . "-")
-                                             ("A)" . "-")
-                                             ("B)" . "-")
-                                             ("a)" . "-")
-                                             ("b)" . "-")
-                                             ("A." . "-")
-                                             ("B." . "-")
-                                             ("a." . "-")
-                                             ("b." . "-"))))
+ (setq org-list-demote-modify-bullet
+       (quote (("+" . "-")
+               ("*" . "-")
+               ("1." . "-")
+               ("1)" . "-")
+               ("A)" . "-")
+               ("B)" . "-")
+               ("a)" . "-")
+               ("b)" . "-")
+               ("A." . "-")
+               ("B." . "-")
+               ("a." . "-")
+               ("b." . "-"))))
  #+end_src
 **** Remove indentation on agenda tags view
  #+begin_src emacs-lisp
