@@ -189,6 +189,7 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 (defvar ha/fixed-font-family
   (cond
    ((x-list-fonts "Menlo")           "Menlo")
+   ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
    ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
    ((x-list-fonts "Fira Code")       "Fira Code")
    ((x-list-fonts "Roboto Mono")     "Roboto Mono")
