@@ -533,23 +533,23 @@ It is better to always copy to location at other window
 **** Load necessary org modules
  #+begin_src emacs-lisp
  ;; Load org modules
- (setq org-modules (quote (org-bbdb
-                           org-bibtex
+ (setq org-modules (quote (ol-bbdb
+                           ol-bibtex
                            org-crypt
-                           org-gnus
+                           ol-gnus
                            org-id
-                           org-info
+                           ol-info
                            org-jsinfo
                            org-habit
                            org-inlinetask
-                           org-irc
-                           org-mew
-                           org-mhe
+                           ol-irc
+                           ol-mew
+                           ol-mhe
                            org-protocol
-                           org-rmail
-                           org-vm
-                           org-wl
-                           org-w3m)))
+                           ol-rmail
+                           ol-vm
+                           ol-wl
+                           ol-w3m)))
  (use-package ob-http
    :ensure)
 
