@@ -380,9 +380,9 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Smartscan
 #+begin_src emacs-lisp
 (use-package smartscan
-  :defer t
   :ensure t
-  :config (global-smartscan-mode t))
+  :config
+  (add-hook 'prog-mode-hook 'smartscan-mode-turn-on))
 #+end_src
 *** Helm-swoop - quickly finding lines
 #+begin_src emacs-lisp
