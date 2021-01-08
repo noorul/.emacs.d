@@ -2439,7 +2439,6 @@ It is better to always copy to location at other window
 *** Magit - A Git Porcelain inside Emacs
 #+begin_src emacs-lisp
 (use-package magit
-  :pin melpa-stable
   :ensure t
   :bind (("C-x g" . magit-status)
          ("C-x G" . magit-status-with-prefix))
