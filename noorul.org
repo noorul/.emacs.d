@@ -2442,6 +2442,7 @@ It is better to always copy to location at other window
   :ensure t
   :bind (("C-x g" . magit-status)
          ("C-x G" . magit-status-with-prefix))
+  :commands magit-auto-revert-mode
   :init
   (defun magit-status-with-prefix ()
     (interactive)
