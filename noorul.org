@@ -2273,6 +2273,8 @@ It is better to always copy to location at other window
 
  #+end_src
 *** Publishing
+**** General
+[2021-05-09 Sun 01:52]
  #+begin_src emacs-lisp
  (setq org-alphabetical-lists t)
  (require 'ox-html)
@@ -2309,6 +2311,13 @@ It is better to always copy to location at other window
           )
          ))
  #+end_src
+**** org-reveal
+#+begin_src emacs-lisp
+(use-package ox-reveal
+  :ensure
+  :config
+  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+#+end_src
 *** Key bindings
  #+begin_src emacs-lisp
  ;;;_, org-mode bindings.
