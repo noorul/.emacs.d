@@ -3246,6 +3246,14 @@ Else, return \" \"."
    (quote ((restclient . t))))
   )
 #+end_src
+** Terminal
+#+begin_src emacs-lisp
+(use-package vterm
+  :ensure t
+  :config
+  (setq vterm-shell "/bin/zsh")
+  )
+#+end_src
 ** Diminish
 #+begin_src emacs-lisp
 (use-package diminish
