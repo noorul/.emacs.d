@@ -3224,7 +3224,7 @@ Else, return \" \"."
   :config (google-this-mode 1))
 #+end_src
 
-*** TLS
+*** COMMENT TLS
 #+begin_src emacs-lisp
 (use-package tls
   :config
