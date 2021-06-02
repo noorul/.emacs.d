@@ -3155,7 +3155,7 @@ Else, return \" \"."
     (bind-key "C-c L" 'my-ledger-open)))
 #+end_src
 
-** Internet Relay Chat
+** COMMENT Internet Relay Chat
 #+begin_src emacs-lisp
 ;;;_ , erc
 
