@@ -2642,6 +2642,17 @@ It is better to always copy to location at other window
   :mode ("\\`Dockerfile" . dockerfile-mode))
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker)
+  :config
+  (defun docker-compose-read-compose-file (prompt &optional initial-input _history)
+    "Wrapper around `read-file-name'."
+    (read-file-name prompt nil nil t initial-input (apply-partially 'string-match ".*\\.yml\\|.*\\.yaml")))
+  )
+#+end_src
+
 *** Emacs Lisp
 #+begin_src emacs-lisp
 (defun my-elisp-indent-or-complete (&optional arg)
