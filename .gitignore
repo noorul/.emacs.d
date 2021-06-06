@@ -20,3 +20,7 @@ request/
 url/
 .dap-breakpoints
 .lsp-session-v1
+/.cache/
+/eclipse.jdt.ls/
+/forge-database.sqlite
+/workspace/
