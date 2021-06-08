@@ -190,6 +190,7 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 #+begin_src emacs-lisp
 (defvar ha/fixed-font-family
   (cond
+   ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
    ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
    ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
    ((x-list-fonts "Menlo")           "Menlo")
@@ -206,10 +207,11 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 
 (defvar ha/variable-font-family
   (cond
-   ((x-list-fonts "ETBembo") "ETBembo")
-   ((x-list-fonts "SF Pro") "SF Pro")
    ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
    ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
+   ((x-list-fonts "ETBembo") "ETBembo")
+   ((x-list-fonts "SF Pro") "SF Pro")
+   ((x-list-fonts "FiraGO") "FiraGO")
    ((x-list-fonts "Lucida Grande")   "Lucida Grande")
    ((x-list-fonts "Verdana")         "Verdana")
    ((x-family-fonts "Sans Serif")    "Sans Serif")
@@ -527,7 +529,9 @@ It is better to always copy to location at other window
  ;;; Org Mode
  ;;;
  (use-package org
-   :diminish "org-mode")
+   :diminish "org-mode"
+   :hook (org-mode . variable-pitch-mode)
+   )
 
  ;; Only .org and .org_archive files carry this mode
  (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
