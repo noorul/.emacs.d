@@ -228,7 +228,42 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
   (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))
 #+end_src
 
-*** Use doom theme
+#+RESULTS:
+
+
+*** COMMENT Leuven theme
+#+begin_src emacs-lisp
+(use-package leuven-theme
+  :config
+  (load-theme 'leuven-dark t))
+#+end_src
+
+*** Use modus-theme
+#+begin_src emacs-lisp
+(use-package modus-themes
+  :ensure
+  :pin melpa
+  :init
+  (setq modus-themes-slanted-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-region 'no-extend
+        modus-themes-org-agenda
+        '((header-block . (variable-pitch scale-title))
+          (header-date . (grayscale workaholic bold-today))
+          (scheduled . uniform)
+          (habit . traffic-light-deuteranopia))
+        )
+  ;; Load the theme files before enabling a theme (else you get an error).
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-vivendi))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+*** COMMENT Use doom theme
 #+begin_src emacs-lisp
 (use-package doom-themes
   :ensure t
