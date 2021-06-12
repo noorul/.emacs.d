@@ -530,6 +530,30 @@ https://github.com/bbatsov/prelude
 (use-package ace-link
   :ensure t)
 #+end_src
+*** Embark
+#+begin_src emacs-lisp
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+
+(use-package embark
+  :ensure t
+  :bind
+  (("C-M-," . embark-act))
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq
+   prefix-help-command #'embark-prefix-help-command
+   embark-prompter 'embark-completing-read-prompter
+   )
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+#+end_src
 *** Dired
 I always want file listing to be sorted by time. This helps a lot.
 #+begin_src emacs-lisp
