@@ -3325,14 +3325,6 @@ Else, return \" \"."
    (quote ((restclient . t))))
   )
 #+end_src
-** Terminal
-#+begin_src emacs-lisp
-(use-package vterm
-  :ensure t
-  :config
-  (setq vterm-shell "/bin/zsh")
-  )
-#+end_src
 ** Diminish
 #+begin_src emacs-lisp
 (use-package diminish
@@ -3344,6 +3336,14 @@ Else, return \" \"."
   (diminish 'auto-complete-mode)
   (diminish 'which-key-mode)
   (diminish 'yas-minor-mode))
+#+end_src
+** Terminal
+#+begin_src emacs-lisp
+(use-package vterm
+  :ensure t
+  :config
+  (setq vterm-shell "/bin/zsh")
+  )
 #+end_src
 ** Work configuration
 #+begin_src emacs-lisp
