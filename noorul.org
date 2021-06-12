@@ -2474,6 +2474,9 @@ It is better to always copy to location at other window
          (lsp-mode . lsp-lens-mode)
   :config (setq lsp-prefer-flymake nil))
 
+;; Add metals backend for lsp-mode
+(use-package lsp-metals)
+
 ;; Enable nice rendering of documentation on hover
 (use-package lsp-ui)
 
@@ -2482,8 +2485,6 @@ It is better to always copy to location at other window
 ;;   to avoid odd behavior with snippets and indentation
 (use-package yasnippet)
 
-;; Add company-lsp backend for metals
-(use-package company-lsp)
 
 ;; Use the Debug Adapter Protocol for running tests and debugging
 (use-package posframe
@@ -2498,7 +2499,6 @@ It is better to always copy to location at other window
 ;; Use the Tree View Protocol for viewing the project structure and triggering compilation
 (use-package lsp-treemacs
   :config
-  (lsp-metals-treeview-enable t)
   (setq lsp-metals-treeview-show-when-views-received t)
   )
 
@@ -2506,8 +2506,9 @@ It is better to always copy to location at other window
   (interactive)
   (sbt-command "assembly"))
 
-(define-key scala-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
-(define-key scala-mode-map (kbd "C-c C-b h") 'sbt-hydra)
+;; (define-key scala-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
+;; (define-key scala-mode-map (kbd "C-c C-b h") 'sbt-hydra)
+#+end_src
 #+end_src
 *** golang
 #+begin_src emacs-lisp
