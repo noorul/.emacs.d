@@ -17,6 +17,15 @@ org-babel-tangle= (=C-c C-v t=) produces.
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
+;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
