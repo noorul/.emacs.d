@@ -198,7 +198,6 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 #+BEGIN_SRC emacs-lisp
 (require 'cl)
 (use-package exec-path-from-shell
-  :ensure t
   :init
   (setq exec-path-from-shell-variables '("PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "JFROG_PASSWORD")))
 
@@ -223,8 +222,8 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 #+end_src
 *** Libraries
 #+begin_src emacs-lisp
-(use-package dash :ensure t)
-(use-package diminish :ensure t)
+(use-package dash)
+(use-package diminish)
 #+end_src
 *** Backups
 
@@ -303,7 +302,6 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 #+begin_src emacs-lisp
 
 (use-package helm
-  :ensure t
   :diminish helm-mode
   :init
   (progn
@@ -343,11 +341,10 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
          ("C-x c SPC" . helm-all-mark-rings))
   :config
   (use-package helm-ls-git
-    :ensure t))
+    :defer t))
 (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
 
 (use-package helm-descbinds
-  :ensure t
   :bind ("C-h b" . helm-descbinds)
   :init
   (fset 'describe-bindings 'helm-descbinds)
@@ -372,7 +369,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Persistent scratch
 #+begin_src emacs-lisp
 (use-package persistent-scratch
-  :ensure t
   :init
   (progn
     (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
@@ -389,7 +385,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Edit server
 #+begin_src emacs-lisp
 (use-package edit-server
-  :ensure t
   :config (setq edit-server-new-frame nil)
   :init
   (progn
@@ -399,9 +394,8 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Help - which-key
 #+begin_src emacs-lisp
 (use-package which-key
-  :ensure t
   :diminish which-key-mode
-  :init
+  :config
   (which-key-mode))
 #+end_src emacs-lisp
 *** GnuPG
@@ -409,7 +403,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 ;; add allow-emacs-pinentry to ~/.gnupg/gpg-agent.conf
 ;; and restart gpg-agent
 (use-package pinentry
-  :ensure t
   :init (setq epa-pinentry-mode 'loopback)
   :config (pinentry-start))
 #+end_src
@@ -422,7 +415,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Kill whole line or region
 #+begin_src emacs-lisp
 (use-package whole-line-or-region
-  :ensure t
   :diminish whole-line-or-region-local-mode
   :init (whole-line-or-region-global-mode))
 #+end_src
@@ -438,14 +430,12 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Smartscan
 #+begin_src emacs-lisp
 (use-package smartscan
-  :ensure t
   :config
   (add-hook 'prog-mode-hook 'smartscan-mode-turn-on))
 #+end_src
 *** Helm-swoop - quickly finding lines
 #+begin_src emacs-lisp
 (use-package helm-swoop
- :ensure t
  :bind
  (("C-S-s" . helm-swoop)
   ("M-s s" . helm-swoop)
@@ -459,7 +449,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Avy - Qickly move around buffer
 #+begin_src emacs-lisp
 (use-package avy
-  :ensure t
   :bind
   (("C-:" . avy-goto-char)
    ("M-g g" . avy-goto-line)
@@ -473,7 +462,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** More window movement
 #+begin_src emacs-lisp
 (use-package switch-window
-  :ensure t
   :bind (("C-x o" . switch-window)))
 #+end_src
 *** Recent files
@@ -503,16 +491,14 @@ https://github.com/bbatsov/prelude
 *** Swiper
 #+begin_src emacs-lisp
 (use-package wgrep
-  :ensure t)
+  :defer 5)
 
 (use-package counsel
-  :ensure t
   :bind (("M-i" . counsel-imenu)
          ("C-h v". counsel-describe-variable)
          ("C-c O" . counsel-git-grep)))
 
 (use-package swiper
-  :ensure t
   :diminish ivy-mode
   :config
   (ivy-mode 1)
@@ -525,7 +511,6 @@ https://github.com/bbatsov/prelude
          ("C-x b" . ivy-switch-buffer)))
 
 (use-package ivy-rich
-  :ensure t
   :config
   (setq ivy-virtual-abbreviate 'full
         ivy-rich-switch-buffer-align-virtual-buffer t
@@ -534,20 +519,17 @@ https://github.com/bbatsov/prelude
   ;; (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
 
 (use-package ivy-hydra
-  :ensure t)
+  :after swiper)
 
-(use-package ace-link
-  :ensure t)
+(use-package ace-link)
 #+end_src
 *** Embark
 #+begin_src emacs-lisp
 (use-package marginalia
-  :ensure t
   :config
   (marginalia-mode))
 
 (use-package embark
-  :ensure t
   :bind
   (("C-M-," . embark-act))
   :init
@@ -580,7 +562,6 @@ It is better to always copy to location at other window
 *** Multiple cursors
 #+begin_src emacs-lisp
 (use-package multiple-cursors
-  :ensure t
   :bind
    (("C->" . mc/mark-next-like-this)
     ("C-<" . mc/mark-previous-like-this)
@@ -613,7 +594,6 @@ It is better to always copy to location at other window
 **** Org bullets
  #+begin_src emacs-lisp
  (use-package org-bullets
-    :ensure t
     :init (add-hook 'org-mode-hook 'org-bullets-mode))
  #+end_src
 **** Load necessary org modules
@@ -636,11 +616,9 @@ It is better to always copy to location at other window
                            ol-vm
                            ol-wl
                            ol-w3m)))
- (use-package ob-http
-   :ensure)
+ (use-package ob-http)
 
- (use-package ob-async
-   :ensure)
+ (use-package ob-async)
 
  (org-reload)
  #+end_src
@@ -1386,8 +1364,8 @@ It is better to always copy to location at other window
  #+end_src
 *** Org babel module for elasticsearch
  #+BEGIN_SRC emacs-lisp
-   (use-package es-mode
-     :ensure t)
+ (use-package es-mode
+   :mode "\\.es$")
  #+END_SRC
 *** Org babel setup
  #+begin_src emacs-lisp
@@ -2100,10 +2078,8 @@ It is better to always copy to location at other window
 
 **** Using org-mime to email
  #+begin_src emacs-lisp
- (use-package org-mime
-   :ensure t)
- (use-package htmlize
-   :ensure t)
+ (use-package org-mime)
+ (use-package htmlize)
  #+end_src
 **** Remove multiple state change log details from the agenda
  #+begin_src emacs-lisp
@@ -2387,7 +2363,6 @@ It is better to always copy to location at other window
 **** org-reveal
 #+begin_src emacs-lisp
 (use-package ox-reveal
-  :ensure
   :config
   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
 #+end_src
@@ -2544,7 +2519,6 @@ It is better to always copy to location at other window
 #+begin_src emacs-lisp
 (use-package lsp-java
   :after lsp-mode
-  :ensure t
   :commands lsp-java-enable
   :init
   (add-hook 'java-mode-hook (lambda ()
@@ -2585,14 +2559,12 @@ It is better to always copy to location at other window
 *** Expand region
 #+begin_src emacs-lisp
 (use-package expand-region
-  :ensure t
   :defer t
   :bind ("C-=" . er/expand-region))
 #+end_src
 *** Magit - A Git Porcelain inside Emacs
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t
   :bind (("C-x g" . magit-status)
          ("C-x G" . magit-status-with-prefix))
   :commands magit-auto-revert-mode
@@ -2612,14 +2584,12 @@ It is better to always copy to location at other window
                            'magit-insert-unpushed-to-upstream-or-recent
                            'replace)))
 
-(use-package git-timemachine
-  :ensure t)
+(use-package git-timemachine)
 #+end_src
 
 *** Projects
 #+begin_src emacs-lisp
 (use-package projectile
-  :ensure t
   :diminish
   :defer 5
   :bind-keymap ("C-c p" . projectile-command-map)
@@ -2634,7 +2604,6 @@ It is better to always copy to location at other window
   (projectile-global-mode))
 
 (use-package helm-projectile
-  :ensure t
   :disabled t
   :config
   (setq projectile-completion-system 'helm)
@@ -2642,8 +2611,7 @@ It is better to always copy to location at other window
   (helm-projectile-on))
 
 (use-package helm-ag
-  :disabled t
-  :ensure t)
+  :disabled t)
 
 (use-package counsel-projectile
   :after (counsel projectile)
@@ -2654,7 +2622,7 @@ It is better to always copy to location at other window
 *** git-messenger - shows commit message
 #+begin_src emacs-lisp
 (use-package git-messenger
-  :ensure t :defer t
+  :defer t
   :bind (("C-x v m" . git-messenger:popup-message))
   :init (setq git-messenger:show-detail t))
 #+end_src
@@ -2704,11 +2672,9 @@ It is better to always copy to location at other window
 
 
 ;; (use-package jedi
-;;   :ensure t
 ;;   :config (add-hook 'python-mode-hook 'jedi:setup))
 ;; (setq yas-snippet-dirs (quote ("~/.emacs.d/snippets")))
 ;; (use-package elpy
-;;   :ensure t
 ;;   :config
 ;;   (progn
 ;;     (setq elpy-modules '(elpy-module-sane-defaults
@@ -2752,7 +2718,6 @@ It is better to always copy to location at other window
 ;;(add-hook 'python-mode-hook 'auto-complete-mode)
 
 (use-package python-pytest
-  :ensure t
   :after projectile
   :bind ("C-c s t" . python-pytest-popup)
   :custom
@@ -2798,18 +2763,16 @@ It is better to always copy to location at other window
 *** Yaml
 #+begin_src emacs-lisp
 (use-package yaml-mode
-  :ensure t)
+    :mode "\\.ya?ml\\'")
 #+end_src
 *** Docker
 #+begin_src emacs-lisp
 (use-package dockerfile-mode
-  :ensure t
   :mode ("\\`Dockerfile" . dockerfile-mode))
 #+end_src
 
 #+begin_src emacs-lisp
 (use-package docker
-  :ensure t
   :bind ("C-c d" . docker)
   :config
   (defun docker-compose-read-compose-file (prompt &optional initial-input _history)
@@ -2835,7 +2798,6 @@ It is better to always copy to location at other window
 #+begin_src emacs-lisp
 (use-package kubernetes
   :load-path "~/github.com/noorul/kubernetes-el"
-  :ensure t
   :commands (kubernetes-overview
              kubernetes-display-pods
              kubernetes-display-configmaps
@@ -2844,14 +2806,12 @@ It is better to always copy to location at other window
 *** Color identifiers mode
 #+begin_src emacs-lisp
 (use-package color-identifiers-mode
-  :ensure t
   :diminish color-identifiers-mode
   :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
 #+end_src
 *** Flycheck
 #+begin_src emacs-lisp
 (use-package flycheck
-  :ensure t
   :diminish
   :init (global-flycheck-mode))
 #+end_src
@@ -2866,8 +2826,7 @@ It is better to always copy to location at other window
 ** Mail
 *** Gnus
 #+begin_src emacs-lisp
-(use-package async
-  :ensure t)
+(use-package async)
 #+end_src
 #+begin_src emacs-lisp
 (require 'gnus)
@@ -3224,13 +3183,11 @@ Else, return \" \"."
 *** offlineimap
 #+begin_src emacs-lisp
 (use-package offlineimap
-  :ensure t
   :config (setq offlineimap-command "/usr/local/bin/offlineimap -u machineui"))
 #+end_src
 *** Org msg
 #+begin_src emacs-lisp
 (use-package org-msg
-  :ensure t
   :disabled
 
   :init (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil"
@@ -3252,7 +3209,6 @@ Else, return \" \"."
   :bind ("C-x C-z" . eshell-toggle))
 
 (use-package eshell-git-prompt
-  :ensure t
   :config
   (eshell-git-prompt-use-theme 'robbyrussell))
 
@@ -3267,7 +3223,6 @@ Else, return \" \"."
 ** Key bindings
 #+begin_src emacs-lisp
 (use-package which-key
-  :ensure t
   :diminish which-key-mode
   :init
   (which-key-mode))
@@ -3296,7 +3251,6 @@ Else, return \" \"."
 ;;;_ , ledger
 
 (use-package "ledger-mode"
-  :ensure t
   :pin melpa-stable
   :commands ledger-mode
   :mode ("/personal/finance/accounts\\.dat" . ledger-mode)
@@ -3397,7 +3351,6 @@ Else, return \" \"."
 *** Google
 #+begin_src emacs-lisp
 (use-package google-this
-  :ensure t
   :diminish google-this-mode
   :config (google-this-mode 1))
 #+end_src
@@ -3413,11 +3366,9 @@ Else, return \" \"."
 #+end_src
 *** Restclient
 #+begin_src emacs-lisp
-(use-package restclient
-  :ensure t)
+(use-package restclient)
 
 (use-package ob-restclient
-  :ensure t
   :config
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
@@ -3427,7 +3378,6 @@ Else, return \" \"."
 ** Diminish
 #+begin_src emacs-lisp
 (use-package diminish
-  :ensure t
   :init
   (diminish 'ivy-mode)
   (diminish 'elpy-mode)
@@ -3439,7 +3389,6 @@ Else, return \" \"."
 ** Terminal
 #+begin_src emacs-lisp
 (use-package vterm
-  :ensure t
   :config
   (setq vterm-shell "/bin/zsh")
   )
