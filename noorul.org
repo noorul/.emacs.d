@@ -3370,11 +3370,12 @@ Else, return \" \"."
 (use-package restclient)
 
 (use-package ob-restclient
+  :after restclient
+  :mode ("\\.rest\\'" . restclient-mode)
   :config
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
-   (quote ((restclient . t))))
-  )
+   (quote ((restclient . t)))))
 #+end_src
 ** Diminish
 #+begin_src emacs-lisp
