@@ -11,6 +11,15 @@ have missed some.
 
 My =~/.emacs.d/init.el= is now a symlink to =noorul.el=, which is what =M-x
 org-babel-tangle= (=C-c C-v t=) produces.
+** Benchmark start-up
+#+begin_src emacs-lisp
+(use-package benchmark-init
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+(benchmark-init/activate)
+#+end_src
 ** Starting up
 #+begin_src emacs-lisp
 ;;;; Starting up
