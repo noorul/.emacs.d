@@ -506,6 +506,7 @@ https://github.com/bbatsov/prelude
          ("C-x b" . ivy-switch-buffer)))
 
 (use-package ivy-rich
+  :after swiper
   :config
   (setq ivy-virtual-abbreviate 'full
         ivy-rich-switch-buffer-align-virtual-buffer t
