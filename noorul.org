@@ -2225,10 +2225,12 @@ It is better to always copy to location at other window
  #+end_src
 **** Contacts
  #+begin_src emacs-lisp
- (require 'org-contacts)
- (custom-set-variables
-  '(org-contacts-files (quote ("~/bitbucket.org/noorul/personal/notebook/contacts.org")))
-  '(calendar-mark-holidays-flag t))
+ (use-package org-contacts
+   :commands org-contacts
+   :load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp"
+   :custom
+   (org-contacts-files (quote ("~/bitbucket.org/noorul/personal/notebook/contacts.org")))
+   (calendar-mark-holidays-flag t))
  #+end_src
 *** Automatic hourly commits
  #+begin_src emacs-lisp
