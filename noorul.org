@@ -107,8 +107,8 @@ org-babel-tangle= (=C-c C-v t=) produces.
 
 (when ha/fixed-font-family
   (set-frame-font ha/fixed-font-family)
-  (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'light)
-  (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'light)
+  (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'normal)
+  (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'normal)
   (set-face-font 'default ha/fixed-font-family))
 
 (when ha/variable-font-family
@@ -122,7 +122,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (load-theme 'leuven-dark t))
 #+end_src
 
-*** Use modus-theme
+*** Modus theme
 #+begin_src emacs-lisp
 (use-package modus-themes
   :pin melpa
