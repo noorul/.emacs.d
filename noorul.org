@@ -124,13 +124,6 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))
 #+end_src
 
-*** COMMENT Leuven theme
-#+begin_src emacs-lisp
-(use-package leuven-theme
-  :config
-  (load-theme 'leuven-dark t))
-#+end_src
-
 *** Modus theme
 #+begin_src emacs-lisp
 (use-package modus-themes
@@ -150,31 +143,6 @@ org-babel-tangle= (=C-c C-v t=) produces.
   :config
   (modus-themes-load-vivendi))
 
-#+end_src
-
-*** COMMENT Use doom theme
-#+begin_src emacs-lisp
-(use-package doom-themes
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  ;; (load-theme 'doom-dracula t)
-  (load-theme 'doom-peacock t)
-
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-  (doom-themes-treemacs-config)
-
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
-
-(use-package doom-modeline
-      :hook (after-init . doom-modeline-mode))
-
-(use-package all-the-icons)
 #+end_src
 
 ** General configuration
