@@ -3369,17 +3369,7 @@ Else, return \" \"."
    (quote org-babel-load-languages)
    (quote ((restclient . t)))))
 #+end_src
-** Diminish
-#+begin_src emacs-lisp
-(use-package diminish
-  :init
-  (diminish 'ivy-mode)
-  (diminish 'elpy-mode)
-  (diminish 'company-mode)
-  (diminish 'auto-complete-mode)
-  (diminish 'which-key-mode)
-  (diminish 'yas-minor-mode))
-#+end_src
+
 ** Terminal
 #+begin_src emacs-lisp
 (use-package vterm
