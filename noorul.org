@@ -490,6 +490,9 @@ https://github.com/bbatsov/prelude
   :defer 5)
 
 (use-package counsel
+  :after ivy
+  :demand t
+  :diminish
   :bind (("M-i" . counsel-imenu)
          ("C-h v". counsel-describe-variable)
          ("C-c O" . counsel-git-grep)))
@@ -600,10 +603,10 @@ It is better to always copy to location at other window
  (setq org-modules (quote (ol-bbdb
                            ol-bibtex
                            org-crypt
-                           ol-gnus
+                           ;; ol-gnus
                            org-id
                            ol-info
-                           org-jsinfo
+                           ;; org-jsinfo
                            org-habit
                            org-inlinetask
                            ol-irc
@@ -648,7 +651,6 @@ It is better to always copy to location at other window
 **** Fast todo selection
  #+begin_src emacs-lisp
  (setq org-use-fast-todo-selection t)
-
  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
  #+end_src
 **** TODO state triggers
@@ -2329,7 +2331,6 @@ It is better to always copy to location at other window
  #+end_src
 *** Publishing
 **** General
-[2021-05-09 Sun 01:52]
  #+begin_src emacs-lisp
  (setq org-alphabetical-lists t)
  (require 'ox-html)
@@ -2431,6 +2432,14 @@ It is better to always copy to location at other window
  #+end_src
 
 ** Coding
+*** Flycheck
+#+begin_src emacs-lisp
+(use-package flycheck
+  :disabled
+  :diminish
+  :init (global-flycheck-mode))
+#+end_src
+*** LSP
 *** Scala
 #+begin_src emacs-lisp
 (use-package scala-mode
@@ -2450,29 +2459,29 @@ It is better to always copy to location at other window
    (setq sbt:program-options '("-Dsbt.supershell=false"))
 )
 
-;; Enable nice rendering of diagnostics like compile errors.
-(use-package flycheck
-  :init (global-flycheck-mode))
-
 (use-package lsp-mode
   ;; Optional - enable lsp-mode automatically in scala files
+  :commands lsp
   :hook  (scala-mode . lsp)
          (lsp-mode . lsp-lens-mode)
   :config (setq lsp-prefer-flymake nil))
 
 ;; Add metals backend for lsp-mode
-(use-package lsp-metals)
+(use-package lsp-metals
+  :after lsp-mode
+  )
 
 ;; Enable nice rendering of documentation on hover
-(use-package lsp-ui)
+(use-package lsp-ui
+  :after lsp-mode
+  )
 
 ;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
 ;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
 ;;   to avoid odd behavior with snippets and indentation
-(use-package yasnippet-snippets
-  :ensure t)
 
 (use-package yasnippet
+  :disabled t
   :demand t
   :diminish yas-minor-mode
   :bind (("C-c y d" . yas-load-directory)
@@ -2490,12 +2499,17 @@ It is better to always copy to location at other window
   :config
   (yas-global-mode 1))
 
+(use-package yasnippet-snippets
+  :disabled t
+  :after yasnippet)
 
 ;; Use the Debug Adapter Protocol for running tests and debugging
 (use-package posframe
+  :disabled
   ;; Posframe is a pop-up tool that must be manually installed for dap-mode
   )
 (use-package dap-mode
+  :after lsp-mode
   :hook
   (lsp-mode . dap-mode)
   (lsp-mode . dap-ui-mode)
@@ -2503,6 +2517,7 @@ It is better to always copy to location at other window
 
 ;; Use the Tree View Protocol for viewing the project structure and triggering compilation
 (use-package lsp-treemacs
+  :after lsp-mode
   :config
   (setq lsp-metals-treeview-show-when-views-received t)
   )
@@ -2517,6 +2532,8 @@ It is better to always copy to location at other window
 *** Groovy
 #+begin_src emacs-lisp
 (use-package groovy-mode
+  :mode ("Jenkinsfile" . groovy-mode)
+  :interpreter ("groovy" . groovy-mode)
   :config
   (setq
    groovy-indent-offset 2))
@@ -2556,7 +2573,6 @@ It is better to always copy to location at other window
 
 (use-package go-mode
   :defer t
-  :ensure t
   :mode ("\\.go\\'" . go-mode)
   :init
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
@@ -2574,6 +2590,7 @@ It is better to always copy to location at other window
   :bind (("C-x g" . magit-status)
          ("C-x G" . magit-status-with-prefix))
   :commands magit-auto-revert-mode
+  :custom (magit-auto-revert-mode nil)
   :init
   (defun magit-status-with-prefix ()
     (interactive)
@@ -2590,7 +2607,8 @@ It is better to always copy to location at other window
                            'magit-insert-unpushed-to-upstream-or-recent
                            'replace)))
 
-(use-package git-timemachine)
+(use-package git-timemachine
+    :commands git-timemachine)
 #+end_src
 
 *** Projects
@@ -2640,6 +2658,7 @@ It is better to always copy to location at other window
          (if (getenv "PYTHONPATH") path-separator "")
          (getenv "PYTHONPATH")))
 (use-package lsp-mode
+  :commands lsp
   :config
   (setq lsp-idle-delay 0.5
         lsp-enable-symbol-highlighting t
@@ -2660,21 +2679,21 @@ It is better to always copy to location at other window
      ("pyls.plugins.mccabe.enabled" nil t)
      ("pyls.plugins.pyflakes.enabled" nil t)))
   (define-key lsp-mode-map (kbd "C-c s") lsp-command-map)
+  (require 'dap-python)
+  (defun dap-python--pyenv-executable-find (command)
+    (executable-find "python"))
 
   :hook
   ((python-mode . lsp)
    (lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package pyvenv
-  :demand t
+  :commands pyvenv-activate
   :config
   (setq pyvenv-mode-line-indicator
         '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
   (pyvenv-mode +1))
 
-(require 'dap-python)
-(defun dap-python--pyenv-executable-find (command)
-  (executable-find "python"))
 
 
 ;; (use-package jedi
@@ -2809,25 +2828,24 @@ It is better to always copy to location at other window
              kubernetes-display-configmaps
              kubernetes-display-secrets))
 #+end_src
+
 *** Color identifiers mode
 #+begin_src emacs-lisp
 (use-package color-identifiers-mode
+  :disabled t
   :diminish color-identifiers-mode
   :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
 #+end_src
-*** Flycheck
-#+begin_src emacs-lisp
-(use-package flycheck
-  :diminish
-  :init (global-flycheck-mode))
-#+end_src
 *** jq
 #+begin_src emacs-lisp
-(use-package counsel-jq)
+(use-package counsel-jq
+  :after swiper
+  )
 #+end_src
 *** Google protocol buffers
 #+begin_src emacs-lisp
-(use-package protobuf-mode)
+(use-package protobuf-mode
+  :mode "\\.proto\\'")
 #+end_src
 ** Mail
 *** Gnus
@@ -3217,11 +3235,12 @@ It is better to always copy to location at other window
   :bind ("C-x C-z" . eshell-toggle))
 
 (use-package eshell-git-prompt
+  :disabled
   :config
   (eshell-git-prompt-use-theme 'robbyrussell))
 
 (use-package eshell
-  :no-require t
+  :commands (eshell eshell-command)
   :init (setq eshell-hist-ignoredups t
               eshell-history-size 50000)
   :config
@@ -3357,12 +3376,11 @@ It is better to always copy to location at other window
 
 #+end_src
 
-
 ** Internet
 *** Google
 #+begin_src emacs-lisp
 (use-package google-this
-  :diminish google-this-mode
+  :diminish
   :config (google-this-mode 1))
 #+end_src
 
@@ -3378,11 +3396,11 @@ It is better to always copy to location at other window
 #+end_src
 *** Restclient
 #+begin_src emacs-lisp
-(use-package restclient)
+(use-package restclient
+  :mode ("\\.rest\\'" . restclient-mode))
 
 (use-package ob-restclient
-  :after restclient
-  :mode ("\\.rest\\'" . restclient-mode)
+  :disabled
   :config
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
