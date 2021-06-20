@@ -3053,6 +3053,8 @@ Else, return \" \"."
 
 (setq gnus-large-newsgroup nil)
 
+(setq gnus-message-archive-group nil)
+
 (defun noorul/move-to-gmail-trash ()
   (interactive)
   (let ((prefix (funcall gnus-move-group-prefix-function
