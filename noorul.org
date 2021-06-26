@@ -2434,10 +2434,6 @@ It is better to always copy to location at other window
                                    (concat user-data-directory ".org-id-locations")))
  #+end_src
 
-*** Display
-#+begin_src emacs-lisp
-(add-hook 'org-mode-hook 'variable-pitch-mode)
-#+end_src
 ** Coding
 *** Scala
 #+begin_src emacs-lisp
