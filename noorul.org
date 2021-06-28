@@ -2499,6 +2499,12 @@ It is better to always copy to location at other window
 ;; (define-key scala-mode-map (kbd "C-c C-b a") 'noorul/ensime-sbt-do-assembly)
 ;; (define-key scala-mode-map (kbd "C-c C-b h") 'sbt-hydra)
 #+end_src
+*** Groovy
+#+begin_src emacs-lisp
+(use-package groovy-mode
+  :config
+  (setq
+   groovy-indent-offset 2))
 #+end_src
 *** golang
 #+begin_src emacs-lisp
