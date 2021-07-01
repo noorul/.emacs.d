@@ -2622,32 +2622,71 @@ It is better to always copy to location at other window
         (concat
          (if (getenv "PYTHONPATH") path-separator "")
          (getenv "PYTHONPATH")))
-(use-package jedi
-  :ensure t
-  :config (add-hook 'python-mode-hook 'jedi:setup))
-(setq yas-snippet-dirs (quote ("~/.emacs.d/snippets")))
-(use-package elpy
-  :ensure t
+(use-package lsp-mode
   :config
-  (progn
-    (setq elpy-modules '(elpy-module-sane-defaults
-                         elpy-module-company
-                         elpy-module-eldoc
-                         elpy-module-flymake
-                         elpy-module-pyvenv
-                         elpy-module-yasnippet))
-    (setq elpy-test-nose-runner-command '("lockutils-wrapper" "nosetests" "-v" "--nocapture"))
-    (setq elpy-project-root-finder-functions
-          '(elpy-project-find-git-root
-            elpy-project-find-projectile-root
-            elpy-project-find-python-root
-            elpy-project-find-hg-root
-            elpy-project-find-svn-root))
-    (setq elpy-test-runner 'elpy-test-nose-runner)
-    (setq elpy-rpc-backend "jedi")
-    (setq elpy-syntax-check-command "pycheckers"))
-  :init
-  (elpy-enable))
+  (setq lsp-idle-delay 0.5
+        lsp-enable-symbol-highlighting t
+        lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
+        lsp-pyls-configuration-sources "flake8"
+        lsp-pyls-plugins-flake8-enabled t
+        lsp-pyls-plugins-pycodestyle-enabled nil
+        lsp-pyls-plugins-mccabe-enabled nil)
+  (lsp-register-custom-settings
+   '(("pyls.plugins.pyls_mypy.enabled" t t)
+     ("pyls.plugins.pyls_mypy.live_mode" nil t)
+     ("pyls.plugins.pyls_black.enabled" t t)
+     ("pyls.plugins.pyls_isort.enabled" t t)
+     ("pyls.plugins.flake8.enabled" t t)
+
+     ;; Disable these as they're duplicated by flake8
+     ("pyls.plugins.pycodestyle.enabled" nil t)
+     ("pyls.plugins.mccabe.enabled" nil t)
+     ("pyls.plugins.pyflakes.enabled" nil t)))
+  (define-key lsp-mode-map (kbd "C-c s") lsp-command-map)
+
+  :hook
+  ((python-mode . lsp)
+   (lsp-mode . lsp-enable-which-key-integration)))
+
+(use-package pyvenv
+  :demand t
+  :config
+  (setq pyvenv-mode-line-indicator
+        '(pyvenv-virtual-env-name ("[venv:" pyvenv-virtual-env-name "] ")))
+  (pyvenv-mode +1))
+
+(require 'dap-python)
+(defun dap-python--pyenv-executable-find (command)
+  (executable-find "python"))
+
+
+;; (use-package jedi
+;;   :ensure t
+;;   :config (add-hook 'python-mode-hook 'jedi:setup))
+;; (setq yas-snippet-dirs (quote ("~/.emacs.d/snippets")))
+;; (use-package elpy
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (setq elpy-modules '(elpy-module-sane-defaults
+;;                          elpy-module-company
+;;                          elpy-module-eldoc
+;;                          elpy-module-flymake
+;;                          elpy-module-pyvenv
+;;                          elpy-module-yasnippet))
+;;     (setq elpy-test-nose-runner-command '("lockutils-wrapper" "nosetests" "-v" "--nocapture"))
+;;     (setq elpy-project-root-finder-functions
+;;           '(elpy-project-find-git-root
+;;             elpy-project-find-projectile-root
+;;             elpy-project-find-python-root
+;;             elpy-project-find-hg-root
+;;             elpy-project-find-svn-root))
+;;     (setq elpy-test-runner 'elpy-test-nose-runner)
+;;     (setq elpy-test-runner 'elpy-test-pytest-runner)
+;;     (setq elpy-rpc-backend "jedi")
+;;     (setq elpy-syntax-check-command "pycheckers"))
+;;   :init
+;;   (elpy-enable))
 
 (defun flymake-get-file-name-mode-and-masks (file-name)
   "Return the corresponding entry from `flymake-allowed-file-name-masks'."
@@ -2667,15 +2706,14 @@ It is better to always copy to location at other window
 
 (add-to-list 'flymake-allowed-file-name-masks '(python-mode elpy-flymake-python-init))
 (setq python-check-command "pycheckers")
-(add-hook 'python-mode-hook 'auto-complete-mode)
+;;(add-hook 'python-mode-hook 'auto-complete-mode)
 
 (use-package python-pytest
   :ensure t
   :after projectile
-  :bind ("C-c C-p C-t" . python-pytest-popup)
+  :bind ("C-c s t" . python-pytest-popup)
   :custom
-  (python-pytest-executable "pytestwrapper"))
-
+  (python-pytest-executable "pytest.sh"))
 #+end_src
 
 *** Version control
