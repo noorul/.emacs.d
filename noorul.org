@@ -1830,7 +1830,7 @@ It is better to always copy to location at other window
            'append)
 
  #+end_src
-**** Checklist handling
+**** COMMENT Checklist handling
  #+begin_src emacs-lisp
  (require 'org-checklist)
  #+end_src
