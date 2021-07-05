@@ -2695,33 +2695,6 @@ It is better to always copy to location at other window
   (pyvenv-mode +1))
 
 
-
-;; (use-package jedi
-;;   :config (add-hook 'python-mode-hook 'jedi:setup))
-;; (setq yas-snippet-dirs (quote ("~/.emacs.d/snippets")))
-;; (use-package elpy
-;;   :config
-;;   (progn
-;;     (setq elpy-modules '(elpy-module-sane-defaults
-;;                          elpy-module-company
-;;                          elpy-module-eldoc
-;;                          elpy-module-flymake
-;;                          elpy-module-pyvenv
-;;                          elpy-module-yasnippet))
-;;     (setq elpy-test-nose-runner-command '("lockutils-wrapper" "nosetests" "-v" "--nocapture"))
-;;     (setq elpy-project-root-finder-functions
-;;           '(elpy-project-find-git-root
-;;             elpy-project-find-projectile-root
-;;             elpy-project-find-python-root
-;;             elpy-project-find-hg-root
-;;             elpy-project-find-svn-root))
-;;     (setq elpy-test-runner 'elpy-test-nose-runner)
-;;     (setq elpy-test-runner 'elpy-test-pytest-runner)
-;;     (setq elpy-rpc-backend "jedi")
-;;     (setq elpy-syntax-check-command "pycheckers"))
-;;   :init
-;;   (elpy-enable))
-
 (defun flymake-get-file-name-mode-and-masks (file-name)
   "Return the corresponding entry from `flymake-allowed-file-name-masks'."
   (unless (stringp file-name)
