@@ -2525,6 +2525,34 @@ It is better to always copy to location at other window
   (setq
    groovy-indent-offset 2))
 #+end_src
+*** Java
+#+begin_src emacs-lisp
+(use-package lsp-java
+  :after lsp-mode
+  :ensure t
+  :commands lsp-java-enable
+  :init
+  (add-hook 'java-mode-hook (lambda ()
+                              (flycheck-mode +1)
+                              (lsp-java-enable)
+                              (lsp-ui-flycheck-enable t)
+                              (lsp-ui-sideline-mode)))
+  :config
+
+  ;; Do not organize imports on file save
+  (setq lsp-java-save-action-organize-imports nil))
+
+  ;; (when (not (file-exists-p lsp-java-server-install-dir))
+  ;;   ;; Install Eclipse JDT server
+  ;;   (message "Installing JDT server for emacs!")
+  ;;   (async-shell-command
+  ;;    (format (concat "mkdir -p %s;"
+  ;;                    "wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar;"
+  ;;                    "tar xf /tmp/jdt-latest.tar -C %s;")
+  ;;            lsp-java-server-install-dir
+  ;;            lsp-java-server-install-dir))))
+#+end_src
+
 *** golang
 #+begin_src emacs-lisp
 (defun lsp-go-install-save-hooks ()
