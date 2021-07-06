@@ -14,6 +14,9 @@ org-babel-tangle= (=C-c C-v t=) produces.
 ** Starting up
 #+begin_src emacs-lisp
 ;;;; Starting up
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
