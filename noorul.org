@@ -69,6 +69,113 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (setq load-prefer-newer t)
 #+end_src
 
+** Display
+*** Syntax highlighting
+#+begin_src emacs-lisp
+;; Syntax highlighting is must
+(setq global-font-lock-mode t)
+#+end_src
+*** Font settings
+#+begin_src emacs-lisp
+(defvar ha/fixed-font-family
+  (cond
+   ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
+   ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
+   ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
+   ((x-list-fonts "Menlo")           "Menlo")
+   ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
+   ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
+   ((x-list-fonts "Fira Code")       "Fira Code")
+   ((x-list-fonts "Roboto Mono")     "Roboto Mono")
+   ((x-list-fonts "Hack")            "Hack")
+   ((x-list-fonts "Source Code Pro") "Source Code Pro")
+   ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
+   ((x-list-fonts "Hasklig")         "Hasklig")
+   ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
+  "My fixed width font based on what is installed, `nil' if not defined.")
+
+(defvar ha/variable-font-family
+  (cond
+   ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
+   ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
+   ((x-list-fonts "ETBembo") "ETBembo")
+   ((x-list-fonts "SF Pro") "SF Pro")
+   ((x-list-fonts "FiraGO") "FiraGO")
+   ((x-list-fonts "Lucida Grande")   "Lucida Grande")
+   ((x-list-fonts "Verdana")         "Verdana")
+   ((x-family-fonts "Sans Serif")    "Sans Serif")
+   (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro.")))
+  "My variable width font available to org-mode files and whatnot.")
+
+(when ha/fixed-font-family
+  (set-frame-font ha/fixed-font-family)
+  (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'light)
+  (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'light)
+  (set-face-font 'default ha/fixed-font-family))
+
+(when ha/variable-font-family
+  (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))
+#+end_src
+
+#+RESULTS:
+
+
+*** COMMENT Leuven theme
+#+begin_src emacs-lisp
+(use-package leuven-theme
+  :config
+  (load-theme 'leuven-dark t))
+#+end_src
+
+*** Use modus-theme
+#+begin_src emacs-lisp
+(use-package modus-themes
+  :pin melpa
+  :init
+  (setq modus-themes-slanted-constructs t
+        modus-themes-bold-constructs nil
+        modus-themes-region 'no-extend
+        modus-themes-org-agenda
+        '((header-block . (variable-pitch scale-title))
+          (header-date . (grayscale workaholic bold-today))
+          (scheduled . uniform)
+          (habit . traffic-light-deuteranopia))
+        )
+  ;; Load the theme files before enabling a theme (else you get an error).
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-vivendi))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+*** COMMENT Use doom theme
+#+begin_src emacs-lisp
+(use-package doom-themes
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;; (load-theme 'doom-dracula t)
+  (load-theme 'doom-peacock t)
+
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  (doom-themes-treemacs-config)
+
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(use-package doom-modeline
+      :hook (after-init . doom-modeline-mode))
+
+(use-package all-the-icons)
+#+end_src
+
 ** General configuration
 *** Reload
 #+begin_src emacs-lisp
@@ -191,110 +298,6 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 ;; Not tabs only space.
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
-#+end_src
-*** Syntax highlighting
-#+begin_src emacs-lisp
-;; Syntax highlighting is must
-(setq global-font-lock-mode t)
-#+end_src
-
-*** Font settings
-#+begin_src emacs-lisp
-(defvar ha/fixed-font-family
-  (cond
-   ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
-   ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
-   ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
-   ((x-list-fonts "Menlo")           "Menlo")
-   ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
-   ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
-   ((x-list-fonts "Fira Code")       "Fira Code")
-   ((x-list-fonts "Roboto Mono")     "Roboto Mono")
-   ((x-list-fonts "Hack")            "Hack")
-   ((x-list-fonts "Source Code Pro") "Source Code Pro")
-   ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
-   ((x-list-fonts "Hasklig")         "Hasklig")
-   ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
-  "My fixed width font based on what is installed, `nil' if not defined.")
-
-(defvar ha/variable-font-family
-  (cond
-   ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
-   ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
-   ((x-list-fonts "ETBembo") "ETBembo")
-   ((x-list-fonts "SF Pro") "SF Pro")
-   ((x-list-fonts "FiraGO") "FiraGO")
-   ((x-list-fonts "Lucida Grande")   "Lucida Grande")
-   ((x-list-fonts "Verdana")         "Verdana")
-   ((x-family-fonts "Sans Serif")    "Sans Serif")
-   (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro.")))
-  "My variable width font available to org-mode files and whatnot.")
-
-(when ha/fixed-font-family
-  (set-frame-font ha/fixed-font-family)
-  (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'light)
-  (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'light)
-  (set-face-font 'default ha/fixed-font-family))
-
-(when ha/variable-font-family
-  (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))
-#+end_src
-
-*** COMMENT Leuven theme
-#+begin_src emacs-lisp
-(use-package leuven-theme
-  :config
-  (load-theme 'leuven-dark t))
-#+end_src
-
-*** Use modus-theme
-#+begin_src emacs-lisp
-(use-package modus-themes
-  :ensure
-  :pin melpa
-  :init
-  (setq modus-themes-slanted-constructs t
-        modus-themes-bold-constructs nil
-        modus-themes-region 'no-extend
-        modus-themes-org-agenda
-        '((header-block . (variable-pitch scale-title))
-          (header-date . (grayscale workaholic bold-today))
-          (scheduled . uniform)
-          (habit . traffic-light-deuteranopia))
-        )
-  ;; Load the theme files before enabling a theme (else you get an error).
-  (modus-themes-load-themes)
-  :config
-  (modus-themes-load-vivendi))
-
-#+end_src
-
-*** COMMENT Use doom theme
-#+begin_src emacs-lisp
-(use-package doom-themes
-  :ensure t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  ;; (load-theme 'doom-dracula t)
-  (load-theme 'doom-peacock t)
-
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
-  (doom-themes-treemacs-config)
-
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
-
-(use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode))
-
-(use-package all-the-icons
-  :ensure t)
 #+end_src
 *** Helm - Interactive completion
 #+begin_src emacs-lisp
