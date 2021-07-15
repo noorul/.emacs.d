@@ -2492,8 +2492,10 @@ It is better to always copy to location at other window
 
 ;; Enable nice rendering of documentation on hover
 (use-package lsp-ui
+  :after lsp-mode
   :hook (lsp-mode . lsp-ui-mode)
   :config
+
   (setq lsp-ui-sideline-enable t)
   (setq lsp-ui-sideline-show-hover nil)
   (setq lsp-ui-doc-position 'bottom)
@@ -2687,21 +2689,16 @@ It is better to always copy to location at other window
   (setq lsp-idle-delay 0.5
         lsp-enable-symbol-highlighting t
         lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
-        lsp-pyls-configuration-sources "flake8"
-        lsp-pyls-plugins-flake8-enabled t
-        lsp-pyls-plugins-pycodestyle-enabled nil
-        lsp-pyls-plugins-mccabe-enabled nil)
+        lsp-pylsp-configuration-sources "flake8"
+        lsp-pylsp-plugins-flake8-enabled t
+        lsp-pylsp-plugins-pycodestyle-enabled nil
+        lsp-pylsp-plugins-mccabe-enabled nil)
   (lsp-register-custom-settings
-   '(("pyls.plugins.pyls_mypy.enabled" t t)
-     ("pyls.plugins.pyls_mypy.live_mode" nil t)
-     ("pyls.plugins.pyls_black.enabled" t t)
-     ("pyls.plugins.pyls_isort.enabled" t t)
-     ("pyls.plugins.flake8.enabled" t t)
-
+   '(
      ;; Disable these as they're duplicated by flake8
-     ("pyls.plugins.pycodestyle.enabled" nil t)
-     ("pyls.plugins.mccabe.enabled" nil t)
-     ("pyls.plugins.pyflakes.enabled" nil t)))
+     ("pylsp.plugins.pycodestyle.enabled" nil t)
+     ("pylsp.plugins.mccabe.enabled" nil t)
+     ("pylsp.plugins.pyflakes.enabled" nil t)))
   (define-key lsp-mode-map (kbd "C-c s") lsp-command-map)
   (require 'dap-python)
   (defun dap-python--pyenv-executable-find (command)
