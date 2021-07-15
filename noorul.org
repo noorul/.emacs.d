@@ -2495,12 +2495,11 @@ It is better to always copy to location at other window
   :after lsp-mode
   :hook (lsp-mode . lsp-ui-mode)
   :config
-
-  (setq lsp-ui-sideline-enable t)
-  (setq lsp-ui-sideline-show-hover nil)
-  (setq lsp-ui-doc-position 'bottom)
-  (lsp-ui-doc-show))
-
+  (define-key lsp-ui-mode-map [remap xref-find-definitions]
+    #'lsp-ui-peek-find-definitions)
+  (define-key lsp-ui-mode-map [remap xref-find-references]
+    #'lsp-ui-peek-find-references)
+  (setq lsp-ui-doc-enable nil))
 
 ;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
 ;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
