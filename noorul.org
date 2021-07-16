@@ -115,9 +115,6 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))
 #+end_src
 
-#+RESULTS:
-
-
 *** COMMENT Leuven theme
 #+begin_src emacs-lisp
 (use-package leuven-theme
@@ -145,9 +142,6 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (modus-themes-load-vivendi))
 
 #+end_src
-
-#+RESULTS:
-: t
 
 *** COMMENT Use doom theme
 #+begin_src emacs-lisp
