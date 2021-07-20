@@ -391,11 +391,19 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :config
   (which-key-mode))
 #+end_src emacs-lisp
+*** Encryption
+#+begin_src emacs-lisp
+(setq epa-file-encrypt-to '("noorul@noorul.com"))
+(setq epa-pinentry-mode 'loopback)
+(setq epg-pinentry-mode 'loopback)
+#+end_src
+
 *** GnuPG
 #+begin_src emacs-lisp
 ;; add allow-emacs-pinentry to ~/.gnupg/gpg-agent.conf
 ;; and restart gpg-agent
 (use-package pinentry
+  :disabled
   :init (setq epa-pinentry-mode 'loopback)
   :config (pinentry-start))
 #+end_src
@@ -3351,9 +3359,10 @@ It is better to always copy to location at other window
   :config (google-this-mode 1))
 #+end_src
 
-*** COMMENT TLS
+*** TLS
 #+begin_src emacs-lisp
 (use-package tls
+  :disabled
   :config
   (setq tls-program
         '("openssl s_client -connect %h:%p -no_ssl2 -ign_eof"
