@@ -361,6 +361,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Persistent scratch
 #+begin_src emacs-lisp
 (use-package persistent-scratch
+  :defer t
   :init
   (progn
     (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
@@ -387,6 +388,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Help - which-key
 #+begin_src emacs-lisp
 (use-package which-key
+  :defer 0
   :diminish which-key-mode
   :config
   (which-key-mode))
@@ -431,8 +433,8 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 *** Smartscan
 #+begin_src emacs-lisp
 (use-package smartscan
-  :config
-  (add-hook 'prog-mode-hook 'smartscan-mode-turn-on))
+  :defer 5
+  :hook (prog-mode . smartscan-mode-turn-on))
 #+end_src
 *** Helm-swoop - quickly finding lines
 #+begin_src emacs-lisp
@@ -3227,8 +3229,10 @@ It is better to always copy to location at other window
 ** Key bindings
 #+begin_src emacs-lisp
 (use-package which-key
-  :diminish which-key-mode
-  :init
+  :defer 5
+  :diminish
+  :commands which-key-mode
+  :config
   (which-key-mode))
 
 (bind-key "C-c ;" 'comment-or-uncomment-region)
