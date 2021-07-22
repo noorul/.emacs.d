@@ -3295,11 +3295,12 @@ It is better to always copy to location at other window
     (bind-key "C-c L" 'my-ledger-open)))
 #+end_src
 
-** COMMENT Internet Relay Chat
+** Internet Relay Chat
 #+begin_src emacs-lisp
 ;;;_ , erc
 
 (use-package erc
+  :disabled
   :config
   (progn
     (setq erc-log-channels t)
