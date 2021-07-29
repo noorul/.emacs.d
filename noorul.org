@@ -589,7 +589,8 @@ It is better to always copy to location at other window
 **** Org bullets
  #+begin_src emacs-lisp
  (use-package org-bullets
-    :init (add-hook 'org-mode-hook 'org-bullets-mode))
+   :disabled
+   :init (add-hook 'org-mode-hook 'org-bullets-mode))
  #+end_src
 **** Load necessary org modules
  #+begin_src emacs-lisp
