@@ -47,6 +47,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (defun my/macbookpro ()
   (interactive)
   (string-equal system-type "darwin"))
+(global-auto-revert-mode)  ; simplifies syncing
 #+end_src
 ** Personal information
 #+begin_src emacs-lisp
