@@ -602,7 +602,6 @@ It is better to always copy to location at other window
  (setq org-modules (quote (ol-bbdb
                            ol-bibtex
                            org-crypt
-                           ;; ol-gnus
                            org-id
                            ol-info
                            ;; org-jsinfo
@@ -2895,6 +2894,8 @@ It is better to always copy to location at other window
 ;;
   :config
   (gnus-delay-initialize)
+  (add-to-list 'org-modules 'ol-gnus)
+  (org-load-modules-maybe t)
   (setq epa-file-cache-passphrase-for-symmetric-encryption t
         ;; Save some startup time
         gnus-check-new-newsgroups nil
