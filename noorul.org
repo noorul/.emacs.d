@@ -11,15 +11,6 @@ have missed some.
 
 My =~/.emacs.d/init.el= is now a symlink to =noorul.el=, which is what =M-x
 org-babel-tangle= (=C-c C-v t=) produces.
-** Benchmark start-up
-#+begin_src emacs-lisp
-(use-package benchmark-init
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
-
-(benchmark-init/activate)
-#+end_src
 ** Starting up
 #+begin_src emacs-lisp
 ;;;; Starting up
@@ -42,19 +33,6 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (setq custom-file "~/.emacs.d/custom-settings.el")
 (load custom-file t)
 #+end_src
-** System information
-#+begin_src emacs-lisp
-(defun my/macbookpro ()
-  (interactive)
-  (string-equal system-type "darwin"))
-(global-auto-revert-mode)  ; simplifies syncing
-#+end_src
-** Personal information
-#+begin_src emacs-lisp
-(setq user-full-name "Noorul Islam K M"
-      user-mail-address "noorul@noorul.com")
-#+end_src
-
 ** Emacs initialization
 *** Add package sources
  #+begin_src emacs-lisp
@@ -75,6 +53,28 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
+#+end_src
+
+** Benchmark start-up
+#+begin_src emacs-lisp
+(use-package benchmark-init
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+(benchmark-init/activate)
+#+end_src
+** System information
+#+begin_src emacs-lisp
+(defun my/macbookpro ()
+  (interactive)
+  (string-equal system-type "darwin"))
+(global-auto-revert-mode)  ; simplifies syncing
+#+end_src
+** Personal information
+#+begin_src emacs-lisp
+(setq user-full-name "Noorul Islam K M"
+      user-mail-address "noorul@noorul.com")
 #+end_src
 
 ** Display
@@ -465,6 +465,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
              dired-directory)))))
   :hook (dired-mode . recentf-add-dired-directory)
   :config
+  (setq recentf-exclude '("~$" "/tmp/" "/ssh:" "/sudo:" "/kubernetes:"))
   (recentf-mode 1))
 #+end_src
 *** Copy filename to clipboard
@@ -2819,14 +2820,24 @@ It is better to always copy to location at other window
 (bind-key "<tab>" #'my-elisp-indent-or-complete emacs-lisp-mode-map)
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package macrostep
+  :bind ("C-c e m" . macrostep-expand))
+#+end_src
 *** Kubernetes
 #+begin_src emacs-lisp
+(use-package magit-popup
+  :after (kubernetes magit))
+
 (use-package kubernetes
   :load-path "~/github.com/noorul/kubernetes-el"
   :commands (kubernetes-overview
              kubernetes-display-pods
              kubernetes-display-configmaps
-             kubernetes-display-secrets))
+             kubernetes-display-secrets)
+  :config
+  (setq kubernetes-poll-frequency 3600
+        kubernetes-redraw-frequency 3600))
 #+end_src
 
 *** Color identifiers mode
