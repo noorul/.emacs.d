@@ -168,11 +168,9 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 #+BEGIN_SRC emacs-lisp
 (require 'cl)
 (use-package exec-path-from-shell
-  :init
-  (setq exec-path-from-shell-variables '("PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "JFROG_PASSWORD")))
-
-(when (memq window-system '(mac ns))
-  (require 'exec-path-from-shell)
+  :if (memq window-system '(mac ns))
+  :config
+  (setq exec-path-from-shell-variables '("PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "JFROG_PASSWORD" "GVT_WORKSPACE"))
   (exec-path-from-shell-initialize))
 
 (if (my/macbookpro)
