@@ -1,7 +1,7 @@
 #+TITLE: Noorul Islam's Emacs configuration
 #+OPTIONS: toc:4 h:4
 #+STARTUP: showeverything
-#+PROPERTY: header-args:emacs-lisp :tangle "~/.emacs.d/noorul.el"
+#+PROPERTY: header-args:emacs-lisp :tangle "~/.config/emacs/noorul.el"
 
 * Configuration
 ** About this file
@@ -9,29 +9,29 @@ This is my personal configuration. Most of the configurations are re-used from
 other sources. I tried my best to credit them via comments and links but I might
 have missed some.
 
-My =~/.emacs.d/init.el= is now a symlink to =noorul.el=, which is what =M-x
+My =~/.config/emacs/init.el= is now a symlink to =noorul.el=, which is what =M-x
 org-babel-tangle= (=C-c C-v t=) produces.
 ** Starting up
 #+begin_src emacs-lisp
-;;;; Starting up
-;; The default is 800 kilobytes.  Measured in bytes.
-(setq gc-cons-threshold (* 50 1000 1000))
+  ;;;; Starting up
+  ;; The default is 800 kilobytes.  Measured in bytes.
+  (setq gc-cons-threshold (* 50 1000 1000))
 
-;; Profile emacs startup
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "*** Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract after-init-time before-init-time)))
-                     gcs-done)))
+  ;; Profile emacs startup
+  ;; (add-hook 'emacs-startup-hook
+  ;;           (lambda ()
+  ;;             (message "*** Emacs loaded in %s with %d garbage collections."
+  ;;                      (format "%.2f seconds"
+  ;;                              (float-time
+  ;;                               (time-subtract after-init-time before-init-time)))
+  ;;                      gcs-done)))
 
-(package-initialize)
-(setq use-package-always-ensure t)
-(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
-(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp")
-(setq custom-file "~/.emacs.d/custom-settings.el")
-(load custom-file t)
+  (package-initialize)
+  (setq use-package-always-ensure t)
+  (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
+  (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp")
+  (setq custom-file "~/.config/emacs/custom-settings.el")
+  (load custom-file t)
 #+end_src
 ** Emacs initialization
 *** Add package sources
@@ -55,7 +55,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (setq load-prefer-newer t)
 #+end_src
 
-** Benchmark start-up
+** COMMENT Benchmark start-up
 #+begin_src emacs-lisp
 (use-package benchmark-init
   :config
@@ -151,7 +151,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+begin_src emacs-lisp
 (defun my/reload-emacs-configuration ()
   (interactive)
-  (load-file "~/.emacs.d/init.el"))
+  (load-file "~/.config/emacs/init.el"))
 #+end_src
 *** UTF-8
 
@@ -171,7 +171,23 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
   :if (memq window-system '(mac ns))
   :config
   (setq exec-path-from-shell-variables '("PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "JFROG_PASSWORD" "GVT_WORKSPACE"))
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (if (and (fboundp 'native-comp-available-p)
+           (native-comp-available-p))
+      (progn
+        (message "Native comp is available")
+        ;; Using Emacs.app/Contents/MacOS/bin since it was compiled with
+        ;; ./configure --prefix="$PWD/nextstep/Emacs.app/Contents/MacOS"
+        (add-to-list 'exec-path (concat invocation-directory "bin") t)
+        (setenv "LIBRARY_PATH" (concat (getenv "LIBRARY_PATH")
+                                       (when (getenv "LIBRARY_PATH")
+                                         ":")
+                                       ;; This is where Homebrew puts gcc libraries.
+                                       (car (file-expand-wildcards
+                                             (expand-file-name "/opt/gcc/lib/gcc/*")))))
+        ;; Only set after LIBRARY_PATH can find gcc libraries.
+        (setq comp-deferred-compilation t))
+    (message "Native comp is *not* available")))
 
 (if (my/macbookpro)
     (progn
@@ -198,7 +214,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 This is one of the things people usually want to change right away. By default, Emacs saves backup files in the current directory. These are the files ending in =~= that are cluttering up your directory lists. The following code stashes them all in =~/.emacs.d/backups=, where I can find them with =C-x C-f= (=find-file=) if I really need to.
 
 #+begin_src emacs-lisp
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+(setq backup-directory-alist '(("." . "~/.config/emacs/backups")))
 #+end_src
 
 Disk space is cheap. Save lots.
@@ -207,7 +223,7 @@ Disk space is cheap. Save lots.
 (setq delete-old-versions -1)
 (setq version-control t)
 (setq vc-make-backup-files t)
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+(setq auto-save-file-name-transforms '((".*" "~/.config/emacs/auto-save-list/" t)))
 #+end_src
 
 *** Windows configuration
@@ -2038,7 +2054,7 @@ It is better to always copy to location at other window
  #+end_src
 **** Getting up to date org-mode info documentation
  #+begin_src emacs-lisp
- (add-to-list 'Info-default-directory-list "~/.emacs.d/site-lisp/org-mode/doc")
+ (add-to-list 'Info-default-directory-list "~/.config/emacs/site-lisp/org-mode/doc")
  #+end_src
 
 **** Prefer future dates or not?
@@ -2618,8 +2634,8 @@ It is better to always copy to location at other window
   :defer 5
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
-  (setq projectile-cache-file "~/.emacs.d/data/projectile.cache")
-  (setq projectile-known-projects-file "~/.emacs.d/data/projectile-bookmarks.eld")
+  (setq projectile-cache-file "~/.config/emacs/data/projectile.cache")
+  (setq projectile-known-projects-file "~/.config/emacs/data/projectile-bookmarks.eld")
   :config
   (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
