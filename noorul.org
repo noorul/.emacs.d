@@ -13,25 +13,26 @@ My =~/.config/emacs/init.el= is now a symlink to =noorul.el=, which is what =M-x
 org-babel-tangle= (=C-c C-v t=) produces.
 ** Starting up
 #+begin_src emacs-lisp
-  ;;;; Starting up
-  ;; The default is 800 kilobytes.  Measured in bytes.
-  (setq gc-cons-threshold (* 50 1000 1000))
+;;;; Starting up
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 100 1000 1000))
+; Profile emacs startup
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (message "*** Emacs loaded in %s with %d garbage collections."
+;;                      (format "%.2f seconds"
+;;                              (float-time
+;;                               (time-subtract after-init-time before-init-time)))
+;;                      gcs-done)))
+(package-initialize)
+(setq use-package-always-ensure t)
+(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
+(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp")
+(setq custom-file "~/.config/emacs/custom-settings.el")
+(load custom-file t)
 
-  ;; Profile emacs startup
-  ;; (add-hook 'emacs-startup-hook
-  ;;           (lambda ()
-  ;;             (message "*** Emacs loaded in %s with %d garbage collections."
-  ;;                      (format "%.2f seconds"
-  ;;                              (float-time
-  ;;                               (time-subtract after-init-time before-init-time)))
-  ;;                      gcs-done)))
+(setq read-process-output-max (* 1024 1024))
 
-  (package-initialize)
-  (setq use-package-always-ensure t)
-  (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
-  (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp")
-  (setq custom-file "~/.config/emacs/custom-settings.el")
-  (load custom-file t)
 #+end_src
 ** Emacs initialization
 *** Add package sources
@@ -2456,6 +2457,23 @@ It is better to always copy to location at other window
   :init (global-flycheck-mode))
 #+end_src
 *** LSP
+**** Company completion
+#+begin_src emacs-lisp
+(use-package company
+  :after lsp-mode
+  :hook ((lsp-mode emacs-lisp-mode) . company-mode)
+  :bind (:map company-active-map
+	      ("<tab>" . company-complete-selection))
+  :config
+  (setq company-backends '(company-capf
+			   company-yasnippet))
+  (global-company-mode))
+#+end_src
+**** COMMENT Company box ui
+#+begin_src emacs-lisp
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+#+end_src
 *** Scala
 #+begin_src emacs-lisp
 (use-package scala-mode
@@ -2489,8 +2507,13 @@ It is better to always copy to location at other window
 
 ;; Enable nice rendering of documentation on hover
 (use-package lsp-ui
-  :after lsp-mode
-  )
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-sideline-enable t)
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-doc-position 'bottom)
+  (lsp-ui-doc-show))
+
 
 ;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
 ;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
