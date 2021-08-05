@@ -3043,6 +3043,8 @@ It is better to always copy to location at other window
   (setq nnslashdot-threaded nil)
 
   (setq gnus-always-read-dribble-file t)
+  (setq gnus-asynchronous t)
+  (setq  gnus-search-use-parsed-queries t)
 
   (setq gnus-activate-foreign-newsgroups nil)
   (setq gnus-summary-display-while-building 10)
@@ -3227,13 +3229,7 @@ It is better to always copy to location at other window
                   collection))
         (gnus-group-jump-to-group
          (ido-completing-read
-          "Group: " choices nil t))))
-
-
-
-  (require 'smtpmail-async)
-  (setq send-mail-function 'async-smtpmail-send-it
-        message-send-mail-function 'async-smtpmail-send-it))
+          "Group: " choices nil t)))))
 #+end_src
 *** offlineimap
 #+begin_src emacs-lisp
