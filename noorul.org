@@ -27,7 +27,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/lisp")
-(add-to-list 'load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp")
+(add-to-list 'load-path "~/git.sr.ht/bzg/org-contrib/lisp")
 (setq custom-file "~/.config/emacs/custom-settings.el")
 (load custom-file t)
 
@@ -2221,7 +2221,7 @@ It is better to always copy to location at other window
  #+begin_src emacs-lisp
  (use-package org-contacts
    :commands org-contacts
-   :load-path "~/code.orgmode.org/bzg/org-mode/contrib/lisp"
+   :load-path "~/git.sr.ht/bzg/org-contrib/lisp"
    :custom
    (org-contacts-files (quote ("~/bitbucket.org/noorul/personal/notebook/contacts.org")))
    (calendar-mark-holidays-flag t))
