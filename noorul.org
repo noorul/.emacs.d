@@ -395,12 +395,16 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 
 *** GnuPG
 #+begin_src emacs-lisp
-;; add allow-emacs-pinentry to ~/.gnupg/gpg-agent.conf
+;; Add the following to ~/.gnupg/gpg-agent.conf
 ;; and restart gpg-agent
+;;;; allow-emacs-pinentry
+;;;; allow-loopback-pinentry
+;;;; pinentry-program /usr/local/bin/pinentry
 (use-package pinentry
-  :disabled
-  :init (setq epa-pinentry-mode 'loopback)
-  :config (pinentry-start))
+  :hook
+  (after-init . pinentry-start)
+  :config
+  (setq epa-pinentry-mode 'loopback))
 #+end_src
 *** Spellcheck is great
 #+begin_src emacs-lisp
