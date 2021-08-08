@@ -2451,6 +2451,19 @@ It is better to always copy to location at other window
  #+end_src
 
 ** Coding
+*** column-enforce-mode
+#+begin_src emacs-lisp
+(use-package column-enforce-mode
+  :config
+  (setq column-enforce-column 110)
+  :hook (progmode-hook . column-enforce-mode))
+#+end_src
+*** rainbow-delimiters
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :commands rainbow-delimiters-mode
+  :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
 *** Flycheck
 #+begin_src emacs-lisp
 (use-package flycheck
@@ -2869,6 +2882,278 @@ It is better to always copy to location at other window
 (use-package protobuf-mode
   :mode "\\.proto\\'")
 #+end_src
+*** Javascript
+**** [[https://github.com/mooz/js2-mode][js2-mode]]
+
+#+begin_src emacs-lisp
+(use-package js2-mode
+  :mode "\\.js\\'"
+  :bind (("C-c s j" . nl/counsel-ag-js))
+  :preface
+  (defun js-filename-p (filename)
+    (string-match "\.js$" filename))
+
+  (defun nl/counsel-ag-js ()
+    "Perform counsel-ag on the project's JavaScript files."
+    (interactive)
+    (counsel-ag "" (projectile-project-root) "--js"))
+
+  (defun nl/counsel-ag-js-spec ()
+    "Perform counsel-ag on the project's JavaScript files."
+    (interactive)
+    (counsel-ag "" (projectile-project-root) "-G Spec.js$"))
+
+  (defun nl/webpack-find-file ()
+    "From a webpack failure backtrace, opens the file under the cursor at the line specified."
+    (interactive)
+    (let (p1 p2 err-line filename file-with-proj-path)
+      (save-some-buffers t)
+      (setq p1 (line-beginning-position) )
+      (setq p2 (line-end-position) )
+      (setq err-line (buffer-substring-no-properties p1 p2))
+      (save-match-data ; is usually a good idea
+        (and (string-match "^\\(ERROR\\|WARNING\\) in \\.\\/\\([^$]+\\)" err-line)
+             (setq filename (match-string 2 err-line))))
+      (message "filename: %s" (expand-file-name filename (projectile-project-root)))
+      (ace-select-window)
+      (find-file (expand-file-name filename (projectile-project-root)))
+      (goto-char (point-min))))
+
+  (defun nl/webpack-find-next-error ()
+    "searches for the next line starting with ERROR and then calls nl/webpack-find-file."
+    (interactive)
+    (next-line)
+    (while (re-search-forward "^ERROR" nil t)
+      (goto-char (match-beginning 0))
+      (recenter 0)
+      (nl/webpack-find-file)))
+
+  :init
+  (setq js2-global-externs '("define"
+                             "jasmine"
+                             "describe"
+                             "fdescribe"
+                             "fail"
+                             "beforeEach"
+                             "afterEach"
+                             "inject"
+                             "expect"
+                             "spyOn"
+                             "it"
+                             "fit"
+                             "xdescribe"
+                             "xit"))
+  :config
+  (setq javascript-common-imenu-regex-list
+        '(("Controller" "[. \t]controller([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Controller" "[. \t]controllerAs:[ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Filter" "[. \t]filter([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("State" "[. \t]state[(:][ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Factory" "[. \t]factory([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Service" "[. \t]service([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Module" "[. \t]module( *['\"]\\([a-zA-Z0-9_.]+\\)['\"], *\\[" 1)
+          ("ngRoute" "[. \t]when(\\(['\"][a-zA-Z0-9_\/]+['\"]\\)" 1)
+          ("Directive" "[. \t]directive([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Event" "[. \t]\$on([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ("Config" "[. \t]config([ \t]*function *( *\\([^\)]+\\)" 1)
+          ("Config" "[. \t]config([ \t]*\\[ *['\"]\\([^'\"]+\\)" 1)
+          ("OnChange" "[ \t]*\$(['\"]\\([^'\"]*\\)['\"]).*\.change *( *function" 1)
+          ("OnClick" "[ \t]*\$([ \t]*['\"]\\([^'\"]*\\)['\"]).*\.click *( *function" 1)
+          ("Watch" "[. \t]\$watch( *['\"]\\([^'\"]+\\)" 1)
+          ("Function" "function[ \t]+\\([a-zA-Z0-9_$.]+\\)[ \t]*(" 1)
+          ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)[ \t]*=[ \t]*function[ \t]*(" 1)
+          ("Function" "^[ \t]*\\([a-zA-Z0-9_$.]+\\)([^)'\"]*)[ \t]*{[ \t]*$" 1)
+          ("Task" "[. \t]task([ \t]*['\"]\\([^'\"]+\\)" 1)
+          ;;("Testcase" "^[ \t]*it(['\"][^']*['\"][ \t]*,[ \t]*function([^)'\"]*)[ \t]*{$" 1)
+          ))
+
+  ;; js-mode imenu enhancement
+  ;; @see http://stackoverflow.com/questions/20863386/idomenu-not-working-in-javascript-mode
+  (defun nl-js-imenu-make-index ()
+    (save-excursion
+      (imenu--generic-function javascript-common-imenu-regex-list)))
+
+  (defun nl/common-prog-mode-settings ())
+  (defun nl/javascript-mode-hook ()
+    (nl/setup-indent 2) ; indent 2 spaces width
+    (setq comment-multi-line t
+          mode-name "JS2")
+    (define-key js-mode-map [remap indent-new-comment-line]
+      'c-indent-new-comment-line)
+    (setq indent-tabs-mode nil)
+    (setq imenu-create-index-function 'nl-js-imenu-make-index)
+    (prettier-js-mode)
+    (flycheck-mode t))
+
+  ;;(eval-after-load 'js2-mode
+  ;;  '(define-key js2-mode-map (kbd "RET") 'js2-line-break))
+
+  ;;(setq ac-js2-evaluate-calls t)
+
+  (setq-default js2-mode-show-parse-errors t)
+  (setq-default js2-strict-missing-semi-warning t)
+  (setq-default js2-strict-trailing-comma-warning t)
+
+
+  :custom
+  (js2-basic-offset 2)
+  (js2-bounce-indent-p nil)
+  (js2-highlight-level 3)
+  :hook ((js2-mode . fic-mode)
+         ;;(js2-mode-hook  . ac-js2-mode)
+         (js2-mode . nl/javascript-mode-hook)
+         (js2-mode . nl/common-prog-mode-settings)))
+#+end_src
+**** [[https://github.com/magnars/js2-refactor.el][js2-refactor]]
+
+#+begin_src emacs-lisp
+(use-package js2-refactor
+  :after js2-mode
+  :diminish js2-refactor-mode
+  :hook (js-mode . js2-refactor-mode)
+  :config
+  (js2r-add-keybindings-with-prefix "C-c C-m"))
+#+end_src
+
+**** [[https://github.com/prettier/prettier-emacs][prettier-js]]
+
+#+begin_src emacs-lisp
+(use-package prettier-js
+  :after (typescript-mode web-mode js-mode)
+  :hook ((typescript-mode . prettier-js-mode)))
+#+end_src
+**** [[https://github.com/ternjs/tern][tern]]
+
+#+begin_src emacs-lisp
+(use-package tern
+  :commands tern-mode
+  :load-path "~/src/github/elisp/tern/emacs"
+  :diminish tern-mode
+  :hook (js2-mode . tern-mode))
+
+(use-package company-tern
+  :init (add-to-list 'company-backends 'company-tern))
+#+end_src
+*** TypeScript
+
+#+begin_src emacs-lisp
+(use-package typescript-mode
+  :hook
+  (typescript-mode . column-enforce-mode)
+  (typescript-mode . rainbow-delimiters-mode)
+  (typescript-mode . nl/typescript-mode)
+  :preface
+  (defun nl/typescript-mode ()
+    (flycheck-mode +1)
+    (eldoc-mode +1)
+    (company-mode +1)
+    (prettier-js-mode)
+    (nl/common-prog-mode-settings)
+
+    ;; need to override the value set in typescript-mode.el
+    (push '(typescript-tsc-pretty
+            "^\\(?:\\(Error\\|Warning\\)\\):[[:blank:]]\\([^:]+\\):\\([[:digit:]]+\\):\\([[:digit:]]+\\)"
+            2 3 4 1)
+          compilation-error-regexp-alist-alist)
+
+    (setq prettify-symbols-alist nl-typescript-prettify-symbols)
+    (prettify-symbols-mode))
+  :config
+  (setq prettify-symbols-unprettify-at-point 'right-edge
+        company-tooltip-align-annotations t ;; aligns annotation to the right hand side
+        flycheck-check-syntax-automatically '(save mode-enabled))
+  (setq-default typescript-indent-level 2)
+
+  (defconst nl-typescript-prettify-symbols
+    '(("=>" . ?⇒)
+      ("<=" . ?≤)
+      (">=" . ?≥)
+      ("===" . ?≡)
+      ("!" . ?¬)
+      ("!=" . ?≠)
+      ("!==" . ?≢)
+      ("&&" . ?∧)
+      ("||" . ?∨))))
+#+end_src
+
+**** [[https://github.com/ananthakumaran/tide][tide]]
+
+#+begin_src emacs-lisp
+(use-package tide
+  :after (typescript-mode company flycheck)
+  :bind (:map tide-mode-map
+              ("C-c C-t f" . tide-fix)
+              ("C-c C-t n" . tide-nav)
+              ("C-c C-t o" . tide-organize-imports)
+              ("C-c C-t r" . tide-rename-symbol)
+              ("C-c C-t x" . tide-references))
+  :init
+  (use-package typescript-mode)
+
+  :config
+  (setq tide-sync-request-timeout 5
+        tide-server-max-response-length 204800)
+
+  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
+  (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
+
+  (defun nl-tide-mode-hook ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    (company-mode +1)
+    (prettier-js-mode)
+    (nl/common-prog-mode-settings)
+    (setq prettify-symbols-alist nl-typescript-prettify-symbols-alist
+          prettify-symbols-unprettify-at-point 'right-edge
+          company-tooltip-align-annotations t) ;; aligns annotation to the right hand side
+    (setq-default typescript-indent-level 2))
+
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (typescript-mode . nl-tide-mode-hook)
+         (typescript-mode . column-enforce-mode)
+         (typescript-mode . rainbow-delimiters-mode)))
+#+end_src
+*** web-mode
+#+begin_src emacs-lisp
+(use-package web-mode
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.json\\'" . web-mode))
+  :bind ("C-c s h" . nl/counsel-ag-html)
+  :hook (web-mode  . nl/web-mode-hook)
+  :preface
+  (defun html-filename-p (filename)
+    (string-match "\.html$" filename))
+
+  (defun nl/counsel-ag-html ()
+    "Perform counsel-ag on the project's HTML files."
+    (interactive)
+    (counsel-ag "" (projectile-project-root) "--html"))
+
+  (defun nl/web-mode-hook ()
+    "Hooks for Web mode."
+    (setq web-mode-markup-indent-offset 2)
+    (prettier-js-mode)
+    (yas-minor-mode))
+
+  :config
+  (setq web-mode-markup-indent-offset 2
+        web-mode-css-indent-offset 2
+        web-mode-code-indent-offset 2
+        web-mode-enable-auto-closing t
+        web-mode-enable-auto-quoting t
+        web-mode-ac-sources-alist
+        '(("css" . (ac-source-css-property))
+          ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (flycheck-add-mode 'typescript-tslint 'web-mode))
+#+end_src
+
 ** Writing
 *** LSP grammarly
 #+begin_src emacs-lisp
