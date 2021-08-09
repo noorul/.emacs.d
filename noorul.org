@@ -3027,12 +3027,8 @@ It is better to always copy to location at other window
 #+begin_src emacs-lisp
 (use-package tern
   :commands tern-mode
-  :load-path "~/src/github/elisp/tern/emacs"
   :diminish tern-mode
   :hook (js2-mode . tern-mode))
-
-(use-package company-tern
-  :init (add-to-list 'company-backends 'company-tern))
 #+end_src
 *** TypeScript
 
