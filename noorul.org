@@ -3055,6 +3055,7 @@ It is better to always copy to location at other window
     (setq prettify-symbols-alist nl-typescript-prettify-symbols)
     (prettify-symbols-mode))
   :config
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
   (setq prettify-symbols-unprettify-at-point 'right-edge
         company-tooltip-align-annotations t ;; aligns annotation to the right hand side
         flycheck-check-syntax-automatically '(save mode-enabled))
