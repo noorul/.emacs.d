@@ -1410,22 +1410,22 @@ It is better to always copy to location at other window
           (java . t)
           (js . t)
           )))
- 
+
  (setq org-babel-default-header-args:java
        '((:dir . "~/bitbucket.org/noorul/sandbox/java")
          (:results . output)))
- 
+
  ;; Do not prompt to confirm evaluation
  ;; This may be dangerous - make sure you understand the consequences
  ;; of setting this -- see the docstring for details
  ;; (setq org-confirm-babel-evaluate nil)
- 
+
  ;; Use fundamental mode when editing plantuml blocks with C-c '
  (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
- 
+
  ;; Don't enable this because it breaks access to emacs from my Android phone
  (setq org-startup-with-inline-images nil)
- 
+
  #+end_src
 *** Reminders
  #+begin_src emacs-lisp
@@ -3195,10 +3195,10 @@ It is better to always copy to location at other window
   (setq gnus-check-new-newsgroups nil  ;; Save some startup time
         ;; I do not want gnus to use full window
         gnus-use-full-window nil
-        
+
         ;; To save some time on exit. I don't use any other news reader.
         gnus-save-newsrc-file nil
-        
+
         gnus-group-line-format "%M%S%p%P%(%-60,60g%)%-5uy %ud\n"
         gnus-sum-thread-tree-single-indent "* "
         gnus-sum-thread-tree-single-leaf "+-> ")
