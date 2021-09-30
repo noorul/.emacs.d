@@ -639,8 +639,6 @@ It is better to always copy to location at other window
                            ol-w3m)))
  (use-package ob-http)
 
- (use-package ob-async)
-
  (org-reload)
  #+end_src
 
