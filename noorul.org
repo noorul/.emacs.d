@@ -86,44 +86,45 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+end_src
 *** Font settings
 #+begin_src emacs-lisp
-(defvar ha/fixed-font-family
-  (cond
-   ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
-   ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
-   ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
-   ((x-list-fonts "Menlo")           "Menlo")
-   ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
-   ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
-   ((x-list-fonts "Fira Code")       "Fira Code")
-   ((x-list-fonts "Roboto Mono")     "Roboto Mono")
-   ((x-list-fonts "Hack")            "Hack")
-   ((x-list-fonts "Source Code Pro") "Source Code Pro")
-   ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
-   ((x-list-fonts "Hasklig")         "Hasklig")
-   ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
-  "My fixed width font based on what is installed, `nil' if not defined.")
+  (when (window-system)
+  (defvar ha/fixed-font-family
+    (cond
+     ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
+     ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
+     ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
+     ((x-list-fonts "Menlo")           "Menlo")
+     ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
+     ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
+     ((x-list-fonts "Fira Code")       "Fira Code")
+     ((x-list-fonts "Roboto Mono")     "Roboto Mono")
+     ((x-list-fonts "Hack")            "Hack")
+     ((x-list-fonts "Source Code Pro") "Source Code Pro")
+     ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
+     ((x-list-fonts "Hasklig")         "Hasklig")
+     ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
+    "My fixed width font based on what is installed, `nil' if not defined.")
 
-(defvar ha/variable-font-family
-  (cond
-   ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
-   ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
-   ((x-list-fonts "ETBembo") "ETBembo")
-   ((x-list-fonts "SF Pro") "SF Pro")
-   ((x-list-fonts "FiraGO") "FiraGO")
-   ((x-list-fonts "Lucida Grande")   "Lucida Grande")
-   ((x-list-fonts "Verdana")         "Verdana")
-   ((x-family-fonts "Sans Serif")    "Sans Serif")
-   (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro.")))
-  "My variable width font available to org-mode files and whatnot.")
+  (defvar ha/variable-font-family
+    (cond
+     ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
+     ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
+     ((x-list-fonts "ETBembo") "ETBembo")
+     ((x-list-fonts "SF Pro") "SF Pro")
+     ((x-list-fonts "FiraGO") "FiraGO")
+     ((x-list-fonts "Lucida Grande")   "Lucida Grande")
+     ((x-list-fonts "Verdana")         "Verdana")
+     ((x-family-fonts "Sans Serif")    "Sans Serif")
+     (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro.")))
+    "My variable width font available to org-mode files and whatnot.")
 
-(when ha/fixed-font-family
-  (set-frame-font ha/fixed-font-family)
-  (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'normal)
-  (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'normal)
-  (set-face-font 'default ha/fixed-font-family))
+  (when ha/fixed-font-family
+    (set-frame-font ha/fixed-font-family)
+    (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'normal)
+    (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'normal)
+    (set-face-font 'default ha/fixed-font-family))
 
-(when ha/variable-font-family
-  (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))
+  (when ha/variable-font-family
+    (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight)))
 #+end_src
 
 *** Modus theme
