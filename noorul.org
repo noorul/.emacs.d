@@ -26,7 +26,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 ;;                      gcs-done)))
 (package-initialize)
 (setq use-package-always-ensure t)
-(add-to-list 'load-path "~/git.savannah.gnu.org/emacs/org-mode/lisp")
+(add-to-list 'load-path "~/git.sv.gnu.org/org-mode/lisp")
 (add-to-list 'load-path "~/git.sr.ht/bzg/org-contrib/lisp")
 (setq custom-file "~/.config/emacs/custom-settings.el")
 (load custom-file t)
