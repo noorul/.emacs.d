@@ -86,7 +86,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+end_src
 *** Font settings
 #+begin_src emacs-lisp
-  (when (window-system)
+(when (window-system)
   (defvar ha/fixed-font-family
     (cond
      ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
@@ -117,10 +117,14 @@ org-babel-tangle= (=C-c C-v t=) produces.
      (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro.")))
     "My variable width font available to org-mode files and whatnot.")
 
+  (defconst ha/fixed-font-family-height
+    (if (my/macbookpro)
+        160
+      135))
   (when ha/fixed-font-family
     (set-frame-font ha/fixed-font-family)
-    (set-face-attribute 'default nil :font ha/fixed-font-family :height 160 :weight 'normal)
-    (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height 160 :weight 'normal)
+    (set-face-attribute 'default nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
+    (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
     (set-face-font 'default ha/fixed-font-family))
 
   (when ha/variable-font-family
@@ -3747,8 +3751,6 @@ It is better to always copy to location at other window
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
- (if (my/macbookpro)
-     (progn
-       (toggle-frame-fullscreen)
-       (toggle-frame-fullscreen)))
+ (toggle-frame-fullscreen)
+ (toggle-frame-fullscreen)
  #+end_src
