@@ -28,6 +28,8 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/git.sv.gnu.org/org-mode/lisp")
 (add-to-list 'load-path "~/git.sr.ht/bzg/org-contrib/lisp")
+(add-to-list 'load-path "~/github.com/ch11ng/xelb")
+(add-to-list 'load-path "~/github.com/ch11ng/exwm")
 (setq custom-file "~/.config/emacs/custom-settings.el")
 (load custom-file t)
 
@@ -71,6 +73,21 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (interactive)
   (string-equal system-type "darwin"))
 (global-auto-revert-mode)  ; simplifies syncing
+#+end_src
+** EXWM
+#+begin_src emacs-lisp
+(defun noorul/run-xmodmap ()
+  (interactive)
+  (start-process-shell-command "xmodmap" nil "xmodmap ~/.xmodmap"))
+
+(setq noorul/exwm-enabled (and (eq window-system 'x)
+                               (seq-contains command-line-args "--use-exwm")))
+
+(when noorul/exwm-enabled
+  (require 'exwm)
+  (require 'exwm-config)
+  (exwm-enable)
+  (noorul/run-xmodmap))
 #+end_src
 ** Personal information
 #+begin_src emacs-lisp
