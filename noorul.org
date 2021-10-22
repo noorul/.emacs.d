@@ -2622,11 +2622,10 @@ It is better to always copy to location at other window
 #+begin_src emacs-lisp
 (use-package lsp-java
   :after lsp-mode
-  :commands lsp-java-enable
   :init
   (add-hook 'java-mode-hook (lambda ()
                               (flycheck-mode +1)
-                              (lsp-java-enable)
+                              (lsp)
                               (lsp-ui-flycheck-enable t)
                               (lsp-ui-sideline-mode)))
   :config
