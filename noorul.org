@@ -3173,6 +3173,11 @@ It is better to always copy to location at other window
   (flycheck-add-mode 'typescript-tslint 'web-mode))
 #+end_src
 
+*** csv mode
+#+begin_src emacs-lisp
+(use-package csv-mode
+  :mode "\\.csv$")
+#+end_src
 ** Writing
 *** LSP grammarly
 #+begin_src emacs-lisp
