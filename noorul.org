@@ -475,7 +475,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 #+begin_src emacs-lisp
 (use-package avy
   :bind
-  (("C-:" . avy-goto-char)
+  (("C-:" . avy-goto-char-timer)
    ("M-g g" . avy-goto-line)
    ("M-g e" . avy-goto-word-0)
    ("M-g w" . avy-goto-word-1)))
