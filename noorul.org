@@ -667,8 +667,8 @@ It is better to always copy to location at other window
 
 **** Agenda Setup
  #+begin_src emacs-lisp
- ;; Every .org file under ~/bitbucket.org/noorul/personal/notebook should be part of agenda.
- (setq org-agenda-files (quote ("~/bitbucket.org/noorul/personal/notebook")))
+ ;; Every .org file under ~/github.com/noorul/notebook/notebook should be part of agenda.
+ (setq org-agenda-files (quote ("~/github.com/noorul/notebook/notebook")))
  #+end_src
 
 *** Tasks and States
@@ -709,13 +709,13 @@ It is better to always copy to location at other window
 *** Adding new tasks quickly with org capture
 **** Capture templates
  #+begin_src emacs-lisp
- (setq org-directory "~/bitbucket.org/noorul/personal/notebook")
- (setq org-default-notes-file "~/bitbucket.org/noorul/personal/notebook/organizer.org")
+ (setq org-directory "~/github.com/noorul/notebook/notebook")
+ (setq org-default-notes-file "~/github.com/noorul/notebook/notebook/organizer.org")
 
  ;; I use C-c r to start capture mode
  (global-set-key (kbd "C-c r") 'org-capture)
 
- (setq noorul/refile-target "~/bitbucket.org/noorul/personal/notebook/organizer.org")
+ (setq noorul/refile-target "~/github.com/noorul/notebook/notebook/organizer.org")
 
  ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
  (setq org-capture-templates
@@ -733,12 +733,12 @@ It is better to always copy to location at other window
                 "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
                ("p" "Phone call" entry (file+datetree noorul/refile-target)
                 "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-               ("c" "Contacts" entry (file "~/bitbucket.org/noorul/personal/notebook/contacts.org")
+               ("c" "Contacts" entry (file "~/github.com/noorul/notebook/notebook/contacts.org")
                 "* %(org-contacts-template-name)
  :PROPERTIES:
  :EMAIL: %(org-contacts-template-email)
  :END:")
-               ("h" "Habit" entry (file "~/bitbucket.org/noorul/personal/notebook/routines.org")
+               ("h" "Habit" entry (file "~/github.com/noorul/notebook/notebook/routines.org")
                 "* NEXT %?\n%U\n%a\nSCHEDULED: %t .+1d/3d\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
  ;; Remove empty LOGBOOK drawers on clock out
@@ -1733,7 +1733,7 @@ It is better to always copy to location at other window
 **** Use the diary for holidays and appointments
  #+begin_src emacs-lisp
  (setq org-agenda-include-diary nil)
- (setq org-agenda-diary-file "~/bitbucket.org/noorul/personal/notebook/organizer.org")
+ (setq org-agenda-diary-file "~/github.com/noorul/notebook/notebook/organizer.org")
  (setq org-agenda-insert-diary-extract-time t)
  #+end_src
 **** Searches include archive files
@@ -2250,7 +2250,7 @@ It is better to always copy to location at other window
    :commands org-contacts
    :load-path "~/git.sr.ht/bzg/org-contrib/lisp"
    :custom
-   (org-contacts-files (quote ("~/bitbucket.org/noorul/personal/notebook/contacts.org")))
+   (org-contacts-files (quote ("~/github.com/noorul/notebook/notebook/contacts.org")))
    (calendar-mark-holidays-flag t))
  #+end_src
 *** Automatic hourly commits
@@ -2561,7 +2561,6 @@ It is better to always copy to location at other window
 ;;   to avoid odd behavior with snippets and indentation
 
 (use-package yasnippet
-  :disabled t
   :demand t
   :diminish yas-minor-mode
   :bind (("C-c y d" . yas-load-directory)
@@ -2576,11 +2575,13 @@ It is better to always copy to location at other window
          ("C-c y x" . yas-expand))
   :bind (:map yas-keymap
               ("C-i" . yas-next-field-or-maybe-expand))
+  :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
+
   :config
+  (yas-load-directory (concat user-emacs-directory "/" "snippets"))
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
-  :disabled t
   :after yasnippet)
 
 ;; Use the Debug Adapter Protocol for running tests and debugging
@@ -2625,9 +2626,7 @@ It is better to always copy to location at other window
   :init
   (add-hook 'java-mode-hook (lambda ()
                               (flycheck-mode +1)
-                              (lsp)
-                              (lsp-ui-flycheck-enable t)
-                              (lsp-ui-sideline-mode)))
+                              (lsp)))
   :config
 
   ;; Do not organize imports on file save
@@ -3640,7 +3639,7 @@ It is better to always copy to location at other window
     (ledger-reports-add "current month expenses" "ledger --aux-date -p 'this month' -S -a reg Expenses"))
   :init
   (progn
-    (setq ledger-file "~/bitbucket.org/noorul/personal/finance/accounts.dat")
+    (setq ledger-file "~/github.com/noorul/notebook/finance/accounts.dat")
     (setq ledger-post-use-ido t)
 
     (add-hook 'ledger-mode-hook
