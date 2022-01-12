@@ -3752,7 +3752,6 @@ It is better to always copy to location at other window
   :mode ("\\.rest\\'" . restclient-mode))
 
 (use-package ob-restclient
-  :disabled
   :config
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
