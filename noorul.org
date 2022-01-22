@@ -2859,6 +2859,10 @@ It is better to always copy to location at other window
   (defun docker-compose-read-compose-file (prompt &optional initial-input _history)
     "Wrapper around `read-file-name'."
     (read-file-name prompt nil nil t initial-input (apply-partially 'string-match ".*\\.yml\\|.*\\.yaml")))
+  (defun docker-container-description-with-stats() "Containers")
+  (defun docker-image-description-with-stats() "Images")
+  (defun docker-network-description-with-stats() "Networks")
+  (defun docker-volume-description-with-stats() "Volumes")
   )
 #+end_src
 
