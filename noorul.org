@@ -104,8 +104,8 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (when (window-system)
   (defvar ha/fixed-font-family
     (cond
-     ((x-list-fonts "Jetbrains Mono")  "Jetbrains Mono")
      ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
+     ((x-list-fonts "Jetbrains Mono")  "Jetbrains Mono")
      ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
      ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
      ((x-list-fonts "Menlo")           "Menlo")
@@ -135,12 +135,12 @@ org-babel-tangle= (=C-c C-v t=) produces.
 
   (defconst ha/fixed-font-family-height
     (if (my/macbookpro)
-        145
+        160
       135))
   (when ha/fixed-font-family
     (set-frame-font ha/fixed-font-family)
-    (set-face-attribute 'default nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'light)
-    (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'light)
+    (set-face-attribute 'default nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
+    (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
     (set-face-font 'default ha/fixed-font-family))
 
   (when ha/variable-font-family
