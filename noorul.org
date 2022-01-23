@@ -104,6 +104,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 (when (window-system)
   (defvar ha/fixed-font-family
     (cond
+     ((x-list-fonts "Iosevka SS14")    "Iosevka SS14")
      ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
      ((x-list-fonts "Jetbrains Mono")  "Jetbrains Mono")
      ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
