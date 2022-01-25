@@ -216,6 +216,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 (if (my/macbookpro)
     (progn
       (setq ns-command-modifier 'meta)
+      (setq mac-option-modifier 'super)
       (setq insert-directory-program (executable-find "gls"))
       ;; Upgraded to El Capitan. Facing problem described here
       ;; http://stuff-things.net/2015/10/05/emacs-visible-bell-work-around-on-os-x-el-capitan/
