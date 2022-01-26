@@ -437,6 +437,19 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
 ** Navigation
+*** Use register to store current location
+#+begin_src emacs-lisp
+(defun noorul/store-current-location ()
+  (interactive)
+  (point-to-register ?1))
+
+(defun noorul/jump-to-saved-location ()
+  (interactive)
+  (jump-to-register ?1))
+
+(bind-key "C-M-;" 'noorul/store-current-location)
+(bind-key "C-M-'" 'noorul/jump-to-saved-location)
+#+end_src
 *** Kill whole line or region
 #+begin_src emacs-lisp
 (use-package whole-line-or-region
