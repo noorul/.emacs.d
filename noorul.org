@@ -156,7 +156,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
   (setq modus-themes-slanted-constructs t
         modus-themes-mixed-fonts t
         modus-themes-bold-constructs nil
-        modus-themes-region 'no-extend
+        modus-themes-region '(bg-only no-extend)
         modus-themes-org-agenda
         '((header-block . (variable-pitch scale-title))
           (header-date . (grayscale workaholic bold-today))
