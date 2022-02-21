@@ -194,7 +194,10 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
   :config
-  (setq exec-path-from-shell-variables '("PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "JFROG_PASSWORD" "GVT_WORKSPACE"))
+  (setq exec-path-from-shell-variables
+        (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME"
+              "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
+              "JIRA_TOKEN"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
