@@ -503,8 +503,9 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 #+end_src
 *** More window movement
 #+begin_src emacs-lisp
-(use-package switch-window
-  :bind (("C-x o" . switch-window)))
+(use-package ace-window
+  :bind (("C-x o" . ace-window))
+  :config (setq aw-background nil))
 #+end_src
 *** Recent files
 #+begin_src emacs-lisp
