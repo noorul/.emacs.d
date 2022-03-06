@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: mc
+# key: mc
+# --
+class `(cdr (assq :classname (car (cdr (cdr (org-babel-get-src-block-info))))))`
+{
+public static void main(String[] args)
+{
+$0
+}
+}
