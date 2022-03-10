@@ -2662,15 +2662,6 @@ It is better to always copy to location at other window
          "-XX:+UseG1GC"
          "-XX:+UseStringDeduplication"
          "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar")))
-;; (when (not (file-exists-p lsp-java-server-install-dir))
-;;   ;; Install Eclipse JDT server
-;;   (message "Installing JDT server for emacs!")
-;;   (async-shell-command
-;;    (format (concat "mkdir -p %s;"
-;;                    "wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz -O /tmp/jdt-latest.tar;"
-;;                    "tar xf /tmp/jdt-latest.tar -C %s;")
-;;            lsp-java-server-install-dir
-;;            lsp-java-server-install-dir))))
 #+end_src
 
 *** golang
