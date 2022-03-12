@@ -3444,8 +3444,7 @@ It is better to always copy to location at other window
   (setq gnus-select-method '(nnnil))
 
   (setq gnus-secondary-select-methods
-        '((nntp "news.gwene.org")
-          (nnimap "work"
+        '((nnimap "work"
                   (nnimap-address "work")
                   (nnimap-server-port 143)
                   (nnimap-stream network)
