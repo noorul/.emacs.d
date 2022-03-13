@@ -1447,6 +1447,7 @@ It is better to always copy to location at other window
           (latex . t)
           (elasticsearch . t)
           (java . t)
+          (groovy . t)
           (js . t)
           )))
 
