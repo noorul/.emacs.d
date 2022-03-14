@@ -588,8 +588,11 @@ https://github.com/bbatsov/prelude
 *** Embark
 #+begin_src emacs-lisp
 (use-package marginalia
+  :init
+  (marginalia-mode)
   :config
-  (marginalia-mode))
+  (add-to-list 'marginalia-command-categories '(counsel-projectile-find-file . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
 
 (use-package embark
   :bind
