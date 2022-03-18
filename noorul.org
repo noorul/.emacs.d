@@ -2909,6 +2909,7 @@ It is better to always copy to location at other window
              kubernetes-display-pods
              kubernetes-display-configmaps
              kubernetes-display-secrets)
+  :bind (("C-c k" . kubernetes-overview))
   :config
   (setq kubernetes-poll-frequency 3600
         kubernetes-redraw-frequency 3600))
