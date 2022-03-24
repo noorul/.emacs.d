@@ -593,7 +593,8 @@ https://github.com/bbatsov/prelude
   (marginalia-mode)
   :config
   (add-to-list 'marginalia-command-categories '(counsel-projectile-find-file . file))
-  (add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file-in-known-projects . file)))
 
 (use-package embark
   :bind
