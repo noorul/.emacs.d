@@ -197,7 +197,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
   (setq exec-path-from-shell-variables
         (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME"
               "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
-              "JIRA_TOKEN"))
+              "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
