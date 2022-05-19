@@ -2667,7 +2667,7 @@ It is better to always copy to location at other window
          "-Xmx1G"
          "-XX:+UseG1GC"
          "-XX:+UseStringDeduplication"
-         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar")))
+         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar")))
 #+end_src
 
 *** golang
