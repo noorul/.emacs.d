@@ -376,8 +376,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   (progn
     (global-undo-tree-mode)
     (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)
-    (setq undo-tree-history-directory-alist '(("." . "~/.config/emacs/backups/undo-tree")))))
+    (setq undo-tree-visualizer-diff t)))
 #+end_src
 *** Persistent scratch
 #+begin_src emacs-lisp
