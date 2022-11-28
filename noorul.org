@@ -15,6 +15,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+begin_src emacs-lisp
 ;;;; Starting up
 ;; The default is 800 kilobytes.  Measured in bytes.
+(setq save-abbrevs 'silently)
 (setq gc-cons-threshold (* 100 1000 1000))
 ; Profile emacs startup
 ;; (add-hook 'emacs-startup-hook
@@ -99,6 +100,12 @@ org-babel-tangle= (=C-c C-v t=) produces.
 ;; Syntax highlighting is must
 (setq global-font-lock-mode t)
 #+end_src
+*** Pixel scroll
+#+begin_src emacs-lisp
+(use-package emacs
+  :custom (pixel-scroll-precision-mode t))
+#+end_src
+
 *** Font settings
 #+begin_src emacs-lisp
 (when (window-system)
@@ -188,6 +195,11 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
+*** Ansi color in compile buffer
+#+begin_src emacs-lisp
+(add-hook 'compilation-filter-hook (lambda () (ansi-color-apply-on-region (point-min) (point-max))))
+#+end_src
+
 *** Mac OS X specific configuration
 #+BEGIN_SRC emacs-lisp
 (require 'cl)
@@ -310,7 +322,195 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
 #+end_src
-*** Helm - Interactive completion
+*** VEMCO
+**** Vertico
+#+begin_src emacs-lisp
+(use-package vertico
+  :init
+  (vertico-mode)
+
+  ;; Different scroll margin
+  ;; (setq vertico-scroll-margin 0)
+
+  ;; Show more candidates
+  ;; (setq vertico-count 20)
+
+  ;; Grow and shrink the Vertico minibuffer
+  ;; (setq vertico-resize t)
+
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  ;; (setq vertico-cycle t)
+  )
+#+end_src
+
+**** Embark
+#+begin_src emacs-lisp
+(use-package marginalia
+  :init
+  (marginalia-mode)
+  :config
+  (add-to-list 'marginalia-prompt-categories '("Find file: " . file))
+  (add-to-list 'marginalia-command-categories '(counsel-projectile-find-file . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file-dwim . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file-other-window . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file-other-frame . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file . file))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file-in-directory . file))
+  (add-to-list 'marginalia-command-categories '(projectile-switch-project . projectile-project))
+  (add-to-list 'marginalia-command-categories '(projectile-find-file-in-known-projects . file)))
+
+(use-package embark
+  :after vertico
+  :bind
+  (("M-o" . embark-act)
+   ("C-h b" . embark-bindings))
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq
+   prefix-help-command #'embark-prefix-help-command
+;;   embark-prompter 'embark-completing-read-prompter
+   )
+  :config
+  (setq embark-cycle-key (kbd "SPC"))
+  (setq embark-quit-after-action t)
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+(use-package
+  embark-consult
+  :after (embark consult)
+  :demand t                ; only necessary if you have the hook below
+  ;; if you want to have consult previews as you move around an
+  ;; auto-updating embark collect buffer
+  :hook (embark-collect-mode . embark-consult-preview-minor-mode)
+  :config
+
+  (defun noorul/my-projectile-vc (&optional project)
+    (interactive "s")
+    (projectile-vc project))
+
+(defun my/embark-projectile-switch-project-action-vc (project)
+  "Search PROJECT with rg."
+  (interactive "s")
+  (let ((projectile-switch-project-action 'projectile-vc))
+    (my/embark-projectile-switch-project-by-name project)))
+
+(defun my/embark-projectile-switch-project-action-run-vterm (project)
+  "Invoke `vterm' from PROJECT's root."
+  (let ((projectile-switch-project-action
+         (lambda ()
+           (projectile-run-vterm))))
+    (my/embark-projectile-switch-project-by-name project)))
+
+
+(defun my/embark-projectile-switch-project-action-rg (project)
+  "Search PROJECT with rg."
+  (let ((projectile-switch-project-action
+         (lambda ()
+           (consult-ripgrep))))
+    (my/embark-projectile-switch-project-by-name project)))
+
+
+(defun my/embark-projectile-switch-project-by-name (project)
+  "Switch to PROJECT.
+Invokes the command referenced by
+`projectile-switch-project-action' on switch.
+This is a replacement for `projectile-switch-project-by-name'
+with a different switching mechanism: the switch-project action
+is called from a dedicated buffer rather than the initial buffer.
+Also, PROJECT's dir-local variables are loaded before calling the
+action."
+  (run-hooks 'projectile-before-switch-project-hook)
+  ;; Kill and recreate the switch buffer to get rid of any local
+  ;; variable
+  (ignore-errors (kill-buffer " *embark-projectile*"))
+  (set-buffer (get-buffer-create " *embark-projectile*"))
+  (setq default-directory project)
+  ;; Load the project dir-local variables into the switch buffer, so
+  ;; the action can make use of them
+  (hack-dir-local-variables-non-file-buffer)
+  (funcall projectile-switch-project-action)
+  ;; If the action relies on `ivy-read' then, after one of its
+  ;; `ivy-read' actions is executed, the current buffer will be set
+  ;; back to the initial buffer. Hence we make sure tu evaluate
+  ;; `projectile-after-switch-project-hook' from the switch buffer.
+  (with-current-buffer " *embark-projectile*"
+    (run-hooks 'projectile-after-switch-project-hook)))
+
+  (embark-define-keymap projectile-map
+    "Commands to act on current file or buffer."
+    ("v" my/embark-projectile-switch-project-action-vc)
+    ("s" my/embark-projectile-switch-project-action-rg)
+    ("xv" my/embark-projectile-switch-project-action-run-vterm))
+
+  (add-to-list 'embark-keymap-alist '(projectile-project . projectile-map)))
+#+end_src
+**** Consult
+#+begin_src emacs-lisp
+(use-package consult
+  :after projectile
+  :bind (("C-x r x" . consult-register)
+         ("C-x r b" . consult-bookmark)
+         ("C-c k" . consult-kmacro)
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complet-command
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("M-y" . consult-yank-pop)
+         ("C-M-#" . consult-register)
+         ("M-g o" . consult-outline)
+         ("M-g h" . consult-org-heading)
+         ("M-g a" . consult-org-agenda)
+         ("M-g m" . consult-mark)
+         ("C-x b" . consult-buffer)
+         ("<help> a" . consult-apropos)            ;; orig. apropos-command
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-project-imenu)
+         ("M-g e" . consult-error)
+         ;; M-s bindings (search-map)
+         ("M-s f" . consult-find)
+         ("M-s L" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s m" . consult-multi-occur)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch)
+         ("M-g l" . consult-line)
+         ("M-s m" . consult-multi-occur)
+         ("C-x c o" . consult-multi-occur)
+         ("C-x c SPC" . consult-mark)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
+         ("M-s l" . consult-line))
+  :init
+  (setq register-preview-delay 0
+        register-preview-function #'consult-register-format)
+  :config
+  (setq consult-project-function (lambda (_) (projectile-project-root)))
+  (setq consult-narrow-key "<"))
+#+end_src
+
+
+**** Orderless
+#+begin_src emacs-lisp
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+*** COMMENT Helm - Interactive completion
 #+begin_src emacs-lisp
 
 (use-package helm
@@ -373,11 +573,11 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (use-package undo-tree
   :diminish undo-tree-mode
   :config
-  (progn
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)
-    (setq undo-tree-history-directory-alist '(("." . "~/.config/emacs/backups/undo-tree")))))
+  (global-undo-tree-mode)
+  (setq undo-tree-auto-save-history nil
+        undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-diff t
+        undo-tree-history-directory-alist '(("." . "~/.config/emacs/backups/undo-tree"))))
 #+end_src
 *** Persistent scratch
 #+begin_src emacs-lisp
@@ -475,7 +675,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :defer 5
   :hook (prog-mode . smartscan-mode-turn-on))
 #+end_src
-*** Helm-swoop - quickly finding lines
+*** COMMENT Helm-swoop - quickly finding lines
 #+begin_src emacs-lisp
 (use-package helm-swoop
   :after helm
@@ -513,7 +713,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (use-package recentf
   :defer 10
   :commands (recentf-mode
-             recentf-add-file
+             Recentf-add-file
              recentf-apply-filename-handlers)
   :preface
   (defun recentf-add-dired-directory ()
@@ -552,66 +752,56 @@ https://github.com/bbatsov/prelude
 (use-package wgrep
   :defer 5)
 
-(use-package counsel
-  :after ivy
-  :demand t
-  :diminish
-  :bind (("M-i" . counsel-imenu)
-         ("C-h v". counsel-describe-variable)
-         ("C-c O" . counsel-git-grep)))
+;; (use-package counsel
+;;   :after ivy
+;;   :demand t
+;;   :diminish
+;;   :bind (("M-i" . counsel-imenu)
+;;          ("C-h v". counsel-describe-variable)
+;;          ("C-c O" . counsel-git-grep)))
 
-(use-package swiper
-  :diminish ivy-mode
-  :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  :bind (("C-s" . swiper)
-         ("C-c C-r" . ivy-resume)
-         ("M-x" . counsel-M-x)
-         ("C-x C-f" . counsel-find-file)
-         ("C-x C-b" . ivy-switch-buffer)
-         ("C-x b" . ivy-switch-buffer)))
+;; (use-package swiper
+;;   :diminish ivy-mode
+;;   :config
+;;   (ivy-mode 1)
+;;   (setq ivy-use-virtual-buffers t)
+;;   :bind (("C-s" . swiper)
+;;          ("C-c C-r" . ivy-resume)
+;;          ("M-x" . counsel-M-x)
+;;          ("C-x C-f" . counsel-find-file)
+;;          ("C-x C-b" . ivy-switch-buffer)
+;;          ("C-x b" . ivy-switch-buffer)))
 
-(use-package ivy-rich
-  :after swiper
-  :config
-  (setq ivy-virtual-abbreviate 'full
-        ivy-rich-switch-buffer-align-virtual-buffer t
-        ivy-rich-abbreviate-paths t)
-  (ivy-rich-mode))
+;; (use-package ivy-rich
+;;   :after swiper
+;;   :config
+;;   (setq ivy-virtual-abbreviate 'full
+;;         ivy-rich-switch-buffer-align-virtual-buffer t
+;;         ivy-rich-abbreviate-paths t)
+;;   (ivy-rich-mode))
   ;; (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
 
-(use-package ivy-hydra
-  :after swiper)
+;; (use-package ivy-hydra
+;;   :after swiper)
 
 (use-package ace-link)
 #+end_src
-*** Embark
-#+begin_src emacs-lisp
-(use-package marginalia
-  :init
-  (marginalia-mode)
-  :config
-  (add-to-list 'marginalia-command-categories '(counsel-projectile-find-file . file))
-  (add-to-list 'marginalia-command-categories '(projectile-find-file . file))
-  (add-to-list 'marginalia-command-categories '(projectile-find-file-in-known-projects . file)))
+*** Using projects as a source for consult-buffer
 
-(use-package embark
-  :bind
-  (("C-M-," . embark-act))
-  :init
-  ;; Optionally replace the key help with a completing-read interface
-  (setq
-   prefix-help-command #'embark-prefix-help-command
-   embark-prompter 'embark-completing-read-prompter
-   )
+#+begin_src emacs-lisp
+(use-package consult
+  :after projectile
+  :defines consult-buffer-sources
   :config
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-#+end_src
+  (projectile-load-known-projects)
+  (setq my-consult-source-projectile-projects
+        `(:name "Projectile projects"
+                :narrow   ?P
+                :category project
+                :action   ,#'projectile-switch-project-by-name
+                :items    ,projectile-known-projects))
+  (add-to-list 'consult-buffer-sources my-consult-source-projectile-projects 'append))
+    #+end_src
 *** Dired
 I always want file listing to be sorted by time. This helps a lot.
 #+begin_src emacs-lisp
@@ -1450,7 +1640,7 @@ It is better to always copy to location at other window
           (org . t)
           (plantuml . t)
           (latex . t)
-          (elasticsearch . t)
+;;          (elasticsearch . t)
           (java . t)
           (groovy . t)
           (js . t)
@@ -2571,9 +2761,9 @@ It is better to always copy to location at other window
   :config (setq lsp-prefer-flymake nil))
 
 ;; Add metals backend for lsp-mode
-(use-package lsp-metals
-  :after lsp-mode
-  )
+;; (use-package lsp-metals
+;;   :after lsp-mode
+;;   )
 
 ;; Enable nice rendering of documentation on hover
 (use-package lsp-ui
@@ -2729,7 +2919,7 @@ It is better to always copy to location at other window
   (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
   (setq projectile-use-git-grep t)
-  (setq projectile-completion-system 'ivy)
+  ;; (setq projectile-completion-system 'ivy)
   (projectile-global-mode))
 
 (use-package helm-projectile
@@ -2742,10 +2932,10 @@ It is better to always copy to location at other window
 (use-package helm-ag
   :disabled t)
 
-(use-package counsel-projectile
-  :after (counsel projectile)
-  :config
-  (counsel-projectile-mode 1))
+;; (use-package counsel-projectile
+;;   :after (counsel projectile)
+;;   :config
+;;   (counsel-projectile-mode 1))
 #+end_src
 
 *** git-messenger - shows commit message
@@ -2870,6 +3060,10 @@ It is better to always copy to location at other window
 #+end_src
 
 #+begin_src emacs-lisp
+(use-package docker-tramp
+  :if (version< emacs-version "29.0")
+  :after docker)
+
 (use-package docker
   :bind ("C-c d" . docker)
   :config
@@ -2905,7 +3099,7 @@ It is better to always copy to location at other window
              kubernetes-display-pods
              kubernetes-display-configmaps
              kubernetes-display-secrets)
-  :bind (("C-c k" . kubernetes-overview))
+  :bind (("C-c K" . kubernetes-overview))
   :config
   (setq kubernetes-poll-frequency 3600
         kubernetes-redraw-frequency 3600))
@@ -2918,7 +3112,7 @@ It is better to always copy to location at other window
   :diminish color-identifiers-mode
   :init (add-hook 'after-init-hook 'global-color-identifiers-mode))
 #+end_src
-*** jq
+*** COMMENT jq
 #+begin_src emacs-lisp
 (use-package counsel-jq
   :after swiper
@@ -3661,7 +3855,9 @@ It is better to always copy to location at other window
     (ledger-reports-add "net worth" "ledger -X INR balance ^Assets ^Liabilities")
     (ledger-reports-add "wallet" "ledger balance ^Assets:Wallet ^Assets:Sajida:Wallet")
     (ledger-reports-add "sajida" "ledger reg -p 'this month' Assets:Sajida:Wallet")
-    (ledger-reports-add "current month expenses" "ledger --aux-date -p 'this month' -S -a reg Expenses"))
+    (ledger-reports-add "current month expenses" "ledger --aux-date -p 'this month' -S -a reg Expenses")
+    (ledger-reports-add "current month food expenses" "ledger --aux-date -p 'this month' -S -a -s reg Expenses:Food")
+    (ledger-reports-add "monthly food expenses" "ledger -y '%b %Y' -M -n reg Expenses:Food"))
   :init
   (progn
     (setq ledger-file "~/github.com/noorul/notebook/finance/accounts.dat")
@@ -3782,8 +3978,9 @@ It is better to always copy to location at other window
 ** Terminal
 #+begin_src emacs-lisp
 (use-package vterm
-  :commands (vterm
-             counsel-projectile-switch-project-action-run-vterm)
+;;  :load-path "/Users/noorul/github.com/akermu/emacs-libvterm"
+  :commands (vterm)
+;;             counsel-projectile-switch-project-action-run-vterm)
   :config
   (setq vterm-shell "/bin/zsh"))
 #+end_src
