@@ -17,6 +17,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq save-abbrevs 'silently)
 (setq gc-cons-threshold (* 100 1000 1000))
+(setq native-comp-async-report-warnings-errors 'silent)
 ; Profile emacs startup
 ;; (add-hook 'emacs-startup-hook
 ;;           (lambda ()
@@ -171,9 +172,8 @@ org-babel-tangle= (=C-c C-v t=) produces.
           (habit . traffic-light-deuteranopia))
         )
   ;; Load the theme files before enabling a theme (else you get an error).
-  (modus-themes-load-themes)
   :config
-  (modus-themes-load-vivendi))
+  (load-theme 'modus-vivendi :no-confim))
 
 #+end_src
 
@@ -1636,7 +1636,7 @@ It is better to always copy to location at other window
           (gnuplot . t)
           (clojure . t)
           (shell . t)
-          (ledger . t)
+;;          (ledger . t)
           (org . t)
           (plantuml . t)
           (latex . t)
