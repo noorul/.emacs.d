@@ -173,8 +173,9 @@ org-babel-tangle= (=C-c C-v t=) produces.
         )
   ;; Load the theme files before enabling a theme (else you get an error).
   :config
-  (load-theme 'modus-vivendi :no-confim))
+  (load-theme 'modus-vivendi-tinted :no-confim))
 
+(use-package ef-themes)
 #+end_src
 
 ** General configuration
@@ -210,7 +211,8 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
         (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME"
               "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
-              "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"))
+              "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
+              "COMPOSE_FILE"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -372,7 +374,7 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 ;;   embark-prompter 'embark-completing-read-prompter
    )
   :config
-  (setq embark-cycle-key (kbd "SPC"))
+  (setq embark-cycle-key "<space>")
   (setq embark-quit-after-action t)
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
@@ -385,7 +387,7 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
   :demand t                ; only necessary if you have the hook below
   ;; if you want to have consult previews as you move around an
   ;; auto-updating embark collect buffer
-  :hook (embark-collect-mode . embark-consult-preview-minor-mode)
+  :hook (embark-collect-mode . consult-preview-at-point-mode)
   :config
 
   (defun noorul/my-projectile-vc (&optional project)
@@ -393,7 +395,7 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
     (projectile-vc project))
 
 (defun my/embark-projectile-switch-project-action-vc (project)
-  "Search PROJECT with rg."
+  "Switch PROJECT's magit buffer."
   (interactive "s")
   (let ((projectile-switch-project-action 'projectile-vc))
     (my/embark-projectile-switch-project-by-name project)))
@@ -413,6 +415,11 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
            (consult-ripgrep))))
     (my/embark-projectile-switch-project-by-name project)))
 
+(defvar-keymap my/embark-projectile-extended-map
+  :doc "Keymap for extended projectile actions."
+  "v" #'my/embark-projectile-switch-project-action-run-vterm)
+
+(fset 'my/embark-projectile-extended-map my/embark-projectile-extended-map)
 
 (defun my/embark-projectile-switch-project-by-name (project)
   "Switch to PROJECT.
@@ -440,11 +447,12 @@ action."
   (with-current-buffer " *embark-projectile*"
     (run-hooks 'projectile-after-switch-project-hook)))
 
-  (embark-define-keymap projectile-map
-    "Commands to act on current file or buffer."
-    ("v" my/embark-projectile-switch-project-action-vc)
-    ("s" my/embark-projectile-switch-project-action-rg)
-    ("xv" my/embark-projectile-switch-project-action-run-vterm))
+  (defvar-keymap projectile-map
+    :doc "Commands to act on current file or buffer."
+    :parent embark-general-map
+    "v" #'my/embark-projectile-switch-project-action-vc
+    "s" #'my/embark-projectile-switch-project-action-rg
+    "x" #'my/embark-projectile-extended-map)
 
   (add-to-list 'embark-keymap-alist '(projectile-project . projectile-map)))
 #+end_src
@@ -945,6 +953,8 @@ It is better to always copy to location at other window
                 "* TODO Review %c\n%U\n  %i" :immediate-finish t)
                ("m" "Meeting" entry (file noorul/refile-target)
                 "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+               ("a" "Aruba Meeting" entry (file+olp "~/github.com/noorul/notebook/notebook/aruba.org" "Meetings")
+                "* %?\n%U\n  %i" :clock-in t :clock-resume t)
                ("p" "Phone call" entry (file+datetree noorul/refile-target)
                 "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
                ("c" "Contacts" entry (file "~/github.com/noorul/notebook/notebook/contacts.org")
@@ -2821,7 +2831,8 @@ It is better to always copy to location at other window
 (use-package lsp-treemacs
   :after lsp-mode
   :config
-  (setq lsp-metals-treeview-show-when-views-received t)
+  (setq lsp-metals-treeview-show-when-views-received t
+        treemacs-no-delete-other-windows nil)
   )
 
 (defun noorul/ensime-sbt-do-assembly ()
@@ -2887,6 +2898,7 @@ It is better to always copy to location at other window
          ("C-x G" . magit-status-with-prefix))
   :commands magit-auto-revert-mode
   :custom (magit-auto-revert-mode nil)
+  :pin melpa
   :init
   (defun magit-status-with-prefix ()
     (interactive)
@@ -3012,6 +3024,37 @@ It is better to always copy to location at other window
   :custom
   (python-pytest-executable "pytest.sh"))
 #+end_src
+*** Ruby
+https://github.com/amake/.emacs.d/blob/master/init.el
+#+begin_src emacs-lisp
+(use-package ruby-mode
+  :ensure nil
+  :after lsp-mode
+  :hook ((ruby-mode . lsp-deferred)))
+
+(use-package inf-ruby)
+
+(use-package ruby-test-mode
+  :after ruby-mode
+  :diminish ruby-test-mode
+  :config
+  (defun amk-ruby-test-pretty-error-diffs (old-func &rest args)
+    "Make error diffs prettier."
+    (let ((exit-status (cadr args)))
+      (apply old-func args)
+      (when (> exit-status 0)
+        (diff-mode)
+        ;; Remove self
+        (advice-remove #'compilation-handle-exit #'amk-ruby-test-pretty-error-diffs))))
+
+  (defun amk-ruby-test-pretty-error-diffs-setup (old-func &rest args)
+    "Set up advice to enable pretty diffs when tests fail."
+    (advice-add #'compilation-handle-exit :around #'amk-ruby-test-pretty-error-diffs)
+    (apply old-func args))
+
+  (advice-add #'ruby-test-run-command :around #'amk-ruby-test-pretty-error-diffs-setup))
+#+end_src
+[2023-03-22 Wed 19:16]
 
 *** Version control
 #+begin_src emacs-lisp
@@ -3067,7 +3110,7 @@ It is better to always copy to location at other window
 
 (use-package docker
   :bind ("C-c d" . docker)
-  :config
+  :init
   (setq docker-show-status nil
         docker-run-async-with-buffer-function 'docker-run-async-with-buffer-shell))
 #+end_src
@@ -3092,7 +3135,8 @@ It is better to always copy to location at other window
 *** Kubernetes
 #+begin_src emacs-lisp
 (use-package magit-popup
-  :after (kubernetes magit))
+  :pin melpa
+  :after (magit kubernetes))
 
 (use-package kubernetes
   :load-path "~/github.com/noorul/kubernetes-el"
@@ -3806,7 +3850,7 @@ It is better to always copy to location at other window
               eshell-history-size 50000)
   :config
   (add-hook 'eshell-mode-hook
-           '(lambda () (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history))))
+            '(lambda () (define-key eshell-mode-map (kbd "M-r") 'counsel-esh-history))))
 #+end_src
 ** Key bindings
 #+begin_src emacs-lisp
@@ -3983,7 +4027,10 @@ It is better to always copy to location at other window
   :commands (vterm)
 ;;             counsel-projectile-switch-project-action-run-vterm)
   :config
-  (setq vterm-shell "/bin/zsh"))
+  (setq vterm-shell "/bin/zsh"
+        vterm-timer-delay 0.01)
+  (defun vterm-send-escape ()
+    (vterm-send-key "<escape>")))
 #+end_src
 ** Work configuration
 #+begin_src emacs-lisp
