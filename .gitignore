@@ -5,8 +5,6 @@ custom-settings.el
 data/
 elpa/
 eshell/
-init.el
-noorul.el
 org-clock-save.el
 transient/
 recentf
