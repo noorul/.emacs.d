@@ -173,9 +173,12 @@ org-babel-tangle= (=C-c C-v t=) produces.
         )
   ;; Load the theme files before enabling a theme (else you get an error).
   :config
-  (load-theme 'modus-vivendi-tinted :no-confim))
+  (load-theme 'modus-vivendi-tritanopia :no-confim))
 
-(use-package ef-themes)
+(use-package ef-themes
+  :init (setq ef-themes-mixed-fonts t)
+  )
+
 #+end_src
 
 ** General configuration
@@ -212,7 +215,8 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
               "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
-              "COMPOSE_FILE"))
+              "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
+              "DOCKER_AUTH_SOCK_PATH"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -454,7 +458,7 @@ action."
     "s" #'my/embark-projectile-switch-project-action-rg
     "x" #'my/embark-projectile-extended-map)
 
-  (add-to-list 'embark-keymap-alist '(projectile-project . projectile-map)))
+  (add-to-list 'embark-keymap-alist '(projectile-project . (projectile-map embark-file-map))))
 #+end_src
 **** Consult
 #+begin_src emacs-lisp
@@ -1634,45 +1638,46 @@ It is better to always copy to location at other window
  #+END_SRC
 *** Org babel setup
  #+begin_src emacs-lisp
- (org-babel-do-load-languages
-  (quote org-babel-load-languages)
-  (quote ((emacs-lisp . t)
-          (dot . t)
-          (sql . t)
-          (calc . t)
-          (ditaa . t)
-          (R . t)
-          (python . t)
-          (ruby . t)
-          (gnuplot . t)
-          (clojure . t)
-          (shell . t)
-;;          (ledger . t)
-          (org . t)
-          (plantuml . t)
-          (latex . t)
-;;          (elasticsearch . t)
-          (java . t)
-          (groovy . t)
-          (js . t)
-          )))
+  (org-babel-do-load-languages
+   (quote org-babel-load-languages)
+   (quote ((emacs-lisp . t)
+           (dot . t)
+           (sql . t)
+           (calc . t)
+           (ditaa . t)
+           (R . t)
+           (python . t)
+           (ruby . t)
+           (gnuplot . t)
+           (clojure . t)
+           (shell . t)
+ ;;          (ledger . t)
+           (org . t)
+           (plantuml . t)
+           (latex . t)
+ ;;          (elasticsearch . t)
+           (java . t)
+           (groovy . t)
+           (js . t)
+           (jq . t)
+           )))
 
- (setq org-babel-default-header-args:java
-       '((:dir . "~/bitbucket.org/noorul/sandbox/java")
-         (:results . "output")))
+  (setq org-babel-default-header-args:java
+        '((:dir . "~/bitbucket.org/noorul/sandbox/java")
+          (:results . "output")))
 
- (setq org-babel-python-command "python3")
+  (setq org-babel-python-command "python3")
 
- ;; Do not prompt to confirm evaluation
- ;; This may be dangerous - make sure you understand the consequences
- ;; of setting this -- see the docstring for details
- ;; (setq org-confirm-babel-evaluate nil)
+  ;; Do not prompt to confirm evaluation
+  ;; This may be dangerous - make sure you understand the consequences
+  ;; of setting this -- see the docstring for details
+  ;; (setq org-confirm-babel-evaluate nil)
 
- ;; Use fundamental mode when editing plantuml blocks with C-c '
- (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+  ;; Use fundamental mode when editing plantuml blocks with C-c '
+  (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
- ;; Don't enable this because it breaks access to emacs from my Android phone
- (setq org-startup-with-inline-images nil)
+  ;; Don't enable this because it breaks access to emacs from my Android phone
+  (setq org-startup-with-inline-images nil)
 
  #+end_src
 *** Reminders
@@ -2699,6 +2704,20 @@ It is better to always copy to location at other window
  (setq org-id-locations-file (convert-standard-filename
                                    (concat user-data-directory ".org-id-locations")))
  #+end_src
+*** org-ql
+#+begin_src emacs-lisp
+(use-package org-ql
+  :after org
+  :commands org-ql-search
+  :bind
+  ("M-g q" . org-ql-find)
+  :config
+  (add-to-list 'vertico-multiform-commands
+               '(org-ql-find)))
+#+end_src
+
+#+RESULTS:
+: org-ql-find
 
 ** Coding
 *** Whitespace
@@ -2869,7 +2888,7 @@ It is better to always copy to location at other window
          "-Xmx1G"
          "-XX:+UseG1GC"
          "-XX:+UseStringDeduplication"
-         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar")))
+         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar")))
 #+end_src
 
 *** golang
@@ -2885,6 +2904,20 @@ It is better to always copy to location at other window
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 )
 #+end_src
+*** Rust
+#+begin_src emacs-lisp
+(use-package rust-mode
+  :defer t
+  :mode ("\\.rs\\'" . rust-mode)
+  :config
+  (setq rust-format-on-save t)
+  :init
+  (add-hook 'rust-mode-hook
+          (lambda () (setq indent-tabs-mode nil)))
+  (add-hook 'rust-mode-hook #'lsp))
+#+end_src
+
+[2023-09-23 Sat 18:39]
 *** Expand region
 #+begin_src emacs-lisp
 (use-package expand-region
@@ -3014,7 +3047,7 @@ It is better to always copy to location at other window
     (flymake-log 3 "file %s, init=%s" file-name (car mode-and-masks))
     mode-and-masks))
 
-(add-to-list 'flymake-allowed-file-name-masks '(python-mode elpy-flymake-python-init))
+;;(add-to-list 'flymake-allowed-file-name-masks '(python-mode elpy-flymake-python-init))
 (setq python-check-command "pycheckers")
 ;;(add-hook 'python-mode-hook 'auto-complete-mode)
 
@@ -3316,6 +3349,10 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   :diminish tern-mode
   :hook (js2-mode . tern-mode))
 #+end_src
+**** jq-mode
+#+begin_src emacs-lisp
+(use-package jq-mode)
+#+end_src
 *** TypeScript
 
 #+begin_src emacs-lisp
@@ -3457,7 +3494,18 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 (use-package lsp-grammarly
   :commands lsp)
 #+end_src
-
+** Reading
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :defer t
+  :mode "\\.pdf$"
+  :config
+  (setq-default pdf-view-display-size 'fit-page)
+  (setq pdf-annot-activate-created-annotations t)
+  :init
+  (pdf-tools-install :no-query))
+#+end_src
+[2023-09-29 Fri 13:51]
 ** Mail
 *** Gnus
 #+begin_src emacs-lisp
@@ -4043,6 +4091,9 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 (let ((personal-config-file "~/bitbucket.org/noorul/emacs-config/personal.el"))
  (if (file-exists-p personal-config-file)
      (load-file personal-config-file)))
+
+(defalias 'noorul/record-exercise
+   (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
 #+end_src
 ** Startup
  #+begin_src emacs-lisp

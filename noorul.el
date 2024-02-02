@@ -124,9 +124,11 @@
         )
   ;; Load the theme files before enabling a theme (else you get an error).
   :config
-  (load-theme 'modus-vivendi-tinted :no-confim))
+  (load-theme 'modus-vivendi-tritanopia :no-confim))
 
-(use-package ef-themes)
+(use-package ef-themes
+  :init (setq ef-themes-mixed-fonts t)
+  )
 
 (defun my/reload-emacs-configuration ()
   (interactive)
@@ -149,7 +151,8 @@
               "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
-              "COMPOSE_FILE"))
+              "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
+              "DOCKER_AUTH_SOCK_PATH"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -342,7 +345,7 @@ action."
     "s" #'my/embark-projectile-switch-project-action-rg
     "x" #'my/embark-projectile-extended-map)
 
-  (add-to-list 'embark-keymap-alist '(projectile-project . projectile-map)))
+  (add-to-list 'embark-keymap-alist '(projectile-project . (projectile-map embark-file-map))))
 
 (use-package consult
   :after projectile
@@ -1323,6 +1326,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
           (java . t)
           (groovy . t)
           (js . t)
+          (jq . t)
           )))
 
  (setq org-babel-default-header-args:java
@@ -2185,6 +2189,15 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (setq org-id-locations-file (convert-standard-filename
                                   (concat user-data-directory ".org-id-locations")))
 
+(use-package org-ql
+  :after org
+  :commands org-ql-search
+  :bind
+  ("M-g q" . org-ql-find)
+  :config
+  (add-to-list 'vertico-multiform-commands
+               '(org-ql-find)))
+
 (add-hook 'before-save-hook #'delete-trailing-whitespace nil nil)
 
 (use-package column-enforce-mode
@@ -2331,7 +2344,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
          "-Xmx1G"
          "-XX:+UseG1GC"
          "-XX:+UseStringDeduplication"
-         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar")))
+         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar")))
 
 (defun lsp-go-install-save-hooks ()
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
@@ -2343,6 +2356,16 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :init
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 )
+
+(use-package rust-mode
+  :defer t
+  :mode ("\\.rs\\'" . rust-mode)
+  :config
+  (setq rust-format-on-save t)
+  :init
+  (add-hook 'rust-mode-hook
+          (lambda () (setq indent-tabs-mode nil)))
+  (add-hook 'rust-mode-hook #'lsp))
 
 (use-package expand-region
   :defer t
@@ -2460,7 +2483,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
     (flymake-log 3 "file %s, init=%s" file-name (car mode-and-masks))
     mode-and-masks))
 
-(add-to-list 'flymake-allowed-file-name-masks '(python-mode elpy-flymake-python-init))
+;;(add-to-list 'flymake-allowed-file-name-masks '(python-mode elpy-flymake-python-init))
 (setq python-check-command "pycheckers")
 ;;(add-hook 'python-mode-hook 'auto-complete-mode)
 
@@ -2714,6 +2737,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :diminish tern-mode
   :hook (js2-mode . tern-mode))
 
+(use-package jq-mode)
+
 (use-package typescript-mode
   :hook
   (typescript-mode . column-enforce-mode)
@@ -2836,6 +2861,15 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (use-package lsp-grammarly
   :commands lsp)
+
+(use-package pdf-tools
+  :defer t
+  :mode "\\.pdf$"
+  :config
+  (setq-default pdf-view-display-size 'fit-page)
+  (setq pdf-annot-activate-created-annotations t)
+  :init
+  (pdf-tools-install :no-query))
 
 (use-package async :defer t)
 
@@ -3384,6 +3418,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (let ((personal-config-file "~/bitbucket.org/noorul/emacs-config/personal.el"))
  (if (file-exists-p personal-config-file)
      (load-file personal-config-file)))
+
+(defalias 'noorul/record-exercise
+   (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
 
 (org-agenda "" "c")
 (toggle-frame-fullscreen)
