@@ -216,7 +216,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
               "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
-              "DOCKER_AUTH_SOCK_PATH"))
+              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
