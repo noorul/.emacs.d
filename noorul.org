@@ -2902,6 +2902,7 @@ It is better to always copy to location at other window
   :mode ("\\.go\\'" . go-mode)
   :init
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+  (add-hook 'go-mode-hook #'lsp)
 )
 #+end_src
 *** Rust
