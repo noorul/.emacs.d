@@ -152,7 +152,7 @@
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
               "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
-              "DOCKER_AUTH_SOCK_PATH"))
+              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -2355,6 +2355,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :mode ("\\.go\\'" . go-mode)
   :init
   (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+  (add-hook 'go-mode-hook #'lsp)
 )
 
 (use-package rust-mode
@@ -2375,7 +2376,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :bind (("C-x g" . magit-status)
          ("C-x G" . magit-status-with-prefix))
   :commands magit-auto-revert-mode
-  :custom (magit-auto-revert-mode nil)
+  :custom
+  (magit-auto-revert-mode nil)
+  (magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
   :pin melpa
   :init
   (defun magit-status-with-prefix ()
@@ -3411,11 +3414,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (defun vterm-send-escape ()
     (vterm-send-key "<escape>")))
 
-(let ((work-config-file "~/bitbucket.org/noorul/emacs-config/work.el"))
+(let ((work-config-file "~/github.com/noorul/work-emacs-config/work.el"))
  (if (file-exists-p work-config-file)
      (load-file work-config-file)))
 
-(let ((personal-config-file "~/bitbucket.org/noorul/emacs-config/personal.el"))
+(let ((personal-config-file "~/github.com/noorul/work-emacs-config/personal.el"))
  (if (file-exists-p personal-config-file)
      (load-file personal-config-file)))
 
