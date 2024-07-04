@@ -111,6 +111,7 @@
 
 (use-package modus-themes
   :pin melpa
+  :disabled t
   :init
   (setq modus-themes-slanted-constructs t
         modus-themes-mixed-fonts t
@@ -127,8 +128,12 @@
   (load-theme 'modus-vivendi-tritanopia :no-confim))
 
 (use-package ef-themes
-  :init (setq ef-themes-mixed-fonts t)
-  )
+  :init
+  (setq ef-themes-mixed-fonts t
+        ef-themes-variable-pitch-ui t)
+  (mapc #'disable-theme custom-enabled-themes)
+  :config
+  (load-theme 'ef-tritanopia-dark :no-confirm))
 
 (defun my/reload-emacs-configuration ()
   (interactive)
