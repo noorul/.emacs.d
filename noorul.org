@@ -3157,7 +3157,8 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   :bind ("C-c d" . docker)
   :init
   (setq docker-show-status nil
-        docker-run-async-with-buffer-function 'docker-run-async-with-buffer-shell))
+        docker-run-async-with-buffer-function 'docker-run-async-with-buffer-shell
+        docker-compose-command "docker compose"))
 #+end_src
 
 *** Emacs Lisp
