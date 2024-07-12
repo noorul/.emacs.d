@@ -2791,6 +2791,7 @@ It is better to always copy to location at other window
   ;; Optional - enable lsp-mode automatically in scala files
   :commands lsp
   :hook  (scala-mode . lsp)
+         (terraform-mode . lsp-deferred)
          (lsp-mode . lsp-lens-mode)
   :config (setq lsp-prefer-flymake nil))
 
@@ -2922,7 +2923,11 @@ It is better to always copy to location at other window
   (add-hook 'rust-mode-hook #'lsp))
 #+end_src
 
-[2023-09-23 Sat 18:39]
+*** Terraform
+#+begin_src emacs-lisp
+(use-package terraform-mode
+  :ensure t)
+#+end_src
 *** Expand region
 #+begin_src emacs-lisp
 (use-package expand-region
