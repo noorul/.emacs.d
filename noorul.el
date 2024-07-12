@@ -112,7 +112,7 @@
 (use-package modus-themes
   :pin melpa
   :disabled t
-  :init
+ :init
   (setq modus-themes-slanted-constructs t
         modus-themes-mixed-fonts t
         modus-themes-bold-constructs nil
@@ -2252,6 +2252,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   ;; Optional - enable lsp-mode automatically in scala files
   :commands lsp
   :hook  (scala-mode . lsp)
+         (terraform-mode . lsp-deferred)
          (lsp-mode . lsp-lens-mode)
   :config (setq lsp-prefer-flymake nil))
 
@@ -2372,6 +2373,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (add-hook 'rust-mode-hook
           (lambda () (setq indent-tabs-mode nil)))
   (add-hook 'rust-mode-hook #'lsp))
+
+(use-package terraform-mode
+  :ensure t)
 
 (use-package expand-region
   :defer t
@@ -2573,7 +2577,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :bind ("C-c d" . docker)
   :init
   (setq docker-show-status nil
-        docker-run-async-with-buffer-function 'docker-run-async-with-buffer-shell))
+        docker-run-async-with-buffer-function 'docker-run-async-with-buffer-shell
+        docker-compose-command "docker compose"))
 
 (defun my-elisp-indent-or-complete (&optional arg)
         (interactive "p")
