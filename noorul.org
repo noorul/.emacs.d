@@ -3497,7 +3497,21 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 (setq nxml-child-indent 4
       nxml-attribute-indent 4)
 #+end_src
-
+*** Nix
+#+begin_src emacs-lisp
+(use-package nix-mode
+  :mode ("\\.nix\\'" "\\.nix.in\\'"))
+(use-package nix-drv-mode
+  :ensure nix-mode
+  :mode "\\.drv\\'")
+(use-package nix-shell
+  :ensure nix-mode
+  :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
+(use-package nix-repl
+  :ensure nix-mode
+  :commands (nix-repl))
+#+end_src
+[2024-07-22 Mon 20:51]
 ** Writing
 *** LSP grammarly
 #+begin_src emacs-lisp
