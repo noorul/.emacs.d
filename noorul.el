@@ -2869,8 +2869,17 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (setq nxml-child-indent 4
       nxml-attribute-indent 4)
 
+(use-package lsp-nix
+  :ensure lsp-mode
+  :after (lsp-mode)
+  :demand t
+  :custom
+  (lsp-nix-nil-formatter ["nixpkgs-fmt"]))
+
 (use-package nix-mode
+  :hook (nix-mode . lsp-deferred)
   :mode ("\\.nix\\'" "\\.nix.in\\'"))
+
 (use-package nix-drv-mode
   :ensure nix-mode
   :mode "\\.drv\\'")
@@ -3425,6 +3434,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
    (quote ((restclient . t)))))
+
+(use-package browser-hist
+  :config
+  (setq browser-hist-default-browser 'firefox)
+  :commands (browser-hist-search))
 
 (use-package vterm
 ;;  :load-path "/Users/noorul/github.com/akermu/emacs-libvterm"
