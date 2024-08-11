@@ -4103,7 +4103,13 @@ https://github.com/amake/.emacs.d/blob/master/init.el
    (quote org-babel-load-languages)
    (quote ((restclient . t)))))
 #+end_src
-
+*** Browser history
+#+begin_src emacs-lisp
+(use-package browser-hist
+  :config
+  (setq browser-hist-default-browser 'firefox)
+  :commands (browser-hist-search))
+#+end_src
 ** Terminal
 #+begin_src emacs-lisp
 (use-package vterm
