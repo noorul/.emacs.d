@@ -3499,8 +3499,17 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 #+end_src
 *** Nix
 #+begin_src emacs-lisp
+(use-package lsp-nix
+  :ensure lsp-mode
+  :after (lsp-mode)
+  :demand t
+  :custom
+  (lsp-nix-nil-formatter ["nixpkgs-fmt"]))
+
 (use-package nix-mode
+  :hook (nix-mode . lsp-deferred)
   :mode ("\\.nix\\'" "\\.nix.in\\'"))
+
 (use-package nix-drv-mode
   :ensure nix-mode
   :mode "\\.drv\\'")
