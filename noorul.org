@@ -3068,6 +3068,10 @@ It is better to always copy to location at other window
   :bind ("C-c s t" . python-pytest-popup)
   :custom
   (python-pytest-executable "pytest.sh"))
+
+(defun my/install-python-lsp ()
+  (interactive)
+  (async-shell-command "poetry run pip install python-lsp-server"))
 #+end_src
 *** Ruby
 https://github.com/amake/.emacs.d/blob/master/init.el

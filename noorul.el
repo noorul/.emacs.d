@@ -2505,6 +2505,10 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :custom
   (python-pytest-executable "pytest.sh"))
 
+(defun my/install-python-lsp ()
+  (interactive)
+  (async-shell-command "poetry run pip install python-lsp-server"))
+
 (use-package ruby-mode
   :ensure nil
   :after lsp-mode
