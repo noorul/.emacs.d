@@ -2963,7 +2963,32 @@ It is better to always copy to location at other window
 (use-package git-timemachine
     :commands git-timemachine)
 #+end_src
+*** Forge
 
+#+begin_src emacs-lisp
+(use-package forge
+  :after magit
+  :custom
+  (forge-database-file "~/.config/forge/database.sqlite")
+  (forge-owned-accounts '(("noorul")))
+  :preface
+  (defun my-quick-create-pull-request (_title branch)
+    (interactive "sTitle: \nsBranch: ")
+    (setq branch (concat "noorul/" branch))
+    ;; Split this commit to another branch.
+    (magit-branch-spinoff branch)
+    ;; Push that branch to the remote.
+    (call-interactively #'magit-push-current-to-pushremote)
+    (sleep-for 3)
+    ;; Create a pullreq using the same title.
+    (forge-create-pullreq (concat "origin/" branch) "origin/main"))
+  :config
+  (transient-insert-suffix 'forge-dispatch "c i"
+    '("p" "quick-pr" my-quick-create-pull-request))
+  (remove-hook 'magit-status-sections-hook 'forge-insert-issues))
+#+end_src
+
+[2024-08-22 Thu 09:16]
 *** Projects
 #+begin_src emacs-lisp
 (use-package projectile

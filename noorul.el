@@ -2408,6 +2408,27 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (use-package git-timemachine
     :commands git-timemachine)
 
+(use-package forge
+  :after magit
+  :custom
+  (forge-database-file "~/.config/forge/database.sqlite")
+  (forge-owned-accounts '(("noorul")))
+  :preface
+  (defun my-quick-create-pull-request (_title branch)
+    (interactive "sTitle: \nsBranch: ")
+    (setq branch (concat "noorul/" branch))
+    ;; Split this commit to another branch.
+    (magit-branch-spinoff branch)
+    ;; Push that branch to the remote.
+    (call-interactively #'magit-push-current-to-pushremote)
+    (sleep-for 3)
+    ;; Create a pullreq using the same title.
+    (forge-create-pullreq (concat "origin/" branch) "origin/main"))
+  :config
+  (transient-insert-suffix 'forge-dispatch "c i"
+    '("p" "quick-pr" my-quick-create-pull-request))
+  (remove-hook 'magit-status-sections-hook 'forge-insert-issues))
+
 (use-package projectile
   :diminish
   :defer 5
