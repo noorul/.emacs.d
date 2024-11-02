@@ -3462,7 +3462,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (use-package browser-hist
   :config
-  (setq browser-hist-default-browser 'firefox)
+  (setq browser-hist-default-browser 'brave)
   :commands (browser-hist-search))
 
 (use-package vterm

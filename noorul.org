@@ -4136,7 +4136,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 #+begin_src emacs-lisp
 (use-package browser-hist
   :config
-  (setq browser-hist-default-browser 'firefox)
+  (setq browser-hist-default-browser 'brave)
   :commands (browser-hist-search))
 #+end_src
 ** Terminal
