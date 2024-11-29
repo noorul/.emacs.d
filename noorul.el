@@ -456,6 +456,8 @@ action."
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
+(global-set-key (kbd "C-c m f") 'toggle-frame-fullscreen)
+
 (defun noorul/store-current-location ()
   (interactive)
   (point-to-register ?1))
