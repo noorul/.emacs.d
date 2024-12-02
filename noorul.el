@@ -2352,7 +2352,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
          "-Xmx1G"
          "-XX:+UseG1GC"
          "-XX:+UseStringDeduplication"
-         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar")))
+         "-javaagent:/Users/noorul/.m2/repository/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar")))
 
 (defun lsp-go-install-save-hooks ()
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
