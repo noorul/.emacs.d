@@ -657,11 +657,6 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
-*** Work around for full screen issue
-#+begin_src emacs-lisp
-(global-set-key (kbd "C-c m f") 'toggle-frame-fullscreen)
-#+end_src
-[2024-11-29 Fri 07:23]
 ** Navigation
 *** Use register to store current location
 #+begin_src emacs-lisp
@@ -4174,6 +4169,6 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 ** Startup
  #+begin_src emacs-lisp
  (org-agenda "" "c")
- (toggle-frame-fullscreen)
+ (setq frame-resize-pixelwise t)
  (toggle-frame-fullscreen)
  #+end_src

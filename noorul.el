@@ -456,8 +456,6 @@ action."
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
-(global-set-key (kbd "C-c m f") 'toggle-frame-fullscreen)
-
 (defun noorul/store-current-location ()
   (interactive)
   (point-to-register ?1))
@@ -3489,5 +3487,5 @@ Late deadlines first, then scheduled, then non-late deadlines"
    (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
 
 (org-agenda "" "c")
-(toggle-frame-fullscreen)
+(setq frame-resize-pixelwise t)
 (toggle-frame-fullscreen)
