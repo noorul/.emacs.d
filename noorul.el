@@ -157,7 +157,7 @@
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
               "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
-              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN"))
+              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN" "ANTHROPIC_API_KEY"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -2914,6 +2914,13 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (use-package nix-repl
   :ensure nix-mode
   :commands (nix-repl))
+
+(use-package gptel
+  :config
+  (setq
+   gptel-model 'claude-3-5-sonnet-20241022
+   gptel-backend (gptel-make-anthropic "Claude"
+                   :stream t :key (getenv "ANTHROPIC_API_KEY"))))
 
 (use-package keytar
   :after lsp-grammarly)
