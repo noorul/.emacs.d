@@ -3485,35 +3485,31 @@ Late deadlines first, then scheduled, then non-late deadlines"
                 zone
                 abbrev
                 (concat (substring zone-time 0 3) ":" (substring zone-time 3))))
-    (error nil)))  ; Return nil if timezone is invalid
-
-(defun list-timezones ()
-  "Get a list of available time zones."
-  (let* ((tzdir (or (bound-and-true-p tzdata-directory)
-                    "/usr/share/zoneinfo/"))
-         (zones nil))
-    (dolist (file (directory-files-recursively tzdir "" t))
-      (when (and (file-regular-p file)
-                 (not (string-match "\\(Etc\\|right\\|posix\\|SystemV\\|tzdata\\|localtime\\|posixrules\\)" file)))
-        (let ((zone (file-relative-name file tzdir)))
-          (push zone zones))))
-    (sort zones #'string<)))
+    (error nil)))
 
 (defun list-timezones-with-descriptions ()
   "Get a list of available time zones with descriptions."
-  (let ((descriptions nil))
-    (dolist (zone (list-timezones))
-      (let ((desc (get-timezone-description zone)))
-        (when desc  ; Only add valid timezones
-          (push (cons desc zone) descriptions))))
-    (sort descriptions (lambda (a b) (string-lessp (car a) (car b))))))
+  (if (eq system-type 'windows-nt)
+      (error "This function is not supported on Windows")
+    (let* ((tzdir "/usr/share/zoneinfo/")
+           (descriptions nil))
+      (dolist (file (directory-files-recursively tzdir "" t))
+        (when (and (file-regular-p file)
+                   (not (string-match "\\(Etc\\|right\\|posix\\|SystemV\\|tzdata\\|localtime\\|posixrules\\)" file)))
+          (let* ((zone (file-relative-name file tzdir))
+                 (desc (get-timezone-description zone)))
+            (when desc
+              (push (cons desc zone) descriptions)))))
+      (sort descriptions (lambda (a b) (string-lessp (car a) (car b)))))))
 
-(defun my/current-time-in-zone (zone)
+(defun current-time-in-zone (zone)
   "Display current time in specified time zone ZONE."
   (interactive
-   (let* ((choices (list-timezones-with-descriptions))
-          (choice (completing-read "Select time zone: " choices nil t)))
-     (list (cdr (assoc choice choices)))))
+   (if (eq system-type 'windows-nt)
+       (error "This function is not supported on Windows")
+     (let* ((choices (list-timezones-with-descriptions))
+            (choice (completing-read "Select time zone: " choices nil t)))
+       (list (cdr (assoc choice choices))))))
   (let ((current-time-format "%Y-%m-%d %H:%M:%S %Z"))
     (message "%s"
              (format-time-string
