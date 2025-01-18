@@ -3475,6 +3475,52 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (setq browser-hist-default-browser 'brave)
   :commands (browser-hist-search))
 
+(defun get-timezone-description (zone)
+  "Get a descriptive name for the time zone ZONE."
+  (condition-case nil
+      (let* ((time (current-time))
+             (zone-time (format-time-string "%z" time zone))
+             (abbrev (format-time-string "%Z" time zone)))
+        (format "%s (%s, UTC%s)"
+                zone
+                abbrev
+                (concat (substring zone-time 0 3) ":" (substring zone-time 3))))
+    (error nil)))  ; Return nil if timezone is invalid
+
+(defun list-timezones ()
+  "Get a list of available time zones."
+  (let* ((tzdir (or (bound-and-true-p tzdata-directory)
+                    "/usr/share/zoneinfo/"))
+         (zones nil))
+    (dolist (file (directory-files-recursively tzdir "" t))
+      (when (and (file-regular-p file)
+                 (not (string-match "\\(Etc\\|right\\|posix\\|SystemV\\|tzdata\\|localtime\\|posixrules\\)" file)))
+        (let ((zone (file-relative-name file tzdir)))
+          (push zone zones))))
+    (sort zones #'string<)))
+
+(defun list-timezones-with-descriptions ()
+  "Get a list of available time zones with descriptions."
+  (let ((descriptions nil))
+    (dolist (zone (list-timezones))
+      (let ((desc (get-timezone-description zone)))
+        (when desc  ; Only add valid timezones
+          (push (cons desc zone) descriptions))))
+    (sort descriptions (lambda (a b) (string-lessp (car a) (car b))))))
+
+(defun my/current-time-in-zone (zone)
+  "Display current time in specified time zone ZONE."
+  (interactive
+   (let* ((choices (list-timezones-with-descriptions))
+          (choice (completing-read "Select time zone: " choices nil t)))
+     (list (cdr (assoc choice choices)))))
+  (let ((current-time-format "%Y-%m-%d %H:%M:%S %Z"))
+    (message "%s"
+             (format-time-string
+              current-time-format
+              (current-time)
+              zone))))
+
 (use-package vterm
 ;;  :load-path "/Users/noorul/github.com/akermu/emacs-libvterm"
   :commands (vterm)
@@ -3484,6 +3530,21 @@ Late deadlines first, then scheduled, then non-late deadlines"
         vterm-timer-delay 0.01)
   (defun vterm-send-escape ()
     (vterm-send-key "<escape>")))
+
+(defun my/open-standalone-vterm (buffer-name command)
+  "Open or switch to a vterm session with BUFFER-NAME and execute COMMAND.
+BUFFER-NAME: Name for the vterm buffer (without asterisks)
+COMMAND: Shell command or script to execute"
+  (interactive "sBuffer name: \nsCommand: ")
+  (let ((vterm-buf-name (concat "*" buffer-name "*"))
+        (projectile-current-project-name nil)
+        (default-directory "~/"))
+    (if (get-buffer vterm-buf-name)
+        (switch-to-buffer vterm-buf-name)
+      (progn
+        (vterm vterm-buf-name)
+        (vterm-send-string command)
+        (vterm-send-return)))))
 
 (let ((work-config-file "~/github.com/noorul/work-emacs-config/work.el"))
  (if (file-exists-p work-config-file)
