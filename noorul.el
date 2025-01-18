@@ -2922,6 +2922,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
    gptel-backend (gptel-make-anthropic "Claude"
                    :stream t :key (getenv "ANTHROPIC_API_KEY"))))
 
+(use-package bitbucket-server
+  :load-path "~/github.com/noorul/bitbucket-server-el")
+
 (use-package keytar
   :after lsp-grammarly)
 
