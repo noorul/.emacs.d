@@ -3502,7 +3502,16 @@ Late deadlines first, then scheduled, then non-late deadlines"
               (push (cons desc zone) descriptions)))))
       (sort descriptions (lambda (a b) (string-lessp (car a) (car b)))))))
 
-(defun current-time-in-zone (zone)
+(defun time-in-zone (time zone)
+  "Display TIME in specified time ZONE."
+  (let ((current-time-format "%Y-%m-%d %H:%M:%S %Z"))
+    (message "%s"
+             (format-time-string
+              current-time-format
+              time
+              zone))))
+
+(defun my/current-time-in-zone (zone)
   "Display current time in specified time zone ZONE."
   (interactive
    (if (eq system-type 'windows-nt)
@@ -3510,12 +3519,19 @@ Late deadlines first, then scheduled, then non-late deadlines"
      (let* ((choices (list-timezones-with-descriptions))
             (choice (completing-read "Select time zone: " choices nil t)))
        (list (cdr (assoc choice choices))))))
-  (let ((current-time-format "%Y-%m-%d %H:%M:%S %Z"))
-    (message "%s"
-             (format-time-string
-              current-time-format
-              (current-time)
-              zone))))
+  (time-in-zone (current-time) zone))
+
+(defun my/time-at-point-in-zone ()
+  "Get time at point and display it in selected timezone."
+  (interactive)
+  (if (eq system-type 'windows-nt)
+      (error "This function is not supported on Windows")
+    (let* ((org-time-was-given t)
+           (time (org-read-date t t))
+           (choices (list-timezones-with-descriptions))
+           (choice (completing-read "Select time zone: " choices nil t))
+           (zone (cdr (assoc choice choices))))
+      (time-in-zone time zone))))
 
 (use-package vterm
 ;;  :load-path "/Users/noorul/github.com/akermu/emacs-libvterm"
