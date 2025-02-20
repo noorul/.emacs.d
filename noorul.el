@@ -2623,7 +2623,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :after (magit kubernetes))
 
 (use-package kubernetes
-  :load-path "~/github.com/noorul/kubernetes-el"
+  :load-path "~/github.com/kubernetes-el/kubernetes-el"
   :commands (kubernetes-overview
              kubernetes-display-pods
              kubernetes-display-configmaps

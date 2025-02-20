@@ -3214,7 +3214,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   :after (magit kubernetes))
 
 (use-package kubernetes
-  :load-path "~/github.com/noorul/kubernetes-el"
+  :load-path "~/github.com/kubernetes-el/kubernetes-el"
   :commands (kubernetes-overview
              kubernetes-display-pods
              kubernetes-display-configmaps
