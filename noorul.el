@@ -2925,6 +2925,46 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (use-package bitbucket-server
   :load-path "~/github.com/noorul/bitbucket-server-el")
 
+(defun aws-get-profiles-async (callback)
+  "Get AWS profiles asynchronously and pass them to CALLBACK."
+  (let ((buffer (generate-new-buffer "*aws-profiles*")))
+    (make-process
+     :name "aws-list-profiles"
+     :buffer buffer
+     :command '("aws" "configure" "list-profiles")
+     :sentinel
+     (lambda (process event)
+       (when (string= event "finished\n")
+         (with-current-buffer buffer
+           (let ((profiles (split-string (buffer-string) "\n" t)))
+             (funcall callback profiles)))
+         (kill-buffer buffer))))))
+
+(defun aws-sso-login-with-profile (profile)
+  "Execute AWS SSO login with the selected PROFILE."
+  (let ((buffer (generate-new-buffer "*aws-sso-login*")))
+    (make-process
+     :name "aws-sso-login"
+     :buffer buffer
+     :command (list "aws" "sso" "login" "--profile" profile)
+     :sentinel
+     (lambda (process event)
+       (when (string= event "finished\n")
+         (message "AWS SSO login completed for profile: %s" profile)
+         (kill-buffer buffer))))))
+
+(defun aws-select-profile-and-login (profiles)
+  "Prompt user to select a profile from PROFILES and initiate SSO login."
+  (let ((selected-profile
+         (completing-read "Select AWS profile: " profiles nil t)))
+    (aws-sso-login-with-profile selected-profile)))
+
+;;;###autoload
+(defun aws-sso-login-interactive ()
+  "Interactive command to execute AWS SSO login with profile selection."
+  (interactive)
+  (aws-get-profiles-async #'aws-select-profile-and-login))
+
 (use-package keytar
   :after lsp-grammarly)
 
