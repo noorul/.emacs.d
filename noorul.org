@@ -3567,45 +3567,73 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 [2025-01-13 Mon 10:46]
 *** AWS
 #+begin_src emacs-lisp
-(defun aws-get-profiles-async (callback)
-  "Get AWS profiles asynchronously and pass them to CALLBACK."
-  (let ((buffer (generate-new-buffer "*aws-profiles*")))
-    (make-process
-     :name "aws-list-profiles"
-     :buffer buffer
-     :command '("aws" "configure" "list-profiles")
-     :sentinel
-     (lambda (process event)
-       (when (string= event "finished\n")
-         (with-current-buffer buffer
-           (let ((profiles (split-string (buffer-string) "\n" t)))
-             (funcall callback profiles)))
-         (kill-buffer buffer))))))
+(defvar aws-sso-profiles-buffer nil
+  "Buffer for storing AWS profiles output.")
 
-(defun aws-sso-login-with-profile (profile)
-  "Execute AWS SSO login with the selected PROFILE."
-  (let ((buffer (generate-new-buffer "*aws-sso-login*")))
-    (make-process
-     :name "aws-sso-login"
-     :buffer buffer
-     :command (list "aws" "sso" "login" "--profile" profile)
-     :sentinel
-     (lambda (process event)
-       (when (string= event "finished\n")
-         (message "AWS SSO login completed for profile: %s" profile)
-         (kill-buffer buffer))))))
+(defvar aws-sso-login-buffer nil
+  "Buffer for storing AWS SSO login output.")
 
-(defun aws-select-profile-and-login (profiles)
-  "Prompt user to select a profile from PROFILES and initiate SSO login."
-  (let ((selected-profile
-         (completing-read "Select AWS profile: " profiles nil t)))
-    (aws-sso-login-with-profile selected-profile)))
+(defvar aws-sso-selected-profile nil
+  "Selected AWS profile for SSO login.")
 
-;;;###autoload
-(defun aws-sso-login-interactive ()
-  "Interactive command to execute AWS SSO login with profile selection."
+(defun aws-sso-check-aws-cli ()
+  "Check if AWS CLI is available in the system."
+  (unless (executable-find "aws")
+    (error "AWS CLI is not installed or not in PATH. Please install it first")))
+
+(defun aws-sso-handle-process-error (process signal)
+  "Handle process errors for AWS commands."
+  (let ((err-msg (with-current-buffer (process-buffer process)
+                   (buffer-string))))
+    (kill-buffer (process-buffer process))
+    (error "AWS command failed: %s\nError: %s" signal err-msg)))
+
+(defun aws-sso-login-sentinel (process event)
+  "Handle AWS SSO login process completion."
+  (cond
+   ((string= event "finished\n")
+    (message "AWS SSO login completed for profile: %s" aws-sso-selected-profile)
+    (kill-buffer aws-sso-login-buffer))
+   ((string-prefix-p "exited abnormally" event)
+    (aws-sso-handle-process-error process event))))
+
+(defun aws-sso-profiles-sentinel (process event)
+  "Handle AWS profiles listing process completion."
+  (cond
+   ((string= event "finished\n")
+    (let ((profiles (with-current-buffer aws-sso-profiles-buffer
+                     (split-string (buffer-string) "\n" t))))
+      (if (null profiles)
+          (error "No AWS profiles found. Please configure at least one profile")
+        (setq aws-sso-selected-profile
+              (completing-read "Select AWS profile: " profiles nil t))
+        (kill-buffer aws-sso-profiles-buffer)
+
+        ;; Start the login process
+        (setq aws-sso-login-buffer (generate-new-buffer "*aws-sso-login*"))
+        (set-process-sentinel
+         (start-process "aws-sso-login" aws-sso-login-buffer
+                       "aws" "sso" "login" "--profile" aws-sso-selected-profile)
+         'aws-sso-login-sentinel))))
+   ((string-prefix-p "exited abnormally" event)
+    (aws-sso-handle-process-error process event))))
+
+(defun aws-sso-login ()
+  "Interactive AWS SSO login with profile selection."
   (interactive)
-  (aws-get-profiles-async #'aws-select-profile-and-login))
+  (condition-case err
+      (progn
+        (aws-sso-check-aws-cli)
+        (setq aws-sso-profiles-buffer (generate-new-buffer "*aws-profiles*"))
+        (set-process-sentinel
+         (start-process "aws-list-profiles" aws-sso-profiles-buffer
+                       "aws" "configure" "list-profiles")
+         'aws-sso-profiles-sentinel))
+    (error
+     (message "Error in aws-sso-login: %s" (error-message-string err))
+     (when aws-sso-profiles-buffer
+       (kill-buffer aws-sso-profiles-buffer)))))
+
 #+end_src
 [2025-02-21 Fri 21:13]
 ** Writing
