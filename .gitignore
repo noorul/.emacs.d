@@ -29,3 +29,4 @@ tutorial/
 projects
 org-persist/
 tree-sitter/
+.cask/
