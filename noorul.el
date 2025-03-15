@@ -2631,7 +2631,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :bind (("C-c K" . kubernetes-overview))
   :config
   (setq kubernetes-poll-frequency 3600
-        kubernetes-redraw-frequency 3600))
+        kubernetes-redraw-frequency 3600
+        kubernetes-pods-display-completed t))
 
 (use-package color-identifiers-mode
   :disabled t

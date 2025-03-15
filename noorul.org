@@ -3222,7 +3222,8 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   :bind (("C-c K" . kubernetes-overview))
   :config
   (setq kubernetes-poll-frequency 3600
-        kubernetes-redraw-frequency 3600))
+        kubernetes-redraw-frequency 3600
+        kubernetes-pods-display-completed t))
 #+end_src
 
 *** Color identifiers mode
