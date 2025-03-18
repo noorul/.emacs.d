@@ -135,7 +135,7 @@
   :init
   (setq ef-themes-mixed-fonts t
         ef-themes-variable-pitch-ui t)
-  (mapc #'disable-theme custom-enabled-themes)
+  ;; (mapc #'disable-theme custom-enabled-themes)
   ;; :config
   ;; (load-theme 'ef-tritanopia-dark :no-confirm)
   )
@@ -635,7 +635,7 @@ action."
 (org-reload)
 
 ;; Every .org file under ~/github.com/noorul/notebook/notebook should be part of agenda.
-(setq org-agenda-files (quote ("~/github.com/noorul/notebook/notebook")))
+(setq org-agenda-files (quote ("~/github.com/noorul/notebook/org/agenda")))
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -663,13 +663,13 @@ action."
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
-(setq org-directory "~/github.com/noorul/notebook/notebook")
-(setq org-default-notes-file "~/github.com/noorul/notebook/notebook/organizer.org")
+(setq org-directory "~/github.com/noorul/notebook/org")
+(setq org-default-notes-file "~/github.com/noorul/notebook/org/agenda/organizer.org")
 
 ;; I use C-c r to start capture mode
 (global-set-key (kbd "C-c r") 'org-capture)
 
-(setq noorul/refile-target "~/github.com/noorul/notebook/notebook/organizer.org")
+(setq noorul/refile-target "~/github.com/noorul/notebook/org/agenda/organizer.org")
 
 ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 (setq org-capture-templates
@@ -685,16 +685,16 @@ action."
                "* TODO Review %c\n%U\n  %i" :immediate-finish t)
               ("m" "Meeting" entry (file noorul/refile-target)
                "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("a" "Aruba Meeting" entry (file+olp "~/github.com/noorul/notebook/notebook/aruba.org" "Meetings")
+              ("a" "Aruba Meeting" entry (file+olp "~/github.com/noorul/notebook/org/agenda/aruba.org" "Meetings")
                "* %?\n%U\n  %i" :clock-in t :clock-resume t)
               ("p" "Phone call" entry (file+datetree noorul/refile-target)
                "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
-              ("c" "Contacts" entry (file "~/github.com/noorul/notebook/notebook/contacts.org")
+              ("c" "Contacts" entry (file "~/github.com/noorul/notebook/org/agenda/contacts.org")
                "* %(org-contacts-template-name)
 :PROPERTIES:
 :EMAIL: %(org-contacts-template-email)
 :END:")
-              ("h" "Habit" entry (file "~/github.com/noorul/notebook/notebook/routines.org")
+              ("h" "Habit" entry (file "~/github.com/noorul/notebook/org/agenda/routines.org")
                "* NEXT %?\n%U\n%a\nSCHEDULED: %t .+1d/3d\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
 ;; Remove empty LOGBOOK drawers on clock out
@@ -1337,7 +1337,6 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
           (groovy . t)
           (js . t)
           (jq . t)
-          (gnuplot . t)
           )))
 
  (setq org-babel-default-header-args:java
@@ -1622,7 +1621,7 @@ so change the default 'F' binding in the agenda to allow both"
 (setq org-agenda-skip-timestamp-if-done t)
 
 (setq org-agenda-include-diary nil)
-(setq org-agenda-diary-file "~/github.com/noorul/notebook/notebook/organizer.org")
+(setq org-agenda-diary-file "~/github.com/noorul/notebook/org/agenda/organizer.org")
 (setq org-agenda-insert-diary-extract-time t)
 
 ;; Include agenda archive files when searching for things
@@ -2028,7 +2027,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :commands org-contacts
   :load-path "~/git.sr.ht/bzg/org-contrib/lisp"
   :custom
-  (org-contacts-files (quote ("~/github.com/noorul/notebook/notebook/contacts.org")))
+  (org-contacts-files (quote ("~/github.com/noorul/notebook/org/agenda/contacts.org")))
   (calendar-mark-holidays-flag t))
 
 (run-at-time "00:59" 3600 'org-save-all-org-buffers)
@@ -2206,6 +2205,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :bind
   ("M-g q" . org-ql-find)
   :config
+  (setq org-ql-search-directories-files-recursive t)
   (add-to-list 'vertico-multiform-commands
                '(org-ql-find)))
 
