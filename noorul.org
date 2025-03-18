@@ -3642,6 +3642,15 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 
 #+end_src
 [2025-02-21 Fri 21:13]
+** AI
+*** Copilot chat
+#+begin_src emacs-lisp
+(use-package copilot-chat)
+#+end_src
+*** Gptel
+#+begin_src emacs-lisp
+(use-package gptel)
+#+end_src
 ** Writing
 *** LSP grammarly
 #+begin_src emacs-lisp

@@ -2998,6 +2998,10 @@ Late deadlines first, then scheduled, then non-late deadlines"
      (when aws-sso-profiles-buffer
        (kill-buffer aws-sso-profiles-buffer)))))
 
+(use-package copilot-chat)
+
+(use-package gptel)
+
 (use-package keytar
   :after lsp-grammarly)
 
