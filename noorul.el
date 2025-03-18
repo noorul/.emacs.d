@@ -2205,9 +2205,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :bind
   ("M-g q" . org-ql-find)
   :config
-  (setq org-ql-search-directories-files-recursive t)
-  (add-to-list 'vertico-multiform-commands
-               '(org-ql-find)))
+  (setq org-ql-search-directories-files-recursive t))
 
 (add-hook 'before-save-hook #'delete-trailing-whitespace nil nil)
 

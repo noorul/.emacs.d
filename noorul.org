@@ -2721,9 +2721,7 @@ It is better to always copy to location at other window
   :bind
   ("M-g q" . org-ql-find)
   :config
-  (setq org-ql-search-directories-files-recursive t)
-  (add-to-list 'vertico-multiform-commands
-               '(org-ql-find)))
+  (setq org-ql-search-directories-files-recursive t))
 #+end_src
 
 #+RESULTS:
