@@ -584,6 +584,8 @@ action."
 
 (require 'dired-x)
 
+(setq isearch-lazy-count t)
+
 (use-package multiple-cursors
   :bind
    (("C->" . mc/mark-next-like-this)
