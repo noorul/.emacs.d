@@ -233,21 +233,36 @@
 (setq-default indent-tabs-mode nil)
 
 (use-package vertico
+  :ensure t
+  :demand
+  :config
+  (setq vertico-cycle t)
+  ;; currently requires melpa version of vertico
+  (setq vertico-preselect 'directory)
   :init
   (vertico-mode)
+  (defun my/vertico-insert ()
+    (interactive)
+    (let* ((mb (minibuffer-contents-no-properties))
+           (lc (if (string= mb "") mb (substring mb -1))))
+      (cond ((string-match-p "^[/~:]" lc) (self-insert-command 1 ?/))
+            ((file-directory-p (vertico--candidate)) (vertico-insert))
+            (t (self-insert-command 1 ?/)))))
+  :bind (:map vertico-map
+              ("/" . #'my/vertico-insert)))
 
-  ;; Different scroll margin
-  ;; (setq vertico-scroll-margin 0)
-
-  ;; Show more candidates
-  ;; (setq vertico-count 20)
-
-  ;; Grow and shrink the Vertico minibuffer
-  ;; (setq vertico-resize t)
-
-  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
-  ;; (setq vertico-cycle t)
-  )
+;; Configure directory extension.
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  :demand
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET"   . vertico-directory-enter)
+              ("DEL"   . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 (use-package marginalia
   :init
