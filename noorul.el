@@ -1,5 +1,6 @@
 ;;;; Starting up
 ;; The default is 800 kilobytes.  Measured in bytes.
+(setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
 (setq save-abbrevs 'silently)
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq native-comp-async-report-warnings-errors 'silent)
@@ -425,9 +426,52 @@ action."
   (setq consult-narrow-key "<"))
 
 (use-package orderless
+  :init
+  ;; Tune the global completion style settings to your liking!
+  ;; This affects the minibuffer and non-lsp completion at point.
+  (setq completion-styles '(orderless partial-completion basic)
+        completion-category-defaults nil
+        completion-category-overrides nil))
+
+(use-package corfu
+  ;; Optional customizations
+  ;; :custom
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode))
+
+;; A few more useful configurations...
+(use-package emacs
   :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+  ;; TAB cycle if there are only few candidates
+  ;; (completion-cycle-threshold 3)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (tab-always-indent 'complete)
+
+  ;; Emacs 30 and newer: Disable Ispell completion function.
+  ;; Try `cape-dict' as an alternative.
+  (text-mode-ispell-word-completion nil)
+
+  ;; Hide commands in M-x which do not apply to the current mode.  Corfu
+  ;; commands are hidden, since they are not used via M-x. This setting is
+  ;; useful beyond Corfu.
+(read-extended-command-predicate #'command-completion-default-include-p))
 
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -2940,10 +2984,66 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (use-package gptel
   :config
+
   (setq
-   gptel-model 'claude-3-5-sonnet-20241022
-   gptel-backend (gptel-make-anthropic "Claude"
-                   :stream t :key (getenv "ANTHROPIC_API_KEY"))))
+   gptel-model 'claude-3.7-sonnet
+   gptel-backend (gptel-make-gh-copilot "Copilot")
+   gptel-directives
+   `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
+ topic relevant terminology.  Do NOT hedge or qualify.  Speak directly and be willing to make creative guesses.
+
+Explain your reasoning.  if you don’t know, say you don’t know.  Be willing to reference less reputable sources for
+ ideas.
+
+Do NOT summarize your answers.
+
+If you use LaTex notation, enclose math in \\( and \\), or \\[ and \\] delimiters.
+
+ Never apologize.  Ask questions when unsure.")
+     (code-infill . ,#'my/gptel-code-infill)
+     (programmer . "You are a careful programmer.  Provide code and only code as output without any additional text, prompt or note.  Do NOT use markdown backticks (```) to format your response.")
+     (cliwhiz . "You are a command line helper.  Generate command line commands that do what is requested, without any additional description or explanation.  Generate ONLY the command, without any markdown code fences.")
+     (emacser . "You are an Emacs maven.  Reply only with the most appropriate built-in Emacs command for the task I specify.  Do NOT generate any additional description or explanation.")
+     (explain . "Explain what this code does to a novice programmer.")
+     (tutor . "You are a tutor and domain expert in the domain of my questions.  You will lead me to discover the answer myself by providing hints.  Your instructions are as follows:
+- If the question or notation is not clear to you, ask for clarifying details.
+- At first your hints should be general and vague.
+- If I fail to make progress, provide more explicit hints.
+- Never provide the answer itself unless I explicitly ask you to.  If my answer is wrong, again provide only hints to correct it.
+- If you use LaTeX notation, enclose math in \\( and \\) or \\[ and \\] delimiters."))
+   gptel--system-message (alist-get 'default gptel-directives)
+   gptel-default-mode 'org-mode)
+
+  :bind (("C-c C-<return>" . gptel-menu)
+         ("C-c <return>" . gptel-send)
+         ("C-c j" . gptel-menu)
+         ("C-c C-g" . gptel-abort))
+  :preface
+  (defun my/gptel-code-infill ()
+    "Fill in code at point based on buffer context.  Note: Sends the whole buffer."
+    (let ((lang (gptel--strip-mode-suffix major-mode)))
+      `(,(format "You are a %s programmer and assistant in a code buffer in a text editor.
+
+Follow my instructions and generate %s code to be inserted at the cursor.
+For context, I will provide you with the code BEFORE and AFTER the cursor.
+
+
+Generate %s code and only code without any explanations or markdown code fences.  NO markdown.
+You may include code comments.
+
+Do not repeat any of the BEFORE or AFTER code." lang lang lang)
+        nil
+        "What is the code AFTER the cursor?"
+        ,(format "AFTER\n```\n%s\n```\n"
+                 (buffer-substring-no-properties
+                  (if (use-region-p) (max (point) (region-end)) (point))
+                  (point-max)))
+        "And what is the code BEFORE the cursor?"
+        ,(format "BEFORE\n```%s\n%s\n```\n" lang
+                 (buffer-substring-no-properties
+                  (point-min)
+                  (if (use-region-p) (min (point) (region-beginning)) (point))))
+        ,@(when (use-region-p) "What should I insert at the cursor?")))))
 
 (use-package bitbucket-server
   :load-path "~/github.com/noorul/bitbucket-server-el")
@@ -3015,7 +3115,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
      (when aws-sso-profiles-buffer
        (kill-buffer aws-sso-profiles-buffer)))))
 
-(use-package copilot-chat)
+(use-package copilot-chat
+  :config
+  (setq copilot-chat-default-model "claude-3.7-sonnet"))
 
 (use-package gptel)
 
