@@ -15,6 +15,7 @@ org-babel-tangle= (=C-c C-v t=) produces.
 #+begin_src emacs-lisp
 ;;;; Starting up
 ;; The default is 800 kilobytes.  Measured in bytes.
+(setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
 (setq save-abbrevs 'silently)
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq native-comp-async-report-warnings-errors 'silent)
