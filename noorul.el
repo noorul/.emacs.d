@@ -3045,6 +3045,17 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
                   (if (use-region-p) (min (point) (region-beginning)) (point))))
         ,@(when (use-region-p) "What should I insert at the cursor?")))))
 
+(use-package ob-gptel
+  :load-path "~/github.com/jwiegley/ob-gptel"
+  :hook ((org-mode . ob-gptel-install-completions))
+  :defines ob-gptel-install-completions
+  :config
+  (add-to-list 'org-babel-load-languages '(gptel . t))
+  ;; Optional, for better completion-at-point
+  (defun ob-gptel-install-completions ()
+    (add-hook 'completion-at-point-functions
+              'ob-gptel-capf nil t)))
+
 (use-package bitbucket-server
   :load-path "~/github.com/noorul/bitbucket-server-el")
 
@@ -3118,8 +3129,6 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 (use-package copilot-chat
   :config
   (setq copilot-chat-default-model "claude-3.7-sonnet"))
-
-(use-package gptel)
 
 (use-package keytar
   :after lsp-grammarly)
