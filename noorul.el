@@ -3556,7 +3556,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 
 ;;;_ , ledger
 
-(use-package "ledger-mode"
+(use-package ledger-mode
   :commands ledger-mode
   :mode ("/finance/accounts\\.dat" . ledger-mode)
   :config
