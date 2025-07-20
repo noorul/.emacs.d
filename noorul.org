@@ -3628,7 +3628,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   :config
 
   (setq
-   gptel-model 'claude-3.7-sonnet
+   gptel-model 'claude-sonnet-4
    gptel-backend (gptel-make-gh-copilot "Copilot")
    gptel-directives
    `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
@@ -3782,7 +3782,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 #+begin_src emacs-lisp
 (use-package copilot-chat
   :config
-  (setq copilot-chat-default-model "claude-3.7-sonnet"))
+  (setq copilot-chat-default-model "claude-sonnet-4"))
 #+end_src
 ** Writing
 *** LSP grammarly

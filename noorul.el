@@ -2986,7 +2986,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :config
 
   (setq
-   gptel-model 'claude-3.7-sonnet
+   gptel-model 'claude-sonnet-4
    gptel-backend (gptel-make-gh-copilot "Copilot")
    gptel-directives
    `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
@@ -3128,7 +3128,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 
 (use-package copilot-chat
   :config
-  (setq copilot-chat-default-model "claude-3.7-sonnet"))
+  (setq copilot-chat-default-model "claude-sonnet-4"))
 
 (use-package keytar
   :after lsp-grammarly)
