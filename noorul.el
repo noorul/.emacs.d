@@ -3577,7 +3577,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
     (ledger-reports-add "current month food expenses" "%(binary) -f %(ledger-file) --aux-date -p 'this month' -S -a -s reg Expenses:Food")
     (ledger-reports-add "monthly food expenses" "%(binary) -f %(ledger-file) -y '%b %Y' -M -n reg Expenses:Food")
     (ledger-reports-add "monthly expenses by account" "%(binary) -f %(ledger-file) -y '%b %Y' -M -n reg %(account)")
-    (ledger-reports-add "credit card expenses report" "%(binary) -f %(ledger-file) reg Liabilities:Infinia --limit 'payee !~ /Credit Due/'"))
+    (ledger-reports-add "credit card expenses report" "%(binary) -f %(ledger-file) reg Liabilities:Infinia --limit 'not any(account =~ /^Assets:/)'"))
 
 
   :init
