@@ -560,7 +560,7 @@ action."
 (use-package recentf
   :defer 10
   :commands (recentf-mode
-             Recentf-add-file
+             recentf-add-file
              recentf-apply-filename-handlers)
   :preface
   (defun recentf-add-dired-directory ()

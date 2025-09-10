@@ -797,7 +797,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
 (use-package recentf
   :defer 10
   :commands (recentf-mode
-             Recentf-add-file
+             recentf-add-file
              recentf-apply-filename-handlers)
   :preface
   (defun recentf-add-dired-directory ()
