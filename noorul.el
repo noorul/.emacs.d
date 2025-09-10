@@ -163,7 +163,9 @@
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
               "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
-              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN" "ANTHROPIC_API_KEY"))
+              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN" "ANTHROPIC_API_KEY" "NVM_DIR"
+              "JIRA_TOKEN" "JIRA_KEY" "BITBUCKET_KEY" "CONFLUENCE_KEY" "JENKINS_USERNAME"
+              "JENKINS_KEY" "BUILDKIT_PROGRESS"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
