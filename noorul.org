@@ -3705,6 +3705,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 *** Bitbucket server
 #+begin_src emacs-lisp
 (use-package bitbucket-server
+  :after marginalia
   :load-path "~/github.com/noorul/bitbucket-server-el")
 #+end_src
 [2025-01-13 Mon 10:46]

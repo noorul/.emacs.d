@@ -3059,6 +3059,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
               'ob-gptel-capf nil t)))
 
 (use-package bitbucket-server
+  :after marginalia
   :load-path "~/github.com/noorul/bitbucket-server-el")
 
 (defvar aws-sso-profiles-buffer nil
