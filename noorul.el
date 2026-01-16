@@ -3782,6 +3782,7 @@ COMMAND: Shell command or script to execute"
 (defalias 'noorul/record-exercise
    (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
 
-(org-agenda "" "c")
+(let  ((projectile-current-project-name nil))
+  (org-agenda "" "c"))
 (setq frame-resize-pixelwise t)
 (toggle-frame-fullscreen)

@@ -4486,7 +4486,8 @@ COMMAND: Shell command or script to execute"
 #+end_src
 ** Startup
  #+begin_src emacs-lisp
- (org-agenda "" "c")
+ (let  ((projectile-current-project-name nil))
+   (org-agenda "" "c"))
  (setq frame-resize-pixelwise t)
  (toggle-frame-fullscreen)
  #+end_src
