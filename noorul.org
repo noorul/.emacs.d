@@ -1736,7 +1736,6 @@ It is better to always copy to location at other window
            (java . t)
            (groovy . t)
            (js . t)
-           (jq . t)
            )))
 
   (setq org-babel-default-header-args:java
@@ -3468,6 +3467,11 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 **** jq-mode
 #+begin_src emacs-lisp
 (use-package jq-mode)
+
+(use-package ob-jq
+  :after jq-mode
+  :config
+  (add-to-list 'org-babel-load-languages '(jq . t)))
 #+end_src
 *** TypeScript
 

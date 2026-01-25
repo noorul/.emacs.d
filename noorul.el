@@ -1399,7 +1399,6 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
           (java . t)
           (groovy . t)
           (js . t)
-          (jq . t)
           )))
 
  (setq org-babel-default-header-args:java
@@ -2845,6 +2844,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :hook (js2-mode . tern-mode))
 
 (use-package jq-mode)
+
+(use-package ob-jq
+  :after jq-mode
+  :config
+  (add-to-list 'org-babel-load-languages '(jq . t)))
 
 (use-package typescript-mode
   :hook
