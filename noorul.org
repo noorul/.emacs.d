@@ -3714,6 +3714,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   (setq copilot-chat-default-model "claude-sonnet-4"))
 #+end_src
 *** Gptel
+**** gptel
 #+begin_src emacs-lisp
 (use-package gptel
   :config
@@ -3790,6 +3791,20 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
     (add-hook 'completion-at-point-functions
               'ob-gptel-capf nil t)))
 
+#+end_src
+**** gptel-commit
+#+begin_src emacs-lisp
+(use-package gptel-commit)
+#+end_src
+**** gptel-agent
+#+begin_src emacs-lisp
+(use-package gptel-agent)
+#+end_src
+**** gptel-quick
+#+begin_src emacs-lisp
+(use-package gptel-quick
+  :ensure t
+  :vc (:url "https://github.com/karthink/gptel-quick"))
 #+end_src
 ** Writing
 *** LSP grammarly

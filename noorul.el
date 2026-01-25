@@ -2988,80 +2988,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :ensure nix-mode
   :commands (nix-repl))
 
-(use-package gptel
-  :config
-
-  (setq
-   gptel-model 'claude-sonnet-4.5
-   gptel-backend (gptel-make-gh-copilot "Copilot")
-   gptel-directives
-   `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
- topic relevant terminology.  Do NOT hedge or qualify.  Speak directly and be willing to make creative guesses.
-
-Explain your reasoning.  if you don’t know, say you don’t know.  Be willing to reference less reputable sources for
- ideas.
-
-Do NOT summarize your answers.
-
-If you use LaTex notation, enclose math in \\( and \\), or \\[ and \\] delimiters.
-
- Never apologize.  Ask questions when unsure.")
-     (code-infill . ,#'my/gptel-code-infill)
-     (programmer . "You are a careful programmer.  Provide code and only code as output without any additional text, prompt or note.  Do NOT use markdown backticks (```) to format your response.")
-     (cliwhiz . "You are a command line helper.  Generate command line commands that do what is requested, without any additional description or explanation.  Generate ONLY the command, without any markdown code fences.")
-     (emacser . "You are an Emacs maven.  Reply only with the most appropriate built-in Emacs command for the task I specify.  Do NOT generate any additional description or explanation.")
-     (explain . "Explain what this code does to a novice programmer.")
-     (tutor . "You are a tutor and domain expert in the domain of my questions.  You will lead me to discover the answer myself by providing hints.  Your instructions are as follows:
-- If the question or notation is not clear to you, ask for clarifying details.
-- At first your hints should be general and vague.
-- If I fail to make progress, provide more explicit hints.
-- Never provide the answer itself unless I explicitly ask you to.  If my answer is wrong, again provide only hints to correct it.
-- If you use LaTeX notation, enclose math in \\( and \\) or \\[ and \\] delimiters."))
-   gptel--system-message (alist-get 'default gptel-directives)
-   gptel-default-mode 'org-mode)
-
-  :bind (("C-c C-<return>" . gptel-menu)
-         ("C-c <return>" . gptel-send)
-         ("C-c j" . gptel-menu)
-         ("C-c C-g" . gptel-abort))
-  :preface
-  (defun my/gptel-code-infill ()
-    "Fill in code at point based on buffer context.  Note: Sends the whole buffer."
-    (let ((lang (gptel--strip-mode-suffix major-mode)))
-      `(,(format "You are a %s programmer and assistant in a code buffer in a text editor.
-
-Follow my instructions and generate %s code to be inserted at the cursor.
-For context, I will provide you with the code BEFORE and AFTER the cursor.
-
-
-Generate %s code and only code without any explanations or markdown code fences.  NO markdown.
-You may include code comments.
-
-Do not repeat any of the BEFORE or AFTER code." lang lang lang)
-        nil
-        "What is the code AFTER the cursor?"
-        ,(format "AFTER\n```\n%s\n```\n"
-                 (buffer-substring-no-properties
-                  (if (use-region-p) (max (point) (region-end)) (point))
-                  (point-max)))
-        "And what is the code BEFORE the cursor?"
-        ,(format "BEFORE\n```%s\n%s\n```\n" lang
-                 (buffer-substring-no-properties
-                  (point-min)
-                  (if (use-region-p) (min (point) (region-beginning)) (point))))
-        ,@(when (use-region-p) "What should I insert at the cursor?")))))
-
-(use-package ob-gptel
-  :load-path "~/github.com/jwiegley/ob-gptel"
-  :hook ((org-mode . ob-gptel-install-completions))
-  :defines ob-gptel-install-completions
-  :config
-  (add-to-list 'org-babel-load-languages '(gptel . t))
-  ;; Optional, for better completion-at-point
-  (defun ob-gptel-install-completions ()
-    (add-hook 'completion-at-point-functions
-              'ob-gptel-capf nil t)))
-
 (use-package bitbucket-server
   :after marginalia
   :load-path "~/github.com/noorul/bitbucket-server-el")
@@ -3136,6 +3062,88 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 (use-package copilot-chat
   :config
   (setq copilot-chat-default-model "claude-sonnet-4"))
+
+(use-package gptel
+  :config
+
+  (setq
+   gptel-model 'claude-sonnet-4.5
+   gptel-backend (gptel-make-gh-copilot "Copilot")
+   gptel-directives
+   `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
+ topic relevant terminology.  Do NOT hedge or qualify.  Speak directly and be willing to make creative guesses.
+
+Explain your reasoning.  if you don’t know, say you don’t know.  Be willing to reference less reputable sources for
+ ideas.
+
+Do NOT summarize your answers.
+
+If you use LaTex notation, enclose math in \\( and \\), or \\[ and \\] delimiters.
+
+ Never apologize.  Ask questions when unsure.")
+     (code-infill . ,#'my/gptel-code-infill)
+     (programmer . "You are a careful programmer.  Provide code and only code as output without any additional text, prompt or note.  Do NOT use markdown backticks (```) to format your response.")
+     (cliwhiz . "You are a command line helper.  Generate command line commands that do what is requested, without any additional description or explanation.  Generate ONLY the command, without any markdown code fences.")
+     (emacser . "You are an Emacs maven.  Reply only with the most appropriate built-in Emacs command for the task I specify.  Do NOT generate any additional description or explanation.")
+     (explain . "Explain what this code does to a novice programmer.")
+     (tutor . "You are a tutor and domain expert in the domain of my questions.  You will lead me to discover the answer myself by providing hints.  Your instructions are as follows:
+- If the question or notation is not clear to you, ask for clarifying details.
+- At first your hints should be general and vague.
+- If I fail to make progress, provide more explicit hints.
+- Never provide the answer itself unless I explicitly ask you to.  If my answer is wrong, again provide only hints to correct it.
+- If you use LaTeX notation, enclose math in \\( and \\) or \\[ and \\] delimiters."))
+   gptel--system-message (alist-get 'default gptel-directives)
+   gptel-default-mode 'org-mode)
+
+  :bind (("C-c C-<return>" . gptel-menu)
+         ("C-c <return>" . gptel-send)
+         ("C-c j" . gptel-menu)
+         ("C-c C-g" . gptel-abort))
+  :preface
+  (defun my/gptel-code-infill ()
+    "Fill in code at point based on buffer context.  Note: Sends the whole buffer."
+    (let ((lang (gptel--strip-mode-suffix major-mode)))
+      `(,(format "You are a %s programmer and assistant in a code buffer in a text editor.
+
+Follow my instructions and generate %s code to be inserted at the cursor.
+For context, I will provide you with the code BEFORE and AFTER the cursor.
+
+
+Generate %s code and only code without any explanations or markdown code fences.  NO markdown.
+You may include code comments.
+
+Do not repeat any of the BEFORE or AFTER code." lang lang lang)
+        nil
+        "What is the code AFTER the cursor?"
+        ,(format "AFTER\n```\n%s\n```\n"
+                 (buffer-substring-no-properties
+                  (if (use-region-p) (max (point) (region-end)) (point))
+                  (point-max)))
+        "And what is the code BEFORE the cursor?"
+        ,(format "BEFORE\n```%s\n%s\n```\n" lang
+                 (buffer-substring-no-properties
+                  (point-min)
+                  (if (use-region-p) (min (point) (region-beginning)) (point))))
+        ,@(when (use-region-p) "What should I insert at the cursor?")))))
+
+(use-package ob-gptel
+  :load-path "~/github.com/jwiegley/ob-gptel"
+  :hook ((org-mode . ob-gptel-install-completions))
+  :defines ob-gptel-install-completions
+  :config
+  (add-to-list 'org-babel-load-languages '(gptel . t))
+  ;; Optional, for better completion-at-point
+  (defun ob-gptel-install-completions ()
+    (add-hook 'completion-at-point-functions
+              'ob-gptel-capf nil t)))
+
+(use-package gptel-commit)
+
+(use-package gptel-agent)
+
+(use-package gptel-quick
+  :ensure t
+  :vc (:url "https://github.com/karthink/gptel-quick"))
 
 (use-package keytar
   :after lsp-grammarly)
