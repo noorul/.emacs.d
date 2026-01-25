@@ -27,6 +27,7 @@ games/
 eln-cache/
 tutorial/
 projects
+projects.eld
 org-persist/
 tree-sitter/
 .cask/
