@@ -3466,10 +3466,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 #+end_src
 **** jq-mode
 #+begin_src emacs-lisp
-(use-package jq-mode)
-
-(use-package ob-jq
-  :after jq-mode
+(use-package jq-mode
   :config
   (add-to-list 'org-babel-load-languages '(jq . t)))
 #+end_src

@@ -2843,10 +2843,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :diminish tern-mode
   :hook (js2-mode . tern-mode))
 
-(use-package jq-mode)
-
-(use-package ob-jq
-  :after jq-mode
+(use-package jq-mode
   :config
   (add-to-list 'org-babel-load-languages '(jq . t)))
 
