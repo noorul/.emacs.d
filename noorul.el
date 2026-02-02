@@ -2269,6 +2269,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :config
   (setq org-ql-search-directories-files-recursive t))
 
+(use-package org-contrib
+  :config
+  (require 'ob-ledger)
+  (add-to-list 'org-babel-load-languages '(ledger . t)))
+
 (add-hook 'before-save-hook #'delete-trailing-whitespace nil nil)
 
 (use-package column-enforce-mode

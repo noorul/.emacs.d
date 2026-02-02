@@ -2790,6 +2790,13 @@ It is better to always copy to location at other window
   :config
   (setq org-ql-search-directories-files-recursive t))
 #+end_src
+*** org-contrib
+#+begin_src emacs-lisp
+(use-package org-contrib
+  :config
+  (require 'ob-ledger)
+  (add-to-list 'org-babel-load-languages '(ledger . t)))
+#+end_src
 ** Coding
 *** Whitespace
 #+begin_src emacs-lisp
