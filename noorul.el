@@ -3756,9 +3756,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
       (time-in-zone time zone))))
 
 (use-package vterm
-;;  :load-path "/Users/noorul/github.com/akermu/emacs-libvterm"
   :commands (vterm)
-;;             counsel-projectile-switch-project-action-run-vterm)
   :config
   (setq vterm-shell "/bin/zsh"
         vterm-timer-delay 0.01)
