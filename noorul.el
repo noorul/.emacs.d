@@ -2504,7 +2504,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (setq projectile-cache-file "~/.config/emacs/data/projectile.cache")
   (setq projectile-known-projects-file "~/.config/emacs/data/projectile-bookmarks.eld")
   :config
-  (setq projectile-enable-caching 'persistent)
+  (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
   (setq projectile-use-git-grep t)
   ;; (setq projectile-completion-system 'ivy)
