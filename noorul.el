@@ -2087,7 +2087,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (use-package org-contacts
   :commands org-contacts
-  :load-path "~/git.sr.ht/bzg/org-contrib/lisp"
+  :after org
   :custom
   (org-contacts-files (quote ("~/github.com/noorul/notebook/org/agenda/contacts.org")))
   (calendar-mark-holidays-flag t))

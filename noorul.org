@@ -2556,7 +2556,7 @@ It is better to always copy to location at other window
  #+begin_src emacs-lisp
  (use-package org-contacts
    :commands org-contacts
-   :load-path "~/git.sr.ht/bzg/org-contrib/lisp"
+   :after org
    :custom
    (org-contacts-files (quote ("~/github.com/noorul/notebook/org/agenda/contacts.org")))
    (calendar-mark-holidays-flag t))
@@ -2790,7 +2790,6 @@ It is better to always copy to location at other window
   :config
   (setq org-ql-search-directories-files-recursive t))
 #+end_src
-
 ** Coding
 *** Whitespace
 #+begin_src emacs-lisp
