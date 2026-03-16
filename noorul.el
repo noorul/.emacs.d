@@ -2460,7 +2460,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (magit-auto-revert-mode nil)
   (magit-diff-refine-hunk 'all)
   (magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
-  :pin melpa
+  :pin melpa-stable
   :init
   (defun magit-status-with-prefix ()
     (interactive)
