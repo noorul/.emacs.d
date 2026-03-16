@@ -3069,7 +3069,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :config
 
   (setq
-   gptel-model 'claude-sonnet-4.5
+   gptel-model 'claude-sonnet-4.6
    gptel-backend (gptel-make-gh-copilot "Copilot")
    gptel-directives
    `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
