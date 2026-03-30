@@ -2290,7 +2290,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :commands (flycheck-mode
              flycheck-next-error
              flycheck-previous-error)
-  :init (global-flycheck-mode))
+  :init (global-flycheck-mode)
+  :custom
+  (flycheck-disabled-checkers '(org-lint)))
 
 (use-package company
   :after lsp-mode

@@ -2822,7 +2822,9 @@ It is better to always copy to location at other window
   :commands (flycheck-mode
              flycheck-next-error
              flycheck-previous-error)
-  :init (global-flycheck-mode))
+  :init (global-flycheck-mode)
+  :custom
+  (flycheck-disabled-checkers '(org-lint)))
 #+end_src
 *** LSP
 **** Company completion
