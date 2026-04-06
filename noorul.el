@@ -3787,6 +3787,10 @@ COMMAND: Shell command or script to execute"
         (vterm-send-string command)
         (vterm-send-return)))))
 
+(use-package ghostel
+  :ensure t
+  :vc (:url "https://github.com/dakra/ghostel" :rev :newest))
+
 (let ((work-config-file "~/github.com/noorul/work-emacs-config/work.el"))
  (if (file-exists-p work-config-file)
      (load-file work-config-file)))

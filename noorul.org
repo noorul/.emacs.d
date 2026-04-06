@@ -4466,6 +4466,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 #+end_src
 
 ** Terminal
+*** vterm
 #+begin_src emacs-lisp
 (use-package vterm
   :commands (vterm)
@@ -4489,6 +4490,12 @@ COMMAND: Shell command or script to execute"
         (vterm vterm-buf-name)
         (vterm-send-string command)
         (vterm-send-return)))))
+#+end_src
+*** ghost
+#+begin_src emacs-lisp
+(use-package ghostel
+  :ensure t
+  :vc (:url "https://github.com/dakra/ghostel" :rev :newest))
 #+end_src
 ** Work configuration
 #+begin_src emacs-lisp
