@@ -130,7 +130,7 @@
           (fg-line-number-active fg-main)
           ))
   :config
-  (modus-themes-load-theme 'modus-vivendi))
+  (modus-themes-load-theme 'modus-vivendi-tritanopia))
 
 (use-package ef-themes
   :init
