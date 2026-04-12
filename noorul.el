@@ -1,9 +1,5 @@
 ;;;; Starting up
-;; The default is 800 kilobytes.  Measured in bytes.
-(setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
 (setq save-abbrevs 'silently)
-(setq gc-cons-threshold (* 100 1000 1000))
-(setq native-comp-async-report-warnings-errors 'silent)
 ; Profile emacs startup
 ;; (add-hook 'emacs-startup-hook
 ;;           (lambda ()
@@ -207,8 +203,6 @@
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.config/emacs/auto-save-list/" t)))
 
-(tool-bar-mode -1)
-
 (display-time-mode 1)
 
 (setq column-number-mode t)
@@ -220,18 +214,6 @@
 
 ;; I hate typing full 'yes', just 'y' is enough.
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-;; I don't need tool bar, scroll bar and menu bar
-;; I get lots of real estate without them.
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-
-;; I don't need splash screen everytime
-(setq inhibit-splash-screen t)
-
-;; Don't show the startup screen
-(setq inhibit-startup-message t)
 
 (setq-default indent-tabs-mode nil)
 
@@ -3804,5 +3786,3 @@ COMMAND: Shell command or script to execute"
 
 (let  ((projectile-current-project-name nil))
   (org-agenda "" "c"))
-(setq frame-resize-pixelwise t)
-(toggle-frame-fullscreen)

@@ -11,14 +11,64 @@ have missed some.
 
 My =~/.config/emacs/init.el= is now a symlink to =noorul.el=, which is what =M-x
 org-babel-tangle= (=C-c C-v t=) produces.
+** Early Init
+This section tangles to =~/.config/emacs/early-init.el=, which Emacs loads before
+the package system and UI are initialised. Setting these values here prevents
+the toolbar/scrollbar flash and reduces GC pressure during startup.
+
+*** UI suppression
+Disabling UI elements before the first frame is created avoids the visual flicker
+of bars appearing and then being hidden.
+#+begin_src emacs-lisp :tangle "~/.config/emacs/early-init.el"
+(setq frame-inhibit-implied-resize 'force)
+(setq frame-resize-pixelwise t)
+(push '(fullscreen . fullboth) default-frame-alist)
+(push '(menu-bar-lines . 0)   default-frame-alist)
+(push '(tool-bar-lines . 0)   default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-splash-screen t)
+(setq inhibit-startup-message t)
+#+end_src
+
+*** GC and startup optimisations
+Temporarily maximise GC threshold and disable expensive hooks during startup,
+then restore sane values afterwards.
+#+begin_src emacs-lisp :tangle "~/.config/emacs/early-init.el"
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.5)
+
+(defvar noorul--file-name-handler-alist file-name-handler-alist)
+(defvar noorul--vc-handled-backends vc-handled-backends)
+(setq file-name-handler-alist nil
+      vc-handled-backends nil)
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 100 1000 1000)
+                  gc-cons-percentage 0.1
+                  file-name-handler-alist noorul--file-name-handler-alist
+                  vc-handled-backends noorul--vc-handled-backends)))
+#+end_src
+
+*** Native compilation
+#+begin_src emacs-lisp :tangle "~/.config/emacs/early-init.el"
+(setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
+(setq native-comp-async-report-warnings-errors 'silent)
+#+end_src
+
+*** Package initialisation
+Tell package.el to initialise at startup using the available cache.
+#+begin_src emacs-lisp :tangle "~/.config/emacs/early-init.el"
+(setq package-enable-at-startup t)
+#+end_src
+
 ** Starting up
 #+begin_src emacs-lisp
 ;;;; Starting up
-;; The default is 800 kilobytes.  Measured in bytes.
-(setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
 (setq save-abbrevs 'silently)
-(setq gc-cons-threshold (* 100 1000 1000))
-(setq native-comp-async-report-warnings-errors 'silent)
 ; Profile emacs startup
 ;; (add-hook 'emacs-startup-hook
 ;;           (lambda ()
@@ -286,11 +336,7 @@ Disk space is cheap. Save lots.
 #+end_src
 
 *** Windows configuration
-I am not a fan of tool bar as I prefer command line.
-
-#+begin_src emacs-lisp
-(tool-bar-mode -1)
-#+end_src
+Moved to Early Init section.
 
 *** Time in the modeline
 
@@ -320,22 +366,10 @@ winner-mode lets you use C-c <left> and C-c <right> to switch between window con
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+end_src
 *** Hide tool bar, scroll bar and menu bar
-#+begin_src emacs-lisp
-;; I don't need tool bar, scroll bar and menu bar
-;; I get lots of real estate without them.
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-#+end_src
+Moved to Early Init section.
 
 *** I not a fan of splash screen and startup message
-#+begin_src emacs-lisp
-;; I don't need splash screen everytime
-(setq inhibit-splash-screen t)
-
-;; Don't show the startup screen
-(setq inhibit-startup-message t)
-#+end_src
+Moved to Early Init section.
 *** No tabs, only space.
 ;; Not tabs only space.
 #+begin_src emacs-lisp
@@ -4516,6 +4550,4 @@ COMMAND: Shell command or script to execute"
  #+begin_src emacs-lisp
  (let  ((projectile-current-project-name nil))
    (org-agenda "" "c"))
- (setq frame-resize-pixelwise t)
- (toggle-frame-fullscreen)
  #+end_src
