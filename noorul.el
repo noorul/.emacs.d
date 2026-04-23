@@ -3050,8 +3050,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (setq copilot-chat-default-model "claude-sonnet-4"))
 
 (use-package gptel
+  :pin melpa
   :config
-
   (setq
    gptel-model 'claude-sonnet-4.6
    gptel-backend (gptel-make-gh-copilot "Copilot")

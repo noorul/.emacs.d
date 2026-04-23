@@ -3753,8 +3753,8 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 **** gptel
 #+begin_src emacs-lisp
 (use-package gptel
+  :pin melpa
   :config
-
   (setq
    gptel-model 'claude-sonnet-4.6
    gptel-backend (gptel-make-gh-copilot "Copilot")
