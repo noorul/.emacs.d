@@ -644,6 +644,9 @@ action."
 (use-package org
   :diminish "org-mode"
   :hook (org-mode . variable-pitch-mode)
+  :config
+  (setq org-goto-interface 'outline-path-completion
+        org-goto-max-level 10)
   )
 
 ;; Only .org and .org_archive files carry this mode
