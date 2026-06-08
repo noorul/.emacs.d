@@ -629,6 +629,14 @@ action."
 
 (setq isearch-lazy-count t)
 
+(defun noorul/open-config ()
+  (interactive)
+  (find-file (expand-file-name "emacs/noorul.org"
+                               (or (getenv "XDG_CONFIG_HOME")
+                                   "~/.config"))))
+
+(global-set-key (kbd "C-c C") #'noorul/open-config)
+
 (use-package multiple-cursors
   :bind
    (("C->" . mc/mark-next-like-this)

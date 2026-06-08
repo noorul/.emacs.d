@@ -939,6 +939,17 @@ It is better to always copy to location at other window
 #+begin_src emacs-lisp
 (setq isearch-lazy-count t)
 #+end_src
+*** Navigate to emacs configuration with simple keybind
+#+begin_src emacs-lisp
+(defun noorul/open-config ()
+  (interactive)
+  (find-file (expand-file-name "emacs/noorul.org"
+                               (or (getenv "XDG_CONFIG_HOME")
+                                   "~/.config"))))
+
+(global-set-key (kbd "C-c C") 'noorul/open-config)
+#+end_src
+
 ** Advanced editing
 *** Multiple cursors
 #+begin_src emacs-lisp
