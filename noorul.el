@@ -2395,6 +2395,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (use-package lsp-java
   :after lsp-mode
   :init
+  (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
   (add-hook 'java-mode-hook (lambda ()
                               (flycheck-mode +1)
                               (lsp)))
@@ -3772,9 +3773,7 @@ COMMAND: Shell command or script to execute"
         (vterm-send-string command)
         (vterm-send-return)))))
 
-(use-package ghostel
-  :ensure t
-  :vc (:url "https://github.com/dakra/ghostel" :rev :newest))
+(use-package ghostel)
 
 (let ((work-config-file "~/github.com/noorul/work-emacs-config/work.el"))
  (if (file-exists-p work-config-file)
