@@ -635,7 +635,7 @@ action."
                                (or (getenv "XDG_CONFIG_HOME")
                                    "~/.config"))))
 
-(global-set-key (kbd "C-c C") #'noorul/open-config)
+(global-set-key (kbd "C-c C") 'noorul/open-config)
 
 (use-package multiple-cursors
   :bind
