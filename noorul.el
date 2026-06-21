@@ -151,7 +151,7 @@
 
 (require 'cl)
 (use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
+  :if (memq window-system '(mac ns x pgtk))
   :config
   (setq exec-path-from-shell-variables
         (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME"
