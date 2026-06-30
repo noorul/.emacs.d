@@ -3725,6 +3725,12 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   (setq browser-hist-default-browser 'brave)
   :commands (browser-hist-search))
 
+(use-package elfeed
+  :ensure t
+  :commands (elfeed elfeed-update elfeed-search-bookmark-handler)
+  :config
+  (setq elfeed-db-directory (concat (concat user-data-directory "elfeed"))))
+
 (defun get-timezone-description (zone)
   "Get a descriptive name for the time zone ZONE."
   (condition-case nil

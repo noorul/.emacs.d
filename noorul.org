@@ -4482,6 +4482,14 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   (setq browser-hist-default-browser 'brave)
   :commands (browser-hist-search))
 #+end_src
+*** Elfeed
+#+begin_src emacs-lisp
+(use-package elfeed
+  :ensure t
+  :commands (elfeed elfeed-update elfeed-search-bookmark-handler)
+  :config
+  (setq elfeed-db-directory (concat (concat user-data-directory "elfeed"))))
+#+end_src
 ** Time
 #+begin_src emacs-lisp
 (defun get-timezone-description (zone)
