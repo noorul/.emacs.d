@@ -401,7 +401,9 @@ action."
          :map isearch-mode-map
          ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
          ("M-s e" . consult-isearch)               ;; orig. isearch-edit-string
-         ("M-s l" . consult-line))
+         ("M-s l" . consult-line)
+         :map minibuffer-local-map
+         ("M-r" . consult-history))
   :init
   (setq register-preview-delay 0
         register-preview-function #'consult-register-format)
@@ -503,6 +505,29 @@ action."
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
+(use-package savehist
+  :unless noninteractive
+  :custom
+  (savehist-additional-variables
+   '(file-name-history
+     kmacro-ring
+     compile-history
+     compile-command))
+  (savehist-autosave-interval 60)
+  (savehist-file (concat user-data-directory "history"))
+  (savehist-ignored-variables
+   '(load-history
+     flyspell-auto-correct-ring
+     org-roam-node-history
+     magit-revision-history
+     org-read-date-history
+     query-replace-history
+     yes-or-no-p-history
+     kill-ring))
+  (savehist-mode t)
+  :config
+  (savehist-mode 1))
 
 (defun noorul/store-current-location ()
   (interactive)
