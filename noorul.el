@@ -3168,6 +3168,10 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   :ensure t
   :vc (:url "https://github.com/karthink/gptel-quick"))
 
+(use-package pi-coding-agent
+  :ensure t
+  :init (defalias 'pi 'pi-coding-agent))
+
 (use-package keytar
   :after lsp-grammarly)
 
