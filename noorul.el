@@ -2527,14 +2527,13 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :defer 5
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
+  (projectile-mode +1)
   (setq projectile-cache-file "~/.config/emacs/data/projectile.cache")
   (setq projectile-known-projects-file "~/.config/emacs/data/projectile-bookmarks.eld")
   :config
   (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
-  (setq projectile-use-git-grep t)
-  ;; (setq projectile-completion-system 'ivy)
-  (projectile-global-mode))
+  (setq projectile-use-git-grep t))
 
 (use-package helm-projectile
   :disabled t
