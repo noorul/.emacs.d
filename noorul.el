@@ -180,15 +180,14 @@
         (setq comp-deferred-compilation t))
     (message "Native comp is *not* available")))
 
+(setq visible-bell nil)
+(setq ring-bell-function 'ignore)))
+
 (if (my/macbookpro)
     (progn
       (setq ns-command-modifier 'meta)
       (setq mac-option-modifier 'super)
-      (setq insert-directory-program (executable-find "gls"))
-      ;; Upgraded to El Capitan. Facing problem described here
-      ;; http://stuff-things.net/2015/10/05/emacs-visible-bell-work-around-on-os-x-el-capitan/
-      (setq visible-bell nil) ;; The default
-      (setq ring-bell-function 'ignore)))
+      (setq insert-directory-program (executable-find "gls"))))
 
 (defconst user-data-directory
   (expand-file-name "data/" user-emacs-directory))
