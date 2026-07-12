@@ -60,51 +60,58 @@
 (use-package emacs
   :custom (pixel-scroll-precision-mode t))
 
-(when (window-system)
-  (defvar ha/fixed-font-family
-    (cond
-     ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
-     ((x-list-fonts "Iosevka SS14")    "Iosevka SS14")
-     ((x-list-fonts "Jetbrains Mono")  "Jetbrains Mono")
-     ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
-     ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
-     ((x-list-fonts "Menlo")           "Menlo")
-     ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
-     ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
-     ((x-list-fonts "Fira Code")       "Fira Code")
-     ((x-list-fonts "Roboto Mono")     "Roboto Mono")
-     ((x-list-fonts "Hack")            "Hack")
-     ((x-list-fonts "Source Code Pro") "Source Code Pro")
-     ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
-     ((x-list-fonts "Hasklig")         "Hasklig")
-     ((x-list-fonts "M+ 1mn")          "M+ 1mn"))
-    "My fixed width font based on what is installed, `nil' if not defined.")
+(defvar ha/fixed-font-family nil
+  "My fixed width font based on what is installed, `nil' if not defined.")
 
-  (defvar ha/variable-font-family
-    (cond
-     ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
-     ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
-     ((x-list-fonts "ETBembo") "ETBembo")
-     ((x-list-fonts "SF Pro") "SF Pro")
-     ((x-list-fonts "FiraGO") "FiraGO")
-     ((x-list-fonts "Lucida Grande")   "Lucida Grande")
-     ((x-list-fonts "Verdana")         "Verdana")
-     ((x-family-fonts "Sans Serif")    "Sans Serif")
-     (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro.")))
-    "My variable width font available to org-mode files and whatnot.")
+(defvar ha/variable-font-family nil
+  "My variable width font available to org-mode files and whatnot.")
 
-  (defconst ha/fixed-font-family-height
-    (if (my/macbookpro)
-        160
-      135))
-  (when ha/fixed-font-family
-    (set-frame-font ha/fixed-font-family)
-    (set-face-attribute 'default nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
-    (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
-    (set-face-font 'default ha/fixed-font-family))
+(defconst ha/fixed-font-family-height
+  (if (my/macbookpro) 160 135))
 
-  (when ha/variable-font-family
-    (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight)))
+(defun ha/setup-fonts (&optional _frame)
+  "Pick installed fonts and apply them to the current frame.
+Deferred to a hook so daemon-launched frames get styled too."
+  (when (display-graphic-p)
+    (setq ha/fixed-font-family
+          (cond
+           ((x-list-fonts "Iosevka SS05")    "Iosevka SS05")
+           ((x-list-fonts "Iosevka SS14")    "Iosevka SS14")
+           ((x-list-fonts "Jetbrains Mono")  "Jetbrains Mono")
+           ((x-list-fonts "Iosevka SS04")    "Iosevka SS04")
+           ((x-list-fonts "Iosevka Fixed")   "Iosevka Fixed")
+           ((x-list-fonts "Menlo")           "Menlo")
+           ((x-list-fonts "SauceCodePro Nerd Font Mono") "SauceCodePro Nerd Font Mono")
+           ((x-list-fonts "IBM Plex Mono")   "IBM Plex Mono")
+           ((x-list-fonts "Fira Code")       "Fira Code")
+           ((x-list-fonts "Roboto Mono")     "Roboto Mono")
+           ((x-list-fonts "Hack")            "Hack")
+           ((x-list-fonts "Source Code Pro") "Source Code Pro")
+           ((x-list-fonts "Anonymous Pro")   "Anonymous Pro")
+           ((x-list-fonts "Hasklig")         "Hasklig")
+           ((x-list-fonts "M+ 1mn")          "M+ 1mn")))
+    (setq ha/variable-font-family
+          (cond
+           ((x-list-fonts "Iosevka Etoile") "Iosevka Etoile")
+           ((x-list-fonts "Source Sans Pro") "Source Sans Pro")
+           ((x-list-fonts "ETBembo") "ETBembo")
+           ((x-list-fonts "SF Pro") "SF Pro")
+           ((x-list-fonts "FiraGO") "FiraGO")
+           ((x-list-fonts "Lucida Grande")   "Lucida Grande")
+           ((x-list-fonts "Verdana")         "Verdana")
+           ((x-family-fonts "Sans Serif")    "Sans Serif")
+           (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+    (when ha/fixed-font-family
+      (set-frame-font ha/fixed-font-family)
+      (set-face-attribute 'default nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
+      (set-face-attribute 'fixed-pitch nil :font ha/fixed-font-family :height ha/fixed-font-family-height :weight 'normal)
+      (set-face-font 'default ha/fixed-font-family))
+    (when ha/variable-font-family
+      (set-face-attribute 'variable-pitch nil :font ha/variable-font-family :height 1.0 :weight 'extralight))))
+
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'ha/setup-fonts)
+  (ha/setup-fonts))
 
 (use-package modus-themes
   :pin melpa
@@ -482,7 +489,8 @@ action."
     (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
     (persistent-scratch-setup-default)))
 
-(server-start)
+(unless (daemonp)
+  (server-start))
 
 (setenv "EDITOR" "emacsclient")
 
