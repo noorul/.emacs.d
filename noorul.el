@@ -307,6 +307,13 @@
            (projectile-run-vterm))))
     (my/embark-projectile-switch-project-by-name project)))
 
+(defun my/embark-projectile-switch-project-action-run-ghostel (project)
+  "Invoke `ghostel-project' from PROJECT's root."
+  (let ((projectile-switch-project-action
+         (lambda ()
+           (ghostel-project))))
+    (my/embark-projectile-switch-project-by-name project)))
+
 
 (defun my/embark-projectile-switch-project-action-rg (project)
   "Search PROJECT with rg."
@@ -317,7 +324,8 @@
 
 (defvar-keymap my/embark-projectile-extended-map
   :doc "Keymap for extended projectile actions."
-  "v" #'my/embark-projectile-switch-project-action-run-vterm)
+  "v" #'my/embark-projectile-switch-project-action-run-vterm
+  "g" #'my/embark-projectile-switch-project-action-run-ghostel)
 
 (fset 'my/embark-projectile-extended-map my/embark-projectile-extended-map)
 
