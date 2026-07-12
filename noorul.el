@@ -181,7 +181,7 @@
     (message "Native comp is *not* available")))
 
 (setq visible-bell nil)
-(setq ring-bell-function 'ignore)))
+(setq ring-bell-function 'ignore)
 
 (if (my/macbookpro)
     (progn
