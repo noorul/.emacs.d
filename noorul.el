@@ -332,7 +332,7 @@ Deferred to a hook so daemon-launched frames get styled too."
 (defvar-keymap my/embark-projectile-extended-map
   :doc "Keymap for extended projectile actions."
   "v" #'my/embark-projectile-switch-project-action-run-vterm
-  "g" #'my/embark-projectile-switch-project-action-run-ghostel)
+  "G" #'my/embark-projectile-switch-project-action-run-ghostel)
 
 (fset 'my/embark-projectile-extended-map my/embark-projectile-extended-map)
 
