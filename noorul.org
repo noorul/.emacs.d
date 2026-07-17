@@ -69,14 +69,18 @@ Tell package.el to initialise at startup using the available cache.
 #+begin_src emacs-lisp
 ;;;; Starting up
 (setq save-abbrevs 'silently)
-; Profile emacs startup
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (message "*** Emacs loaded in %s with %d garbage collections."
-;;                      (format "%.2f seconds"
-;;                              (float-time
-;;                               (time-subtract after-init-time before-init-time)))
-;;                      gcs-done)))
+
+;; Profile emacs startup
+(defun display-startup-time ()
+  "Display how long Emacs took to start up and how many GCs ran."
+  (message "*** Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'display-startup-time)
+
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/git.sv.gnu.org/org-mode/lisp")
@@ -109,7 +113,7 @@ Tell package.el to initialise at startup using the available cache.
 (setq load-prefer-newer t)
 #+end_src
 
-** COMMENT Benchmark start-up
+** Benchmark start-up
 #+begin_src emacs-lisp
 (use-package benchmark-init
   :config
@@ -273,7 +277,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 
 *** Mac OS X specific configuration
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
+(require 'cl-lib)
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
   :config
@@ -1057,9 +1061,10 @@ It is better to always copy to location at other window
                            ol-vm
                            ol-wl
                            ol-w3m)))
- (use-package ob-http)
+ (use-package ob-http
+   :after org)
 
- (org-reload)
+ ;; No (org-reload) here; `org-modules' load when org-mode first activates.
  #+end_src
 
 **** Agenda Setup
@@ -1287,7 +1292,8 @@ It is better to always copy to location at other window
  #+begin_src emacs-lisp
  ;;
  ;; Resume clocking task when emacs is restarted
- (org-clock-persistence-insinuate)
+ (with-eval-after-load 'org
+   (org-clock-persistence-insinuate))
  ;;
  ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
  (setq org-clock-history-length 23)
@@ -1406,7 +1412,6 @@ It is better to always copy to location at other window
 
  (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
 
- (require 'org-id)
  (defun bh/clock-in-task-by-id (id)
    "Clock in a task by id"
    (org-with-point-at (org-id-find id 'marker)
@@ -1771,7 +1776,7 @@ It is better to always copy to location at other window
                              (format-time-string "%m" (current-time))))
                 (my-pair)
                 (dates-string
-                 (do
+                 (cl-do
                      ((count 0 (+ 1 count))
                       (ret-string ""))
                      ((> count 12) ret-string)
@@ -1809,9 +1814,10 @@ It is better to always copy to location at other window
  #+END_SRC
 *** Org babel setup
  #+begin_src emacs-lisp
-  (org-babel-do-load-languages
-   (quote org-babel-load-languages)
-   (quote ((emacs-lisp . t)
+  (with-eval-after-load 'org
+   (org-babel-do-load-languages
+    (quote org-babel-load-languages)
+    (quote ((emacs-lisp . t)
            (dot . t)
            (sql . t)
            (calc . t)
@@ -1830,7 +1836,7 @@ It is better to always copy to location at other window
            (java . t)
            (groovy . t)
            (js . t)
-           )))
+           ))))
 
   (setq org-babel-default-header-args:java
         '((:dir . "~/bitbucket.org/noorul/sandbox/java")
@@ -1844,7 +1850,8 @@ It is better to always copy to location at other window
   ;; (setq org-confirm-babel-evaluate nil)
 
   ;; Use fundamental mode when editing plantuml blocks with C-c '
-  (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+  (with-eval-after-load 'org
+    (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental))))
 
   ;; Don't enable this because it breaks access to emacs from my Android phone
   (setq org-startup-with-inline-images nil)
@@ -1861,8 +1868,8 @@ It is better to always copy to location at other window
  ; Rebuild the reminders everytime the agenda is displayed
  (add-hook 'org-finalize-agenda-hook 'bh/org-agenda-to-appt 'append)
 
- ; This is at the end of my .emacs - so appointments are set up when Emacs starts
- (bh/org-agenda-to-appt)
+ ; Set up appointments shortly after startup instead of during init
+ (run-with-idle-timer 5 nil 'bh/org-agenda-to-appt)
 
  ; Activate appointments so we get notifications
  (appt-activate t)
@@ -1884,7 +1891,8 @@ It is better to always copy to location at other window
    _ - \n
    "#+end_" str "\n")
 
- (define-abbrev org-mode-abbrev-table "sblk" "" 'skel-org-block)
+ (with-eval-after-load 'org
+   (define-abbrev org-mode-abbrev-table "sblk" "" 'skel-org-block))
 
 
  ;; selisp - Emacs Lisp source block
@@ -1895,7 +1903,8 @@ It is better to always copy to location at other window
    _ - \n
    "#+end_src\n")
 
- (define-abbrev org-mode-abbrev-table "selisp" "" 'skel-org-block-elisp)
+ (with-eval-after-load 'org
+   (define-abbrev org-mode-abbrev-table "selisp" "" 'skel-org-block-elisp))
 
  #+end_src
 **** Narrowing to subtree
@@ -2657,7 +2666,9 @@ It is better to always copy to location at other window
  #+end_src
 *** Automatic hourly commits
  #+begin_src emacs-lisp
- (run-at-time "00:59" 3600 'org-save-all-org-buffers)
+ (run-at-time "00:59" 3600 (lambda ()
+                             (when (featurep 'org)
+                               (org-save-all-org-buffers))))
  #+end_src
 *** helm
  ;; Stolen from https://github.com/LeoUfimtsev/emacsconfig/blob/master/.emacs
@@ -2777,10 +2788,11 @@ It is better to always copy to location at other window
 **** General
  #+begin_src emacs-lisp
  (setq org-alphabetical-lists t)
- (require 'ox-html)
- (require 'ox-latex)
- (require 'ox-ascii)
- (require 'ox-md)
+ (with-eval-after-load 'ox
+   (require 'ox-html)
+   (require 'ox-latex)
+   (require 'ox-ascii)
+   (require 'ox-md))
  (setq org-publish-project-alist
        '(
          ("noorul-blog"
@@ -2814,6 +2826,7 @@ It is better to always copy to location at other window
 **** org-reveal
 #+begin_src emacs-lisp
 (use-package ox-reveal
+  :after ox
   :config
   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
 #+end_src
@@ -2887,6 +2900,7 @@ It is better to always copy to location at other window
 *** org-contrib
 #+begin_src emacs-lisp
 (use-package org-contrib
+  :after org
   :config
   (require 'ob-ledger)
   (add-to-list 'org-babel-load-languages '(ledger . t)))
@@ -2986,8 +3000,8 @@ It is better to always copy to location at other window
 ;;   to avoid odd behavior with snippets and indentation
 
 (use-package yasnippet
-  :demand t
   :diminish yas-minor-mode
+  :commands yas-minor-mode-on
   :bind (("C-c y d" . yas-load-directory)
          ("C-c y i" . yas-insert-snippet)
          ("C-c y f" . yas-visit-snippet-file)
@@ -3277,7 +3291,8 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   :after lsp-mode
   :hook ((ruby-mode . lsp-deferred)))
 
-(use-package inf-ruby)
+(use-package inf-ruby
+  :defer t)
 
 (use-package ruby-test-mode
   :after ruby-mode
@@ -3349,10 +3364,6 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package docker-tramp
-  :if (version< emacs-version "29.0")
-  :after docker)
-
 (use-package docker
   :bind ("C-c d" . docker)
   :init
@@ -3566,8 +3577,10 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 **** jq-mode
 #+begin_src emacs-lisp
 (use-package jq-mode
-  :config
-  (add-to-list 'org-babel-load-languages '(jq . t)))
+  :defer t
+  :init
+  (with-eval-after-load 'org
+    (add-to-list 'org-babel-load-languages '(jq . t))))
 #+end_src
 *** TypeScript
 
@@ -3806,6 +3819,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 *** Copilot chat
 #+begin_src emacs-lisp
 (use-package copilot-chat
+  :defer t
   :config
   (setq copilot-chat-default-model "claude-sonnet-4"))
 #+end_src
@@ -3814,6 +3828,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 #+begin_src emacs-lisp
 (use-package gptel
   :pin melpa
+  :defer t
   :config
   (setq
    gptel-model 'claude-sonnet-4.6
@@ -3890,22 +3905,26 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 #+end_src
 **** gptel-commit
 #+begin_src emacs-lisp
-(use-package gptel-commit)
+(use-package gptel-commit
+  :commands gptel-commit)
 #+end_src
 **** gptel-agent
 #+begin_src emacs-lisp
-(use-package gptel-agent)
+(use-package gptel-agent
+  :defer t)
 #+end_src
 **** gptel-quick
 #+begin_src emacs-lisp
 (use-package gptel-quick
   :ensure t
-  :vc (:url "https://github.com/karthink/gptel-quick"))
+  :vc (:url "https://github.com/karthink/gptel-quick")
+  :commands gptel-quick)
 #+end_src
 *** Pi Coding Agent
 #+begin_src emacs-lisp
 (use-package pi-coding-agent
   :ensure t
+  :commands pi-coding-agent
   :init (defalias 'pi 'pi-coding-agent))
 #+end_src
 ** Writing
@@ -3921,12 +3940,12 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 #+begin_src emacs-lisp
 (use-package pdf-tools
   :defer t
-  :mode "\\.pdf$"
+  :init
+  ;; Lazy alternative to pdf-tools-install; installs on first PDF visit.
+  (pdf-loader-install)
   :config
   (setq-default pdf-view-display-size 'fit-page)
-  (setq pdf-annot-activate-created-annotations t)
-  :init
-  (pdf-tools-install :no-query))
+  (setq pdf-annot-activate-created-annotations t))
 #+end_src
 [2023-09-29 Fri 13:51]
 ** Mail
@@ -3956,8 +3975,9 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 ;;
   :config
   (gnus-delay-initialize)
-  (add-to-list 'org-modules 'ol-gnus)
-  (org-load-modules-maybe t)
+  (with-eval-after-load 'org
+    (add-to-list 'org-modules 'ol-gnus)
+    (org-load-modules-maybe t))
   (setq gnus-check-new-newsgroups nil  ;; Save some startup time
         ;; I do not want gnus to use full window
         gnus-use-full-window nil
@@ -4217,18 +4237,18 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   (defun change-smtp ()
     "Change the SMTP server according to the current from line."
     (save-excursion
-      (loop with from = (save-restriction
-                          (message-narrow-to-headers)
-                          (message-fetch-field "from"))
-            for (acc-type address . auth-spec) in smtp-accounts
-            when (string-match address from)
-            do (cond
-                ((string= acc-type "plain")
-                 (return (apply 'set-smtp-plain auth-spec)))
-                ((string= acc-type "ssl")
-                 (return (apply 'set-smtp-ssl auth-spec)))
-                (t (error "Unrecognized SMTP account type: `%s'." acc-type)))
-            finally (error "Cannot interfere SMTP information."))))
+      (cl-loop with from = (save-restriction
+                             (message-narrow-to-headers)
+                             (message-fetch-field "from"))
+               for (acc-type address . auth-spec) in smtp-accounts
+               when (string-match address from)
+               do (cond
+                   ((string= acc-type "plain")
+                    (cl-return (apply 'set-smtp-plain auth-spec)))
+                   ((string= acc-type "ssl")
+                    (cl-return (apply 'set-smtp-ssl auth-spec)))
+                   (t (error "Unrecognized SMTP account type: `%s'." acc-type)))
+               finally (error "Cannot interfere SMTP information."))))
 
   (add-hook 'message-send-hook 'change-smtp)
 
@@ -4492,6 +4512,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   :mode ("\\.rest\\'" . restclient-mode))
 
 (use-package ob-restclient
+  :after org
   :config
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
@@ -4601,7 +4622,8 @@ COMMAND: Shell command or script to execute"
 #+end_src
 *** ghostel
 #+begin_src emacs-lisp
-(use-package ghostel)
+(use-package ghostel
+  :defer t)
 #+end_src
 ** Work configuration
 #+begin_src emacs-lisp
@@ -4618,7 +4640,7 @@ COMMAND: Shell command or script to execute"
 (defalias 'noorul/record-exercise
    (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
 #+end_src
-** Startup
+** COMMENT Startup
  #+begin_src emacs-lisp
  (let  ((projectile-current-project-name nil))
    (org-agenda "" "c"))

@@ -1,13 +1,17 @@
 ;;;; Starting up
 (setq save-abbrevs 'silently)
-; Profile emacs startup
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (message "*** Emacs loaded in %s with %d garbage collections."
-;;                      (format "%.2f seconds"
-;;                              (float-time
-;;                               (time-subtract after-init-time before-init-time)))
-;;                      gcs-done)))
+
+;; Profile emacs startup
+(defun display-startup-time ()
+  "Display how long Emacs took to start up and how many GCs ran."
+  (message "*** Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'display-startup-time)
+
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/git.sv.gnu.org/org-mode/lisp")
@@ -32,6 +36,13 @@
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
+
+(use-package benchmark-init
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+(benchmark-init/activate)
 
 (defun my/macbookpro ()
   (interactive)
@@ -156,7 +167,7 @@ Deferred to a hook so daemon-launched frames get styled too."
 
 (add-hook 'compilation-filter-hook (lambda () (ansi-color-apply-on-region (point-min) (point-max))))
 
-(require 'cl)
+(require 'cl-lib)
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
   :config
@@ -726,9 +737,10 @@ action."
                           ol-vm
                           ol-wl
                           ol-w3m)))
-(use-package ob-http)
+(use-package ob-http
+  :after org)
 
-(org-reload)
+;; No (org-reload) here; `org-modules' load when org-mode first activates.
 
 ;; Every .org file under ~/github.com/noorul/notebook/notebook should be part of agenda.
 (setq org-agenda-files (quote ("~/github.com/noorul/notebook/org/agenda")))
@@ -923,7 +935,8 @@ action."
 
 ;;
 ;; Resume clocking task when emacs is restarted
-(org-clock-persistence-insinuate)
+(with-eval-after-load 'org
+  (org-clock-persistence-insinuate))
 ;;
 ;; Show lot of clocking history so it's easy to pick items off the C-F11 list
 (setq org-clock-history-length 23)
@@ -1042,7 +1055,6 @@ as the default task."
 
 (add-hook 'org-clock-out-hook 'bh/clock-out-maybe 'append)
 
-(require 'org-id)
 (defun bh/clock-in-task-by-id (id)
   "Clock in a task by id"
   (org-with-point-at (org-id-find id 'marker)
@@ -1378,7 +1390,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
                             (format-time-string "%m" (current-time))))
                (my-pair)
                (dates-string
-                (do
+                (cl-do
                     ((count 0 (+ 1 count))
                      (ret-string ""))
                     ((> count 12) ret-string)
@@ -1411,9 +1423,10 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
 (use-package es-mode
   :mode "\\.es$")
 
-(org-babel-do-load-languages
-  (quote org-babel-load-languages)
-  (quote ((emacs-lisp . t)
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+   (quote org-babel-load-languages)
+   (quote ((emacs-lisp . t)
           (dot . t)
           (sql . t)
           (calc . t)
@@ -1432,7 +1445,7 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
           (java . t)
           (groovy . t)
           (js . t)
-          )))
+          ))))
 
  (setq org-babel-default-header-args:java
        '((:dir . "~/bitbucket.org/noorul/sandbox/java")
@@ -1446,7 +1459,8 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
  ;; (setq org-confirm-babel-evaluate nil)
 
  ;; Use fundamental mode when editing plantuml blocks with C-c '
- (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+ (with-eval-after-load 'org
+   (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental))))
 
  ;; Don't enable this because it breaks access to emacs from my Android phone
  (setq org-startup-with-inline-images nil)
@@ -1460,8 +1474,8 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
 ; Rebuild the reminders everytime the agenda is displayed
 (add-hook 'org-finalize-agenda-hook 'bh/org-agenda-to-appt 'append)
 
-; This is at the end of my .emacs - so appointments are set up when Emacs starts
-(bh/org-agenda-to-appt)
+; Set up appointments shortly after startup instead of during init
+(run-with-idle-timer 5 nil 'bh/org-agenda-to-appt)
 
 ; Activate appointments so we get notifications
 (appt-activate t)
@@ -1479,7 +1493,8 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
   _ - \n
   "#+end_" str "\n")
 
-(define-abbrev org-mode-abbrev-table "sblk" "" 'skel-org-block)
+(with-eval-after-load 'org
+  (define-abbrev org-mode-abbrev-table "sblk" "" 'skel-org-block))
 
 
 ;; selisp - Emacs Lisp source block
@@ -1490,7 +1505,8 @@ Skip project and sub-project tasks, habits, and loose non-project tasks."
   _ - \n
   "#+end_src\n")
 
-(define-abbrev org-mode-abbrev-table "selisp" "" 'skel-org-block-elisp)
+(with-eval-after-load 'org
+  (define-abbrev org-mode-abbrev-table "selisp" "" 'skel-org-block-elisp))
 
 (global-set-key (kbd "<f5>") 'bh/org-todo)
 
@@ -2125,7 +2141,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (org-contacts-files (quote ("~/github.com/noorul/notebook/org/agenda/contacts.org")))
   (calendar-mark-holidays-flag t))
 
-(run-at-time "00:59" 3600 'org-save-all-org-buffers)
+(run-at-time "00:59" 3600 (lambda ()
+                            (when (featurep 'org)
+                              (org-save-all-org-buffers))))
 
 (defun my/helm-multi-swoop-all-headings ()
   "Search only for headings across all files"
@@ -2206,10 +2224,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (switch-to-buffer "*scratch*"))
 
 (setq org-alphabetical-lists t)
-(require 'ox-html)
-(require 'ox-latex)
-(require 'ox-ascii)
-(require 'ox-md)
+(with-eval-after-load 'ox
+  (require 'ox-html)
+  (require 'ox-latex)
+  (require 'ox-ascii)
+  (require 'ox-md))
 (setq org-publish-project-alist
       '(
         ("noorul-blog"
@@ -2241,6 +2260,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
         ))
 
 (use-package ox-reveal
+  :after ox
   :config
   (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
 
@@ -2303,6 +2323,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (setq org-ql-search-directories-files-recursive t))
 
 (use-package org-contrib
+  :after org
   :config
   (require 'ob-ledger)
   (add-to-list 'org-babel-load-languages '(ledger . t)))
@@ -2383,8 +2404,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;;   to avoid odd behavior with snippets and indentation
 
 (use-package yasnippet
-  :demand t
   :diminish yas-minor-mode
+  :commands yas-minor-mode-on
   :bind (("C-c y d" . yas-load-directory)
          ("C-c y i" . yas-insert-snippet)
          ("C-c y f" . yas-visit-snippet-file)
@@ -2642,7 +2663,8 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :after lsp-mode
   :hook ((ruby-mode . lsp-deferred)))
 
-(use-package inf-ruby)
+(use-package inf-ruby
+  :defer t)
 
 (use-package ruby-test-mode
   :after ruby-mode
@@ -2700,10 +2722,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (use-package dockerfile-mode
   :mode ("\\`Dockerfile" . dockerfile-mode))
-
-(use-package docker-tramp
-  :if (version< emacs-version "29.0")
-  :after docker)
 
 (use-package docker
   :bind ("C-c d" . docker)
@@ -2884,8 +2902,10 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :hook (js2-mode . tern-mode))
 
 (use-package jq-mode
-  :config
-  (add-to-list 'org-babel-load-languages '(jq . t)))
+  :defer t
+  :init
+  (with-eval-after-load 'org
+    (add-to-list 'org-babel-load-languages '(jq . t))))
 
 (use-package typescript-mode
   :hook
@@ -3097,11 +3117,13 @@ Late deadlines first, then scheduled, then non-late deadlines"
        (kill-buffer aws-sso-profiles-buffer)))))
 
 (use-package copilot-chat
+  :defer t
   :config
   (setq copilot-chat-default-model "claude-sonnet-4"))
 
 (use-package gptel
   :pin melpa
+  :defer t
   :config
   (setq
    gptel-model 'claude-sonnet-4.6
@@ -3174,16 +3196,20 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
     (add-hook 'completion-at-point-functions
               'ob-gptel-capf nil t)))
 
-(use-package gptel-commit)
+(use-package gptel-commit
+  :commands gptel-commit)
 
-(use-package gptel-agent)
+(use-package gptel-agent
+  :defer t)
 
 (use-package gptel-quick
   :ensure t
-  :vc (:url "https://github.com/karthink/gptel-quick"))
+  :vc (:url "https://github.com/karthink/gptel-quick")
+  :commands gptel-quick)
 
 (use-package pi-coding-agent
   :ensure t
+  :commands pi-coding-agent
   :init (defalias 'pi 'pi-coding-agent))
 
 (use-package keytar
@@ -3194,12 +3220,12 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 
 (use-package pdf-tools
   :defer t
-  :mode "\\.pdf$"
+  :init
+  ;; Lazy alternative to pdf-tools-install; installs on first PDF visit.
+  (pdf-loader-install)
   :config
   (setq-default pdf-view-display-size 'fit-page)
-  (setq pdf-annot-activate-created-annotations t)
-  :init
-  (pdf-tools-install :no-query))
+  (setq pdf-annot-activate-created-annotations t))
 
 (use-package async :defer t)
 
@@ -3224,8 +3250,9 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 ;;
   :config
   (gnus-delay-initialize)
-  (add-to-list 'org-modules 'ol-gnus)
-  (org-load-modules-maybe t)
+  (with-eval-after-load 'org
+    (add-to-list 'org-modules 'ol-gnus)
+    (org-load-modules-maybe t))
   (setq gnus-check-new-newsgroups nil  ;; Save some startup time
         ;; I do not want gnus to use full window
         gnus-use-full-window nil
@@ -3485,18 +3512,18 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   (defun change-smtp ()
     "Change the SMTP server according to the current from line."
     (save-excursion
-      (loop with from = (save-restriction
-                          (message-narrow-to-headers)
-                          (message-fetch-field "from"))
-            for (acc-type address . auth-spec) in smtp-accounts
-            when (string-match address from)
-            do (cond
-                ((string= acc-type "plain")
-                 (return (apply 'set-smtp-plain auth-spec)))
-                ((string= acc-type "ssl")
-                 (return (apply 'set-smtp-ssl auth-spec)))
-                (t (error "Unrecognized SMTP account type: `%s'." acc-type)))
-            finally (error "Cannot interfere SMTP information."))))
+      (cl-loop with from = (save-restriction
+                             (message-narrow-to-headers)
+                             (message-fetch-field "from"))
+               for (acc-type address . auth-spec) in smtp-accounts
+               when (string-match address from)
+               do (cond
+                   ((string= acc-type "plain")
+                    (cl-return (apply 'set-smtp-plain auth-spec)))
+                   ((string= acc-type "ssl")
+                    (cl-return (apply 'set-smtp-ssl auth-spec)))
+                   (t (error "Unrecognized SMTP account type: `%s'." acc-type)))
+               finally (error "Cannot interfere SMTP information."))))
 
   (add-hook 'message-send-hook 'change-smtp)
 
@@ -3733,6 +3760,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   :mode ("\\.rest\\'" . restclient-mode))
 
 (use-package ob-restclient
+  :after org
   :config
   (org-babel-do-load-languages
    (quote org-babel-load-languages)
@@ -3830,7 +3858,8 @@ COMMAND: Shell command or script to execute"
         (vterm-send-string command)
         (vterm-send-return)))))
 
-(use-package ghostel)
+(use-package ghostel
+  :defer t)
 
 (let ((work-config-file "~/github.com/noorul/work-emacs-config/work.el"))
  (if (file-exists-p work-config-file)
@@ -3842,6 +3871,3 @@ COMMAND: Shell command or script to execute"
 
 (defalias 'noorul/record-exercise
    (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
-
-(let  ((projectile-current-project-name nil))
-  (org-agenda "" "c"))
