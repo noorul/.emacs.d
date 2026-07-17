@@ -160,7 +160,8 @@ Deferred to a hook so daemon-launched frames get styled too."
               "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
               "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN" "ANTHROPIC_API_KEY" "NVM_DIR"
               "JIRA_TOKEN" "JIRA_KEY" "BITBUCKET_KEY" "CONFLUENCE_KEY" "JENKINS_USERNAME"
-              "JENKINS_KEY" "BUILDKIT_PROGRESS"))
+              "JENKINS_KEY" "BUILDKIT_PROGRESS" "LOGSCALE_KEY" "LOGSCALE_KEY_AQUA"
+              "LOGSCALE_KEY_BROOKE" "LOGSCALE_KEY_USWEST4"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -3096,6 +3097,107 @@ Late deadlines first, then scheduled, then non-late deadlines"
      (message "Error in aws-sso-login: %s" (error-message-string err))
      (when aws-sso-profiles-buffer
        (kill-buffer aws-sso-profiles-buffer)))))
+
+(use-package consult-gh
+  :after consult
+  :custom
+  (consult-gh-default-clone-directory "~/github.com")
+  (consult-gh-show-preview t)
+  (consult-gh-preview-key "C-o")
+  (consult-gh-repo-action #'consult-gh--repo-browse-files-action)
+  (consult-gh-large-file-warning-threshold 2500000)
+  (consult-gh-confirm-name-before-fork nil)
+  (consult-gh-confirm-before-clone t)
+  (consult-gh-notifications-show-unread-only nil)
+  (consult-gh-default-interactive-command #'consult-gh-transient)
+  (consult-gh-prioritize-local-folder nil)
+  (consult-gh-confirm-before-clone nil)
+  (consult-gh-group-dashboard-by :reason)
+  ;;;; Optional
+  (consult-gh-repo-preview-major-mode nil) ; show readmes in their original format
+  (consult-gh-preview-major-mode 'org-mode) ; use 'org-mode for editing comments, commit messages, ...
+  :config
+  ;; Remember visited orgs and repos across sessions
+  (add-to-list 'savehist-additional-variables 'consult-gh--known-orgs-list)
+  (add-to-list 'savehist-additional-variables 'consult-gh--known-repos-list)
+  ;; Enable default keybindings (e.g. for commenting on issues, prs, ...)
+  (consult-gh-enable-default-keybindings))
+
+
+;; Install `consult-gh-embark' for embark actions
+(use-package consult-gh-embark
+  :diminish
+  :config
+  (consult-gh-embark-mode +1))
+
+;; --- slug helpers ------------------------------------------------------
+
+(defun my/projectile-github-repo-slug ()
+  "Return OWNER/REPO from the current Projectile project root."
+  (let* ((root (directory-file-name (projectile-project-root)))
+         (repo (file-name-nondirectory root))
+         (owner (file-name-nondirectory
+                 (directory-file-name (file-name-directory root)))))
+    (format "%s/%s" owner repo)))
+
+(defun my/embark-projectile-github-repo-slug ()
+  "Return OWNER/REPO for `default-directory'."
+  (let* ((root (directory-file-name (expand-file-name default-directory)))
+         (repo (file-name-nondirectory root))
+         (owner (file-name-nondirectory
+                 (directory-file-name (file-name-directory root)))))
+    (format "%s/%s" owner repo)))
+
+;; --- regular Projectile commands --------------------------------------
+
+(defun my/consult-gh-pr-list-projectile ()
+  "Call `consult-gh-pr-list' with OWNER/REPO from the current project."
+  (interactive)
+  (if (projectile-project-p)
+      (consult-gh-pr-list (my/projectile-github-repo-slug))
+    (user-error "Not in a Projectile project")))
+
+(defun my/consult-gh-issue-list-projectile ()
+  "Call `consult-gh-issue-list' with OWNER/REPO from the current project."
+  (interactive)
+  (if (projectile-project-p)
+      (consult-gh-issue-list (my/projectile-github-repo-slug))
+    (user-error "Not in a Projectile project")))
+
+;; --- Projectile prefix map (C-c p G) ----------------------------------
+
+(define-prefix-command 'my/projectile-github-map)
+(define-key projectile-command-map (kbd "G") 'my/projectile-github-map)
+(define-key my/projectile-github-map (kbd "p") #'my/consult-gh-pr-list-projectile)
+(define-key my/projectile-github-map (kbd "i") #'my/consult-gh-issue-list-projectile)
+
+;; --- Embark Projectile actions ----------------------------------------
+
+(defun my/embark-projectile-switch-project-action-gh-prs (project)
+  "Open PR list for PROJECT."
+  (interactive "s")
+  (let ((projectile-switch-project-action
+         (lambda ()
+           (consult-gh-pr-list (my/embark-projectile-github-repo-slug)))))
+    (my/embark-projectile-switch-project-by-name project)))
+
+(defun my/embark-projectile-switch-project-action-gh-issues (project)
+  "Open issue list for PROJECT."
+  (interactive "s")
+  (let ((projectile-switch-project-action
+         (lambda ()
+           (consult-gh-issue-list (my/embark-projectile-github-repo-slug)))))
+    (my/embark-projectile-switch-project-by-name project)))
+
+;; --- Embark submenu ---------------------------------------------------
+
+(define-prefix-command 'my/embark-projectile-github-map)
+(define-key my/embark-projectile-github-map (kbd "p")
+            #'my/embark-projectile-switch-project-action-gh-prs)
+(define-key my/embark-projectile-github-map (kbd "i")
+            #'my/embark-projectile-switch-project-action-gh-issues)
+
+(define-key projectile-map (kbd "G") #'my/embark-projectile-github-map)
 
 (use-package copilot-chat
   :defer t
