@@ -1,17 +1,5 @@
 ;;;; Starting up
 (setq save-abbrevs 'silently)
-
-;; Profile emacs startup
-(defun display-startup-time ()
-  "Display how long Emacs took to start up and how many GCs ran."
-  (message "*** Emacs loaded in %s with %d garbage collections."
-           (format "%.2f seconds"
-                   (float-time
-                    (time-subtract after-init-time before-init-time)))
-           gcs-done))
-
-(add-hook 'emacs-startup-hook #'display-startup-time)
-
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/git.sv.gnu.org/org-mode/lisp")
@@ -36,13 +24,6 @@
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
-
-(use-package benchmark-init
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
-
-(benchmark-init/activate)
 
 (defun my/macbookpro ()
   (interactive)

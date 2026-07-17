@@ -69,18 +69,6 @@ Tell package.el to initialise at startup using the available cache.
 #+begin_src emacs-lisp
 ;;;; Starting up
 (setq save-abbrevs 'silently)
-
-;; Profile emacs startup
-(defun display-startup-time ()
-  "Display how long Emacs took to start up and how many GCs ran."
-  (message "*** Emacs loaded in %s with %d garbage collections."
-           (format "%.2f seconds"
-                   (float-time
-                    (time-subtract after-init-time before-init-time)))
-           gcs-done))
-
-(add-hook 'emacs-startup-hook #'display-startup-time)
-
 (package-initialize)
 (setq use-package-always-ensure t)
 (add-to-list 'load-path "~/git.sv.gnu.org/org-mode/lisp")
@@ -113,7 +101,22 @@ Tell package.el to initialise at startup using the available cache.
 (setq load-prefer-newer t)
 #+end_src
 
-** Benchmark start-up
+** COMMENT Startup profiling
+Remove COMMENT from this heading to tangle these blocks when profiling
+startup again.
+*** Load time stats
+#+begin_src emacs-lisp
+(defun display-startup-time ()
+  "Display how long Emacs took to start up and how many GCs ran."
+  (message "*** Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
+
+(add-hook 'emacs-startup-hook #'display-startup-time)
+#+end_src
+*** Benchmark start-up
 #+begin_src emacs-lisp
 (use-package benchmark-init
   :config
