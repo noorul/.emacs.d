@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 ;;;; Starting up
 (setq save-abbrevs 'silently)
 (package-initialize)
@@ -3099,7 +3101,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
        (kill-buffer aws-sso-profiles-buffer)))))
 
 (use-package consult-gh
-  :after consult
+  :defer t
   :custom
   (consult-gh-default-clone-directory "~/github.com")
   (consult-gh-show-preview t)
@@ -3116,10 +3118,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
   ;;;; Optional
   (consult-gh-repo-preview-major-mode nil) ; show readmes in their original format
   (consult-gh-preview-major-mode 'org-mode) ; use 'org-mode for editing comments, commit messages, ...
-  :config
+  :init
   ;; Remember visited orgs and repos across sessions
   (add-to-list 'savehist-additional-variables 'consult-gh--known-orgs-list)
   (add-to-list 'savehist-additional-variables 'consult-gh--known-repos-list)
+  :config
   ;; Enable default keybindings (e.g. for commenting on issues, prs, ...)
   (consult-gh-enable-default-keybindings))
 
@@ -3127,6 +3130,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 ;; Install `consult-gh-embark' for embark actions
 (use-package consult-gh-embark
   :diminish
+  :after consult-gh
   :config
   (consult-gh-embark-mode +1))
 
@@ -3197,7 +3201,11 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (define-key my/embark-projectile-github-map (kbd "i")
             #'my/embark-projectile-switch-project-action-gh-issues)
 
-(define-key projectile-map (kbd "G") #'my/embark-projectile-github-map)
+;; Runs after the embark-consult block's :config has defined
+;; projectile-map (after-load callbacks fire in registration order, and
+;; that block registers on 'embark earlier in init than this one).
+(with-eval-after-load 'embark
+  (define-key projectile-map (kbd "G") #'my/embark-projectile-github-map))
 
 (use-package copilot-chat
   :defer t

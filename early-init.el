@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 (setq frame-inhibit-implied-resize 'force)
 (setq frame-resize-pixelwise t)
 (push '(fullscreen . fullboth) default-frame-alist)

@@ -20,6 +20,8 @@ the toolbar/scrollbar flash and reduces GC pressure during startup.
 Disabling UI elements before the first frame is created avoids the visual flicker
 of bars appearing and then being hidden.
 #+begin_src emacs-lisp :tangle "~/.config/emacs/early-init.el"
+;;; -*- lexical-binding: t -*-
+
 (setq frame-inhibit-implied-resize 'force)
 (setq frame-resize-pixelwise t)
 (push '(fullscreen . fullboth) default-frame-alist)
@@ -67,6 +69,8 @@ Tell package.el to initialise at startup using the available cache.
 
 ** Starting up
 #+begin_src emacs-lisp
+;;; -*- lexical-binding: t -*-
+
 ;;;; Starting up
 (setq save-abbrevs 'silently)
 (package-initialize)
@@ -3822,7 +3826,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 ** Github
 #+begin_src emacs-lisp
 (use-package consult-gh
-  :after consult
+  :defer t
   :custom
   (consult-gh-default-clone-directory "~/github.com")
   (consult-gh-show-preview t)
@@ -3839,10 +3843,11 @@ https://github.com/amake/.emacs.d/blob/master/init.el
   ;;;; Optional
   (consult-gh-repo-preview-major-mode nil) ; show readmes in their original format
   (consult-gh-preview-major-mode 'org-mode) ; use 'org-mode for editing comments, commit messages, ...
-  :config
+  :init
   ;; Remember visited orgs and repos across sessions
   (add-to-list 'savehist-additional-variables 'consult-gh--known-orgs-list)
   (add-to-list 'savehist-additional-variables 'consult-gh--known-repos-list)
+  :config
   ;; Enable default keybindings (e.g. for commenting on issues, prs, ...)
   (consult-gh-enable-default-keybindings))
 
@@ -3850,6 +3855,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 ;; Install `consult-gh-embark' for embark actions
 (use-package consult-gh-embark
   :diminish
+  :after consult-gh
   :config
   (consult-gh-embark-mode +1))
 
@@ -3920,7 +3926,11 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 (define-key my/embark-projectile-github-map (kbd "i")
             #'my/embark-projectile-switch-project-action-gh-issues)
 
-(define-key projectile-map (kbd "G") #'my/embark-projectile-github-map)
+;; Runs after the embark-consult block's :config has defined
+;; projectile-map (after-load callbacks fire in registration order, and
+;; that block registers on 'embark earlier in init than this one).
+(with-eval-after-load 'embark
+  (define-key projectile-map (kbd "G") #'my/embark-projectile-github-map))
 
 #+end_src
 ** AI
