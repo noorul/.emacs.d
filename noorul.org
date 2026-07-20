@@ -3947,47 +3947,76 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 **** gptel
 #+begin_src emacs-lisp
 (use-package gptel
-  :pin melpa
   :defer t
+  :commands (gptel gptel-send)
+  :hook ((gptel-mode . gptel-highlight-mode))
+  :bind (("C-c C-<return>" . gptel-menu)
+         ("C-c <return>" . gptel-send)
+         ("C-c j" . gptel-menu)
+         ("C-c M-j" . gptel)
+         ("C-c C-g" . gptel-abort))
   :config
   (setq
    gptel-model 'claude-sonnet-4.6
    gptel-backend (gptel-make-gh-copilot "Copilot")
-   gptel-directives
-   `((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications.  Speak in specific,
- topic relevant terminology.  Do NOT hedge or qualify.  Speak directly and be willing to make creative guesses.
+   gptel-display-buffer-action '(pop-to-buffer-same-window)
+   gptel-highlight-methods (if (controlling-tty-p) '(margin) '(fringe))
+   gptel-track-media t
+   gptel-expert-commands t))
 
-Explain your reasoning.  if you don’t know, say you don’t know.  Be willing to reference less reputable sources for
- ideas.
 
-Do NOT summarize your answers.
+(use-package gptel-rewrite
+  :after gptel
+  :ensure nil
+  :demand t
+  :bind ( :map gptel-rewrite-actions-map
+          ("C-c C-i" . gptel--rewrite-inline-diff))
+  :config
+  (add-hook 'poi-functions
+            (lambda (arg) (interactive "p")
+              (dotimes (_ (abs arg))
+                (if (> arg 0)
+                    (gptel--rewrite-next)
+                  (gptel--rewrite-previous)))))
+  (defun gptel--rewrite-inline-diff (&optional ovs)
+    (interactive (list (gptel--rewrite-overlay-at)))
+    (unless (require 'inline-diff nil t)
+      (user-error "Inline diffs require the inline-diff package"))
+    (when-let* ((ov-buf (overlay-buffer (or (car-safe ovs) ovs)))
+                ((buffer-live-p ov-buf)))
+      (with-current-buffer ov-buf
+        (cl-loop for ov in (ensure-list ovs)
+                 for ov-beg = (overlay-start ov)
+                 for ov-end = (overlay-end ov)
+                 for response = (overlay-get ov 'gptel-rewrite)
+                 do (delete-overlay ov)
+                 (inline-diff-words
+                  ov-beg ov-end response)))))
 
-If you use LaTex notation, enclose math in \\( and \\), or \\[ and \\] delimiters.
+  (when (boundp 'gptel--rewrite-dispatch-actions)
+    (add-to-list
+     'gptel--rewrite-dispatch-actions '(?i "inline-diff")
+     'append))
 
- Never apologize.  Ask questions when unsure.")
-     (code-infill . ,#'my/gptel-code-infill)
-     (programmer . "You are a careful programmer.  Provide code and only code as output without any additional text, prompt or note.  Do NOT use markdown backticks (```) to format your response.")
-     (cliwhiz . "You are a command line helper.  Generate command line commands that do what is requested, without any additional description or explanation.  Generate ONLY the command, without any markdown code fences.")
-     (emacser . "You are an Emacs maven.  Reply only with the most appropriate built-in Emacs command for the task I specify.  Do NOT generate any additional description or explanation.")
-     (explain . "Explain what this code does to a novice programmer.")
-     (tutor . "You are a tutor and domain expert in the domain of my questions.  You will lead me to discover the answer myself by providing hints.  Your instructions are as follows:
-- If the question or notation is not clear to you, ask for clarifying details.
-- At first your hints should be general and vague.
-- If I fail to make progress, provide more explicit hints.
-- Never provide the answer itself unless I explicitly ask you to.  If my answer is wrong, again provide only hints to correct it.
-- If you use LaTeX notation, enclose math in \\( and \\) or \\[ and \\] delimiters."))
-   gptel--system-message (alist-get 'default gptel-directives)
-   gptel-default-mode 'org-mode)
-
-  :bind (("C-c C-<return>" . gptel-menu)
-         ("C-c <return>" . gptel-send)
-         ("C-c j" . gptel-menu)
-         ("C-c C-g" . gptel-abort))
-  :preface
-  (defun my/gptel-code-infill ()
+  (defun my/gptel-code-infill (&optional margin)
     "Fill in code at point based on buffer context.  Note: Sends the whole buffer."
-    (let ((lang (gptel--strip-mode-suffix major-mode)))
-      `(,(format "You are a %s programmer and assistant in a code buffer in a text editor.
+    (lambda ()
+      (let* ((lang (gptel--strip-mode-suffix major-mode))
+             (start (if (use-region-p) (min (point) (region-beginning)) (point)))
+             (end (if (use-region-p) (max (point) (region-end)) (point)))
+             (before-start (if margin
+                               (save-excursion (goto-char start)
+                                               (forward-line (- margin))
+                                               (point))
+                             (point-min)))
+             (after-end (if margin
+                            (save-excursion (goto-char end)
+                                            (forward-line margin)
+                                            (point))
+                          (point-max))))
+        (nconc
+         (list
+          (format "You are a %s programmer and assistant in a code buffer in a text editor.
 
 Follow my instructions and generate %s code to be inserted at the cursor.
 For context, I will provide you with the code BEFORE and AFTER the cursor.
@@ -3997,22 +4026,21 @@ Generate %s code and only code without any explanations or markdown code fences.
 You may include code comments.
 
 Do not repeat any of the BEFORE or AFTER code." lang lang lang)
-        nil
-        "What is the code AFTER the cursor?"
-        ,(format "AFTER\n```\n%s\n```\n"
-                 (buffer-substring-no-properties
-                  (if (use-region-p) (max (point) (region-end)) (point))
-                  (point-max)))
-        "And what is the code BEFORE the cursor?"
-        ,(format "BEFORE\n```%s\n%s\n```\n" lang
-                 (buffer-substring-no-properties
-                  (point-min)
-                  (if (use-region-p) (min (point) (region-beginning)) (point))))
-        ,@(when (use-region-p) "What should I insert at the cursor?")))))
+          nil
+          "What is the code AFTER the cursor?"
+          (format "AFTER\n```\n%s\n```\n"
+                  (buffer-substring-no-properties end after-end))
+          "And what is the code BEFORE the cursor?"
+          (format "BEFORE\n```%s\n%s\n```\n" lang
+                  (buffer-substring-no-properties before-start start)))
+         (when (use-region-p) (list "What should I insert at the cursor?"))))))
+  (setf (alist-get 'infill-buffer gptel-directives) (my/gptel-code-infill))
+  (setf (alist-get 'infill-50 gptel-directives) (my/gptel-code-infill 50)))
 #+end_src
 #+begin_src emacs-lisp
 (use-package ob-gptel
   :load-path "~/github.com/jwiegley/ob-gptel"
+  :after gptel
   :hook ((org-mode . ob-gptel-install-completions))
   :defines ob-gptel-install-completions
   :config
@@ -4026,17 +4054,22 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 **** gptel-commit
 #+begin_src emacs-lisp
 (use-package gptel-commit
+  :after gptel
   :commands gptel-commit)
 #+end_src
 **** gptel-agent
 #+begin_src emacs-lisp
 (use-package gptel-agent
-  :defer t)
+  :defer t
+  :after gptel)
 #+end_src
-**** gptel-quick
+**** COMMENT gptel-quick
 #+begin_src emacs-lisp
 (use-package gptel-quick
   :ensure t
+  :defer t
+  :preface (require 'vc-git)
+  :after gptel
   :vc (:url "https://github.com/karthink/gptel-quick")
   :commands gptel-quick)
 #+end_src
