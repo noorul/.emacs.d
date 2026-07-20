@@ -779,6 +779,8 @@ action."
                "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
               ("a" "Aruba Meeting" entry (file+olp "~/github.com/noorul/notebook/org/agenda/aruba.org" "Meetings")
                "* %?\n%U\n  %i" :clock-in t :clock-resume t)
+              ("N" "Notes" entry (file+datetree "~/github.com/noorul/notebook/org/agenda/aruba.org" "Notes")
+               "* %? :NOTE:\n%U\n%a\n  %i" :clock-in t :clock-resume t)
               ("p" "Phone call" entry (file+datetree noorul/refile-target)
                "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
               ("c" "Contacts" entry (file "~/github.com/noorul/notebook/org/agenda/contacts.org")
