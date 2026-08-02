@@ -155,7 +155,7 @@ Deferred to a hook so daemon-launched frames get styled too."
   :if (memq window-system '(mac ns x pgtk))
   :config
   (setq exec-path-from-shell-variables
-        (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME"
+        (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "ASPELL_CONF"
               "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
