@@ -2543,6 +2543,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
     ;; Create a pullreq using the same title.
     (forge-create-pullreq (concat "origin/" branch) "origin/main"))
   :config
+  (setq forge-browse-topics-using-forge nil)
   (transient-insert-suffix 'forge-dispatch "c i"
     '("p" "quick-pr" my-quick-create-pull-request))
   (remove-hook 'magit-status-sections-hook 'forge-insert-issues))
