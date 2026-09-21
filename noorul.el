@@ -415,6 +415,7 @@ action."
          ("M-s l" . consult-line)
          :map minibuffer-local-map
          ("M-r" . consult-history))
+  :hook (completion-list-mode . consult-preview-at-point-mode)
   :init
   (setq register-preview-delay 0
         register-preview-function #'consult-register-format)
