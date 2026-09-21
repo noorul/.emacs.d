@@ -163,7 +163,9 @@ Deferred to a hook so daemon-launched frames get styled too."
               "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN" "ANTHROPIC_API_KEY" "NVM_DIR"
               "JIRA_TOKEN" "JIRA_KEY" "BITBUCKET_KEY" "CONFLUENCE_KEY" "JENKINS_USERNAME"
               "JENKINS_KEY" "BUILDKIT_PROGRESS" "LOGSCALE_KEY" "LOGSCALE_KEY_AQUA"
-              "LOGSCALE_KEY_BROOKE" "LOGSCALE_KEY_USWEST4"))
+              "LOGSCALE_KEY_BROOKE" "LOGSCALE_KEY_USWEST4" "LOGSCALE_KEY_UAENORTH1"
+              "LOGSCALE_KEY_THDNAAS" "NODE_EXTRA_CA_CERTS" "MCP_BITBUCKET_AUTH"
+              "MCP_JIRA_AUTH" "MCP_CONFLUENCE_AUTH" "MCP_AITOOLS_API_KEY"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
