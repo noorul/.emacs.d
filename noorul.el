@@ -3226,7 +3226,12 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (use-package gptel
   :defer t
   :commands (gptel gptel-send)
-  :hook ((gptel-mode . gptel-highlight-mode))
+  :hook ((gptel-mode . gptel-highlight-mode)
+         (gptel-mode . (lambda ()
+                         (setq-local gptel-cache t)
+                         (add-hook 'before-save-hook #'my/gptel-assign-filename
+                                   nil 'local))))
+
   :bind (("C-c C-<return>" . gptel-menu)
          ("C-c <return>" . gptel-send)
          ("C-c j" . gptel-menu)
@@ -3241,6 +3246,23 @@ Late deadlines first, then scheduled, then non-late deadlines"
    gptel-highlight-methods (if (controlling-tty-p) '(margin) '(fringe))
    gptel-track-media t
    gptel-expert-commands t))
+
+  (defvar my/gptel-chat-directory "~/github.com/noorul/notebook/gptel")
+
+  (defun my/gptel-assign-filename ()
+    (unless (or (buffer-file-name) current-prefix-arg)
+      (make-directory my/gptel-chat-directory t)
+      (my/gptel-mode-add-prop-line)
+      (setq buffer-file-name
+            (file-name-concat
+             my/gptel-chat-directory
+             (concat
+              (format-time-string "%Y%m%d%H%M%2S-")
+              (file-name-sans-extension
+               (replace-regexp-in-string " " "-" (buffer-name)))
+              (pcase major-mode
+                ('org-mode ".org") ('markdown-mode ".md") (_ ".txt")))))
+      (rename-buffer (file-name-nondirectory buffer-file-name) t)))
 
 
 (use-package gptel-rewrite
