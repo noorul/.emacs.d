@@ -3221,7 +3221,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (use-package copilot-chat
   :defer t
   :config
-  (setq copilot-chat-default-model "claude-sonnet-5"))
+  (setq copilot-chat-default-model "claude-sonnet-5.5"))
 
 (use-package gptel
   :defer t
@@ -3235,7 +3235,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :config
   (setq
    gptel-default-mode 'org-mode
-   gptel-model 'claude-sonnet-5
+   gptel-model 'claude-sonnet-5.5
    gptel-backend (gptel-make-gh-copilot "Copilot")
    gptel-display-buffer-action '(pop-to-buffer-same-window)
    gptel-highlight-methods (if (controlling-tty-p) '(margin) '(fringe))
