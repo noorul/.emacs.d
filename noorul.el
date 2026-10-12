@@ -3247,6 +3247,18 @@ Late deadlines first, then scheduled, then non-late deadlines"
    gptel-track-media t
    gptel-expert-commands t))
 
+  (defun my/gptel-mode-add-prop-line ()
+    "Ensure that this file opens with `gptel-mode' enabled."
+    (save-excursion
+      (let ((enable-local-variables t)) ; Ensure we can modify local variables
+        (if (and (save-excursion (goto-char (point-min)) (looking-at ".*-\\*-")))
+            ;; If there's a -*- line
+            ;; First remove any existing eval, then add the new one
+            (modify-file-local-variable-prop-line 'eval nil 'delete))
+        ;; Always add our eval
+        (add-file-local-variable-prop-line
+         'eval '(and (fboundp 'gptel-mode) (gptel-mode 1))))))
+
   (defvar my/gptel-chat-directory "~/github.com/noorul/notebook/gptel")
 
   (defun my/gptel-assign-filename ()
