@@ -59,6 +59,14 @@ then restore sane values afterwards.
 #+begin_src emacs-lisp :tangle "~/.config/emacs/early-init.el"
 (setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
 (setq native-comp-async-report-warnings-errors 'silent)
+;; libgccjit needs this before the first trampoline/eln is compiled,
+;; so it must be set early (libemutls_w.a lives in a per-target subdir).
+(let ((dirs (append '("/opt/homebrew/lib/gcc/current")
+                    (file-expand-wildcards
+                     "/opt/homebrew/lib/gcc/current/gcc/*/*" t)))
+      (old (getenv "LIBRARY_PATH")))
+  (setenv "LIBRARY_PATH"
+          (string-join (if old (append dirs (list old)) dirs) ":")))
 #+end_src
 
 *** Package initialisation
@@ -307,15 +315,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
         (message "Native comp is available")
         ;; Using Emacs.app/Contents/MacOS/bin since it was compiled with
         ;; ./configure --prefix="$PWD/nextstep/Emacs.app/Contents/MacOS"
-        (add-to-list 'exec-path (concat invocation-directory "bin") t)
-        (setenv "LIBRARY_PATH" (concat (getenv "LIBRARY_PATH")
-                                       (when (getenv "LIBRARY_PATH")
-                                         ":")
-                                       ;; This is where Homebrew puts gcc libraries.
-                                       (car (file-expand-wildcards
-                                             (expand-file-name "/opt/gcc/lib/gcc/*")))))
-        ;; Only set after LIBRARY_PATH can find gcc libraries.
-        (setq comp-deferred-compilation t))
+        (add-to-list 'exec-path (concat invocation-directory "bin") t))
     (message "Native comp is *not* available")))
 
 (setq visible-bell nil)

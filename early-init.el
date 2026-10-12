@@ -29,5 +29,13 @@
 
 (setq native-comp-jit-compilation-deny-list '(".*org-element.*"))
 (setq native-comp-async-report-warnings-errors 'silent)
+;; libgccjit needs this before the first trampoline/eln is compiled,
+;; so it must be set early (libemutls_w.a lives in a per-target subdir).
+(let ((dirs (append '("/opt/homebrew/lib/gcc/current")
+                    (file-expand-wildcards
+                     "/opt/homebrew/lib/gcc/current/gcc/*/*" t)))
+      (old (getenv "LIBRARY_PATH")))
+  (setenv "LIBRARY_PATH"
+          (string-join (if old (append dirs (list old)) dirs) ":")))
 
 (setq package-enable-at-startup t)
