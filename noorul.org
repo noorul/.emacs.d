@@ -251,8 +251,7 @@ Deferred to a hook so daemon-launched frames get styled too."
 
 (use-package ef-themes
   :init
-  (setq ef-themes-mixed-fonts t
-        ef-themes-variable-pitch-ui t)
+  (setq ef-themes-mixed-fonts t)
   ;; (mapc #'disable-theme custom-enabled-themes)
   ;; :config
   ;; (load-theme 'ef-tritanopia-dark :no-confirm)
