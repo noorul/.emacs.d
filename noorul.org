@@ -4107,10 +4107,10 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 #+end_src
 *** Pi Coding Agent
 #+begin_src emacs-lisp
-(use-package pi-coding-agent
+(use-package pilish
   :ensure t
-  :commands pi-coding-agent
-  :init (defalias 'pi 'pi-coding-agent))
+  :commands pilish
+  :init (defalias 'pi 'pilish))
 #+end_src
 ** Writing
 *** LSP grammarly

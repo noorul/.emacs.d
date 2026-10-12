@@ -3357,10 +3357,10 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   :defer t
   :after gptel)
 
-(use-package pi-coding-agent
+(use-package pilish
   :ensure t
-  :commands pi-coding-agent
-  :init (defalias 'pi 'pi-coding-agent))
+  :commands pilish
+  :init (defalias 'pi 'pilish))
 
 (use-package keytar
   :after lsp-grammarly)
