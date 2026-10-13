@@ -3358,7 +3358,17 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 
 (use-package gptel-agent
   :defer t
-  :after gptel)
+  :after gptel
+  :init
+  ;; Stub presets so restoring a saved chat can find them and lazy-load
+  ;; gptel-agent (which redefines them and registers the tools).
+  (dolist (name '(gptel-agent gptel-plan))
+    (gptel-make-preset name
+      :pre #'gptel-agent-update
+      :post (let ((n name)) (lambda () (gptel-preset n #'set-local)))))
+  :config
+  ;; Keep the bundled agents/ dir and also scan ~/.agents
+  (add-to-list 'gptel-agent-dirs (expand-file-name "~/.agents") t))
 
 (use-package pilish
   :ensure t
