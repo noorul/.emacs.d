@@ -165,7 +165,8 @@ Deferred to a hook so daemon-launched frames get styled too."
               "LOGSCALE_KEY_BROOKE" "LOGSCALE_KEY_USWEST4" "LOGSCALE_KEY_UAENORTH1"
               "LOGSCALE_KEY_THDNAAS" "NODE_EXTRA_CA_CERTS" "MCP_BITBUCKET_AUTH"
               "MCP_JIRA_AUTH" "MCP_CONFLUENCE_AUTH" "MCP_AITOOLS_API_KEY"
-              "LOGSCALE_KEY_US_EAST1" "LOGSCALE_KEY_EVIAN3"))
+              "LOGSCALE_KEY_US_EAST1" "LOGSCALE_KEY_EVIAN3" "LOGSCALE_KEY_INTERNAL2"
+              "LOGSCALE_KEY_UKWEST1"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
