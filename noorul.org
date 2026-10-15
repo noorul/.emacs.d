@@ -4117,6 +4117,44 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   ;; Keep the bundled agents/ dir and also scan ~/.agents
   (add-to-list 'gptel-agent-dirs (expand-file-name "~/.agents") t))
 #+end_src
+**** mcp
+#+begin_src emacs-lisp
+(use-package mcp
+  :ensure t
+  :after gptel
+  :defer t
+  :init
+  (require 'gptel-integrations)
+  :config
+  (defvar my/mcp-json-file (expand-file-name "~/.agents/mcp/mcp.json")
+    "Claude-style mcp.json holding server URLs and credentials.")
+  (defvar my/mcp-servers '("jira" "confluence" "bitbucket")
+    "Servers from `my/mcp-json-file' to expose via mcp.el.")
+
+  (defun my/mcp-load-servers ()
+    "Build `mcp-hub-servers' from `my/mcp-json-file'.
+Only servers listed in `my/mcp-servers' are used.  The non-header
+`token_type' key is dropped.  `caFile' is added to `gnutls-trustfiles'."
+    (let* ((json (let ((json-object-type 'alist) (json-key-type 'symbol))
+                   (json-read-file my/mcp-json-file)))
+           (servers (alist-get 'mcpServers json))
+           result)
+      (dolist (name my/mcp-servers)
+        (when-let* ((cfg (alist-get (intern name) servers)))
+          (when-let* ((ca (alist-get 'caFile cfg)))
+            (add-to-list 'gnutls-trustfiles (expand-file-name ca) t))
+          (push (list name
+                      :url (alist-get 'url cfg)
+                      :headers
+                      (cl-loop for (k . v) in (alist-get 'headers cfg)
+                               unless (eq k 'token_type)
+                               collect (cons (symbol-name k) v)))
+                result)))
+      (setq mcp-hub-servers (nreverse result))))
+
+  (when (file-readable-p my/mcp-json-file)
+    (my/mcp-load-servers)))
+#+end_src
 **** COMMENT gptel-quick
 #+begin_src emacs-lisp
 (use-package gptel-quick
