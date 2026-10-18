@@ -4176,7 +4176,10 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
 *** Agent shell
 #+begin_src emacs-lisp
 (use-package agent-shell
-  :ensure t)
+  :ensure t
+  :config
+  (setq agent-shell-preferred-agent-config 'claude-code
+        agent-shell-session-restore-verbosity 'last))
 #+end_src
 ** Writing
 *** LSP grammarly

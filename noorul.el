@@ -3414,7 +3414,10 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
   :init (defalias 'pi 'pilish))
 
 (use-package agent-shell
-  :ensure t)
+  :ensure t
+  :config
+  (setq agent-shell-preferred-agent-config 'claude-code
+        agent-shell-session-restore-verbosity 'last))
 
 (use-package keytar
   :after lsp-grammarly)
