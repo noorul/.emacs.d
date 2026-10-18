@@ -3413,6 +3413,9 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
   :commands pilish
   :init (defalias 'pi 'pilish))
 
+(use-package agent-shell
+  :ensure t)
+
 (use-package keytar
   :after lsp-grammarly)
 
