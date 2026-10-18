@@ -3759,6 +3759,7 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 *** Bitbucket server
 #+begin_src emacs-lisp
 (use-package bitbucket-server
+  :if (file-directory-p "~/github.com/noorul/bitbucket-server-el")
   :after marginalia
   :load-path "~/github.com/noorul/bitbucket-server-el")
 #+end_src

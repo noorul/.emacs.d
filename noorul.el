@@ -3033,6 +3033,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :commands (nix-repl))
 
 (use-package bitbucket-server
+  :if (file-directory-p "~/github.com/noorul/bitbucket-server-el")
   :after marginalia
   :load-path "~/github.com/noorul/bitbucket-server-el")
 
