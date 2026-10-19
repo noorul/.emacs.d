@@ -48,6 +48,10 @@
 (setq user-full-name "Noorul Islam K M"
       user-mail-address "noorul@noorul.com")
 
+(defun noorul/work-system-p ()
+  "Return non-nil when running on the work laptop."
+  (string= (system-name) "HPE-FHPMJKN7TQ"))
+
 ;; Syntax highlighting is must
 (setq global-font-lock-mode t)
 
@@ -3416,7 +3420,8 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
 (use-package agent-shell
   :ensure t
   :config
-  (setq agent-shell-preferred-agent-config 'claude-code
+  (setq agent-shell-preferred-agent-config
+        (if (noorul/work-system-p) 'pi 'claude-code)
         agent-shell-session-restore-verbosity 'last))
 
 (use-package keytar
