@@ -428,26 +428,97 @@ action."
         completion-category-defaults nil
         completion-category-overrides nil))
 
+;; Inline ghost-text preview of the top candidate while typing (Emacs 30+).
+;; TAB accepts the preview; M-i opens the Corfu popup from it.
+(use-package completion-preview
+  :ensure nil
+  :if (version<= "30.1" emacs-version)
+  :diminish completion-preview-mode
+  :config
+  (global-completion-preview-mode 1))
+
+;; Popup only on demand (TAB or M-/)
 (use-package corfu
-  ;; Optional customizations
-  ;; :custom
-  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  :demand t
+  :bind (("M-/" . completion-at-point)
+         :map corfu-map
+         ("M-." . corfu-move-to-minibuffer))
+  :custom
+  (corfu-auto nil)
+  (corfu-cycle t)                   ;; Enable cycling for `corfu-next/previous'
+  (corfu-min-width 80)
+  (corfu-max-width 80)              ;; Always have the same width
+  (corfu-count 14)
+  (corfu-scroll-margin 4)
+  ;; SPC inserts an orderless separator instead of quitting the popup
+  (corfu-separator ?\s)
+  (corfu-quit-at-boundary nil)
+  (corfu-quit-no-match 'separator)
+  :preface
+  (defun my/corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer when Vertico is not active."
+    (unless (bound-and-true-p vertico--input)
+      (setq-local corfu-auto nil)
+      (corfu-mode 1)))
 
-  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
-  ;; :hook ((prog-mode . corfu-mode)
-  ;;        (shell-mode . corfu-mode)
-  ;;        (eshell-mode . corfu-mode))
+  (defun corfu-move-to-minibuffer ()
+    "Move the current Corfu completion to the minibuffer (Vertico)."
+    (interactive)
+    (pcase completion-in-region--data
+      (`(,beg ,end ,table ,pred ,extras)
+       (let ((completion-extra-properties extras)
+             completion-cycle-threshold completion-cycling)
+         (consult-completion-in-region beg end table pred)))))
+  :config
+  (global-corfu-mode)
+  (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
+  (add-hook 'minibuffer-setup-hook #'my/corfu-enable-in-minibuffer 1)
+  ;; Sort candidates by recent use; persisted via savehist
+  (corfu-history-mode)
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 
-  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
-  ;; be used globally (M-/).  See also the customization variable
-  ;; `global-corfu-modes' to exclude certain modes.
+;; Documentation popup next to the candidate list
+(use-package corfu-popupinfo
+  :ensure nil
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :bind (:map corfu-map
+              ("M-n" . corfu-popupinfo-scroll-up)
+              ("M-p" . corfu-popupinfo-scroll-down))
+  :custom
+  (corfu-popupinfo-delay 0.5)
+  (corfu-popupinfo-max-width 70)
+  (corfu-popupinfo-max-height 20))
+
+;; Extra completion-at-point sources for Corfu
+(use-package cape
+  :demand t
+  :bind-keymap ("C-c c" . cape-prefix-map)
   :init
-  (global-corfu-mode))
+  ;; `cape-file' goes first: it only claims input that contains a "/"
+  ;; under an existing directory, so it does not shadow other capfs.
+  (add-hook 'completion-at-point-functions #'cape-file -10)
+  ;; Appended, so mode-specific capfs (lsp, ...) still come first
+  (add-hook 'completion-at-point-functions #'cape-dabbrev t)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block t))
+
+;; Elisp symbols and dabbrev words merged into a single candidate list
+(use-package elisp-mode
+  :ensure nil
+  :after cape
+  :hook (emacs-lisp-mode . my/setup-elisp-capf)
+  :preface
+  (defun my/setup-elisp-capf ()
+    (setq-local completion-at-point-functions
+                ;; `cape-file' first, otherwise the elisp capf claims
+                ;; ~/foo as a symbol and file names never complete
+                `(cape-file
+                  ,(cape-capf-super
+                    #'elisp-completion-at-point
+                    ;; Only offer dabbrev words of 5+ characters
+                    (cape-capf-predicate #'cape-dabbrev
+                                         (lambda (cand) (>= (length cand) 5))))))))
 
 ;; A few more useful configurations...
 (use-package emacs
@@ -2338,15 +2409,16 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :custom
   (flycheck-disabled-checkers '(org-lint)))
 
-(use-package company
-  :after lsp-mode
-  :hook ((lsp-mode emacs-lisp-mode) . company-mode)
-  :bind (:map company-active-map
-	      ("<tab>" . company-complete-selection))
-  :config
-  (setq company-backends '(company-capf
-			   company-yasnippet))
-  (global-company-mode))
+(use-package lsp-mode
+  :custom
+  (lsp-completion-provider :none)
+  :init
+  (defun my/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))
+    ;; The lsp capf is exclusive and would hide `cape-file'
+    (add-hook 'completion-at-point-functions #'cape-file -10 t))
+  :hook (lsp-completion-mode . my/lsp-mode-setup-completion))
 
 (use-package scala-mode
   :mode "\\.s\\(cala\\|bt\\)$")
@@ -2591,7 +2663,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :config
   (setq lsp-idle-delay 0.5
         lsp-enable-symbol-highlighting t
-        lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
+        lsp-enable-snippet nil  ;; Snippet expansion from lsp candidates is not wired up with Corfu
         lsp-pylsp-configuration-sources "flake8"
         lsp-pylsp-plugins-flake8-enabled t
         lsp-pylsp-plugins-pycodestyle-enabled nil
@@ -2907,7 +2979,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (defun nl/typescript-mode ()
     (flycheck-mode +1)
     (eldoc-mode +1)
-    (company-mode +1)
     (prettier-js-mode)
     (nl/common-prog-mode-settings)
 
@@ -2922,7 +2993,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :config
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
   (setq prettify-symbols-unprettify-at-point 'right-edge
-        company-tooltip-align-annotations t ;; aligns annotation to the right hand side
         flycheck-check-syntax-automatically '(save mode-enabled))
   (setq-default typescript-indent-level 2)
 
@@ -2938,7 +3008,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
       ("||" . ?∨))))
 
 (use-package tide
-  :after (typescript-mode company flycheck)
+  :after (typescript-mode flycheck)
   :bind (:map tide-mode-map
               ("C-c C-t f" . tide-fix)
               ("C-c C-t n" . tide-nav)
@@ -2962,12 +3032,10 @@ Late deadlines first, then scheduled, then non-late deadlines"
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
     (eldoc-mode +1)
     (tide-hl-identifier-mode +1)
-    (company-mode +1)
     (prettier-js-mode)
     (nl/common-prog-mode-settings)
-    (setq prettify-symbols-alist nl-typescript-prettify-symbols-alist
-          prettify-symbols-unprettify-at-point 'right-edge
-          company-tooltip-align-annotations t) ;; aligns annotation to the right hand side
+    (setq prettify-symbols-alist nl-typescript-prettify-symbols
+          prettify-symbols-unprettify-at-point 'right-edge)
     (setq-default typescript-indent-level 2))
 
   :hook ((typescript-mode . tide-setup)
