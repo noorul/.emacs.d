@@ -193,6 +193,10 @@ Deferred to a hook so daemon-launched frames get styled too."
 (defconst user-data-directory
   (expand-file-name "data/" user-emacs-directory))
 
+(defun user-data (file)
+  "Return FILE expanded under `user-data-directory'."
+  (expand-file-name file user-data-directory))
+
 (use-package dash)
 (use-package diminish)
 
@@ -552,7 +556,7 @@ action."
   :defer t
   :init
   (progn
-    (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
+    (setq persistent-scratch-save-file (user-data ".persistent-scratch"))
     (persistent-scratch-setup-default)))
 
 (unless (daemonp)
@@ -596,7 +600,7 @@ action."
      compile-history
      compile-command))
   (savehist-autosave-interval 60)
-  (savehist-file (concat user-data-directory "history"))
+  (savehist-file (user-data "history"))
   (savehist-ignored-variables
    '(load-history
      flyspell-auto-correct-ring
@@ -641,7 +645,7 @@ action."
    ("M-g e" . avy-goto-word-0)
    ("M-g w" . avy-goto-word-1)))
 
-(setq bookmark-default-file (concat user-data-directory "bookmarks"))
+(setq bookmark-default-file (user-data "bookmarks"))
 
 (use-package ace-window
   :bind (("C-x o" . ace-window))
@@ -664,6 +668,7 @@ action."
              dired-directory)))))
   :hook (dired-mode . recentf-add-dired-directory)
   :config
+  (setq recentf-save-file (user-data "recentf.eld"))
   (setq recentf-exclude '("~$" "/tmp/" "/ssh:" "/sudo:" "/kubernetes:"))
   (recentf-mode 1))
 
@@ -750,7 +755,7 @@ action."
     ("C-|" . mc/skip-to-next-like-this)
     ("C-*" . mc/mark-all-like-this))
    :config
-   (setq mc/list-file (expand-file-name "mc-lists.el" user-data-directory)))
+   (setq mc/list-file (user-data "mc-lists.el")))
 
 ;;;
 ;;; Org Mode
@@ -2373,7 +2378,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
                              nil nil t)))
 
 (setq org-id-locations-file (convert-standard-filename
-                                  (concat user-data-directory ".org-id-locations")))
+                                  (user-data ".org-id-locations")))
 
 (use-package org-ql
   :after org
@@ -2627,8 +2632,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
   (projectile-mode +1)
-  (setq projectile-cache-file "~/.config/emacs/data/projectile.cache")
-  (setq projectile-known-projects-file "~/.config/emacs/data/projectile-bookmarks.eld")
+  (setq projectile-cache-file (user-data "projectile.cache"))
+  (setq projectile-known-projects-file (user-data "projectile-bookmarks.eld"))
+  (setq projectile-frecency-file (user-data "projectile-frecency.eld"))
   :config
   (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
@@ -3490,7 +3496,8 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
   :config
   (setq agent-shell-preferred-agent-config
         (if (noorul/work-system-p) 'pi 'claude-code)
-        agent-shell-session-restore-verbosity 'last))
+        agent-shell-session-restore-verbosity 'last
+        shell-maker-root-path user-data-directory))
 
 (use-package keytar
   :after lsp-grammarly)
@@ -4055,7 +4062,7 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
   :ensure t
   :commands (elfeed elfeed-update elfeed-search-bookmark-handler)
   :config
-  (setq elfeed-db-directory (concat (concat user-data-directory "elfeed"))))
+  (setq elfeed-db-directory (user-data "elfeed")))
 
 (defun get-timezone-description (zone)
   "Get a descriptive name for the time zone ZONE."

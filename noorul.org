@@ -338,6 +338,10 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 #+begin_src emacs-lisp
 (defconst user-data-directory
   (expand-file-name "data/" user-emacs-directory))
+
+(defun user-data (file)
+  "Return FILE expanded under `user-data-directory'."
+  (expand-file-name file user-data-directory))
 #+end_src
 *** Libraries
 #+begin_src emacs-lisp
@@ -813,7 +817,7 @@ This lets you use =C-x u= (=undo-tree-visualize=) to visually walk through the c
   :defer t
   :init
   (progn
-    (setq persistent-scratch-save-file (expand-file-name ".persistent-scratch" user-data-directory))
+    (setq persistent-scratch-save-file (user-data ".persistent-scratch"))
     (persistent-scratch-setup-default)))
 #+end_src
 *** Server start
@@ -882,7 +886,7 @@ already started the server, and a second `(server-start)` prompts and hangs init
      compile-history
      compile-command))
   (savehist-autosave-interval 60)
-  (savehist-file (concat user-data-directory "history"))
+  (savehist-file (user-data "history"))
   (savehist-ignored-variables
    '(load-history
      flyspell-auto-correct-ring
@@ -957,7 +961,7 @@ already started the server, and a second `(server-start)` prompts and hangs init
 #+end_src
 *** Bookmarks
 #+begin_src emacs-lisp
-(setq bookmark-default-file (concat user-data-directory "bookmarks"))
+(setq bookmark-default-file (user-data "bookmarks"))
 #+end_src
 *** More window movement
 #+begin_src emacs-lisp
@@ -984,6 +988,7 @@ already started the server, and a second `(server-start)` prompts and hangs init
              dired-directory)))))
   :hook (dired-mode . recentf-add-dired-directory)
   :config
+  (setq recentf-save-file (user-data "recentf.eld"))
   (setq recentf-exclude '("~$" "/tmp/" "/ssh:" "/sudo:" "/kubernetes:"))
   (recentf-mode 1))
 #+end_src
@@ -1097,7 +1102,7 @@ It is better to always copy to location at other window
     ("C-|" . mc/skip-to-next-like-this)
     ("C-*" . mc/mark-all-like-this))
    :config
-   (setq mc/list-file (expand-file-name "mc-lists.el" user-data-directory)))
+   (setq mc/list-file (user-data "mc-lists.el")))
 #+end_src
 ** Org
 *** Getting started with org-mode
@@ -2979,7 +2984,7 @@ It is better to always copy to location at other window
 *** Misc
  #+begin_src emacs-lisp
  (setq org-id-locations-file (convert-standard-filename
-                                   (concat user-data-directory ".org-id-locations")))
+                                   (user-data ".org-id-locations")))
  #+end_src
 *** org-ql
 #+begin_src emacs-lisp
@@ -3276,8 +3281,9 @@ use orderless for its candidates.
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
   (projectile-mode +1)
-  (setq projectile-cache-file "~/.config/emacs/data/projectile.cache")
-  (setq projectile-known-projects-file "~/.config/emacs/data/projectile-bookmarks.eld")
+  (setq projectile-cache-file (user-data "projectile.cache"))
+  (setq projectile-known-projects-file (user-data "projectile-bookmarks.eld"))
+  (setq projectile-frecency-file (user-data "projectile-frecency.eld"))
   :config
   (setq projectile-enable-caching t)
   (setq projectile-globally-ignored-files (quote ("TAGS" "GPATH" "GRTAGS" "GTAGS" "ID")))
@@ -4250,7 +4256,8 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
   :config
   (setq agent-shell-preferred-agent-config
         (if (noorul/work-system-p) 'pi 'claude-code)
-        agent-shell-session-restore-verbosity 'last))
+        agent-shell-session-restore-verbosity 'last
+        shell-maker-root-path user-data-directory))
 #+end_src
 ** Writing
 *** LSP grammarly
@@ -4856,7 +4863,7 @@ Only servers listed in `my/mcp-servers' are used.  The non-header
   :ensure t
   :commands (elfeed elfeed-update elfeed-search-bookmark-handler)
   :config
-  (setq elfeed-db-directory (concat (concat user-data-directory "elfeed"))))
+  (setq elfeed-db-directory (user-data "elfeed")))
 #+end_src
 ** Time
 #+begin_src emacs-lisp
