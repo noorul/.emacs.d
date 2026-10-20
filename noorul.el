@@ -3415,7 +3415,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   (setf (alist-get 'infill-50 gptel-directives) (my/gptel-code-infill 50)))
 
 (use-package ob-gptel
-  :load-path "~/github.com/jwiegley/ob-gptel"
+  :vc (:url "https://github.com/jwiegley/ob-gptel" :rev :newest)
   :after gptel
   :hook ((org-mode . ob-gptel-install-completions))
   :defines ob-gptel-install-completions

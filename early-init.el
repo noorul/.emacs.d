@@ -17,8 +17,9 @@
 
 (defvar noorul--file-name-handler-alist file-name-handler-alist)
 (defvar noorul--vc-handled-backends vc-handled-backends)
+;; Keep Git so package-vc (use-package :vc) can clone during init.
 (setq file-name-handler-alist nil
-      vc-handled-backends nil)
+      vc-handled-backends '(Git))
 
 (add-hook 'emacs-startup-hook
           (lambda ()

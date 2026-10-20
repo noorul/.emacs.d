@@ -44,8 +44,9 @@ then restore sane values afterwards.
 
 (defvar noorul--file-name-handler-alist file-name-handler-alist)
 (defvar noorul--vc-handled-backends vc-handled-backends)
+;; Keep Git so package-vc (use-package :vc) can clone during init.
 (setq file-name-handler-alist nil
-      vc-handled-backends nil)
+      vc-handled-backends '(Git))
 
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -4153,7 +4154,7 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
 #+end_src
 #+begin_src emacs-lisp
 (use-package ob-gptel
-  :load-path "~/github.com/jwiegley/ob-gptel"
+  :vc (:url "https://github.com/jwiegley/ob-gptel" :rev :newest)
   :after gptel
   :hook ((org-mode . ob-gptel-install-completions))
   :defines ob-gptel-install-completions
