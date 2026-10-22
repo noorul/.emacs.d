@@ -2584,7 +2584,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (magit-auto-revert-mode nil)
   (magit-diff-refine-hunk 'all)
   (magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
-  :pin melpa-stable
+  :pin melpa
   :init
   (defun magit-status-with-prefix ()
     (interactive)
@@ -2606,6 +2606,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
 
 (use-package forge
   :after magit
+  :pin melpa
   :custom
   (forge-database-file "~/.config/forge/database.sqlite")
   (forge-owned-accounts '(("noorul")))
@@ -2622,6 +2623,13 @@ Late deadlines first, then scheduled, then non-late deadlines"
     (forge-create-pullreq (concat "origin/" branch) "origin/main"))
   :config
   (setq forge-browse-topics-using-forge nil)
+  ;; Only list open topics by default.
+  (setq forge-status-buffer-default-topic-filters
+        (forge--topics-spec :type 'topic :active nil :state 'open
+                            :order 'newest :limit 200)
+        forge-list-buffer-default-topic-filters
+        (forge--topics-spec :type 'topic :active nil :state 'open
+                            :order 'newest :limit 200))
   (transient-insert-suffix 'forge-dispatch "c i"
     '("p" "quick-pr" my-quick-create-pull-request))
   (remove-hook 'magit-status-sections-hook 'forge-insert-issues))
