@@ -159,7 +159,7 @@ Deferred to a hook so daemon-launched frames get styled too."
   :config
   (setq exec-path-from-shell-variables
         (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "ASPELL_CONF"
-              "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN"
+              "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN" "GITHUB_TOKEN"
               "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
               "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
               "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
@@ -170,7 +170,7 @@ Deferred to a hook so daemon-launched frames get styled too."
               "LOGSCALE_KEY_THDNAAS" "NODE_EXTRA_CA_CERTS" "MCP_BITBUCKET_AUTH"
               "MCP_JIRA_AUTH" "MCP_CONFLUENCE_AUTH" "MCP_AITOOLS_API_KEY"
               "LOGSCALE_KEY_US_EAST1" "LOGSCALE_KEY_EVIAN3" "LOGSCALE_KEY_INTERNAL2"
-              "LOGSCALE_KEY_UKWEST1"))
+              "LOGSCALE_KEY_UKWEST1" "LOGSCALE_KEY_BERGREN"))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
