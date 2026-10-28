@@ -807,7 +807,7 @@ action."
 ;; No (org-reload) here; `org-modules' load when org-mode first activates.
 
 ;; Every .org file under ~/github.com/noorul/notebook/notebook should be part of agenda.
-(setq org-agenda-files (seq-filter #'file-directory-p (quote ("~/github.com/noorul/notebook/org/agenda" "~/work/org/agenda"))))
+(setq org-agenda-files (seq-filter #'file-directory-p (quote ("~/github.com/noorul/notebook/org/agenda" "~/logbook/org/agenda"))))
 
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -857,9 +857,9 @@ action."
                "* TODO Review %c\n%U\n  %i" :immediate-finish t)
               ("m" "Meeting" entry (file noorul/refile-target)
                "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
-              ("a" "Project Meeting" entry (file+olp "~/work/org/agenda/projects.org" "Meetings")
+              ("a" "Project Meeting" entry (file+olp "~/logbook/org/agenda/projects.org" "Meetings")
                "* %?\n%U\n  %i" :clock-in t :clock-resume t)
-              ("N" "Notes" entry (file+datetree "~/work/org/agenda/projects.org" "Notes")
+              ("N" "Notes" entry (file+datetree "~/logbook/org/agenda/projects.org" "Notes")
                "* %? :NOTE:\n%U\n%a\n  %i" :clock-in t :clock-resume t)
               ("p" "Phone call" entry (file+datetree noorul/refile-target)
                "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
