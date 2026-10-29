@@ -3497,25 +3497,49 @@ Do not repeat any of the BEFORE or AFTER code." lang lang lang)
   (defvar my/mcp-servers '("jira" "confluence" "bitbucket")
     "Servers from `my/mcp-json-file' to expose via mcp.el.")
 
+  (defun my/mcp--expand-env (string)
+    "Replace each ${VAR} in STRING with the value of environment variable VAR.
+Signal an error naming VAR if it is unset or empty."
+    (replace-regexp-in-string
+     "\\${\\([A-Za-z_][A-Za-z0-9_]*\\)}"
+     (lambda (match)
+       (let* ((var (match-string 1 match))
+              (val (getenv var)))
+         (if (member val '(nil ""))
+             (error "Environment variable %s is not set" var)
+           val)))
+     string t t))
+
   (defun my/mcp-load-servers ()
     "Build `mcp-hub-servers' from `my/mcp-json-file'.
-Only servers listed in `my/mcp-servers' are used.  The non-header
-`token_type' key is dropped.  `caFile' is added to `gnutls-trustfiles'."
+Only servers listed in `my/mcp-servers' are used.  ${VAR} references in
+the URL and header values are expanded from the environment.  The
+non-header `token_type' key is dropped.  `caFile' is added to
+`gnutls-trustfiles'.  A server whose entry has no URL or references an
+unset variable is skipped with a warning."
     (let* ((json (let ((json-object-type 'alist) (json-key-type 'symbol))
                    (json-read-file my/mcp-json-file)))
            (servers (alist-get 'mcpServers json))
            result)
       (dolist (name my/mcp-servers)
         (when-let* ((cfg (alist-get (intern name) servers)))
-          (when-let* ((ca (alist-get 'caFile cfg)))
-            (add-to-list 'gnutls-trustfiles (expand-file-name ca) t))
-          (push (list name
-                      :url (alist-get 'url cfg)
-                      :headers
-                      (cl-loop for (k . v) in (alist-get 'headers cfg)
-                               unless (eq k 'token_type)
-                               collect (cons (symbol-name k) v)))
-                result)))
+          (condition-case err
+              (let ((url (or (alist-get 'url cfg)
+                             (error "No \"url\" configured"))))
+                (when-let* ((ca (alist-get 'caFile cfg)))
+                  (add-to-list 'gnutls-trustfiles (expand-file-name ca) t))
+                (push (list name
+                            :url (my/mcp--expand-env url)
+                            :headers
+                            (cl-loop for (k . v) in (alist-get 'headers cfg)
+                                     unless (eq k 'token_type)
+                                     collect (cons (symbol-name k)
+                                                   (my/mcp--expand-env v))))
+                      result))
+            (error
+             (display-warning 'mcp (format "Skipping server %s: %s" name
+                                           (error-message-string err))
+                              :warning)))))
       (setq mcp-hub-servers (nreverse result))))
 
   (when (file-readable-p my/mcp-json-file)
