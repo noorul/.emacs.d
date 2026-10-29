@@ -327,6 +327,12 @@ Deferred to a hook so daemon-launched frames get styled too."
            (consult-ripgrep))))
     (my/embark-projectile-switch-project-by-name project)))
 
+(defun my/embark-projectile-switch-project-action-switch-buffer (project)
+  "Switch to a buffer belonging to PROJECT (`projectile-switch-to-buffer')."
+  (interactive "s")
+  (let ((projectile-switch-project-action #'projectile-switch-to-buffer))
+    (my/embark-projectile-switch-project-by-name project)))
+
 (defvar-keymap my/embark-projectile-extended-map
   :doc "Keymap for extended projectile actions."
   "v" #'my/embark-projectile-switch-project-action-run-vterm
@@ -365,6 +371,7 @@ action."
     :parent embark-general-map
     "v" #'my/embark-projectile-switch-project-action-vc
     "s" #'my/embark-projectile-switch-project-action-rg
+    "b" #'my/embark-projectile-switch-project-action-switch-buffer
     "x" #'my/embark-projectile-extended-map)
 
   (add-to-list 'embark-keymap-alist '(projectile-project . (projectile-map embark-file-map))))
