@@ -523,6 +523,25 @@ Moved to Early Init section.
   (let ((projectile-switch-project-action #'projectile-switch-to-buffer))
     (my/embark-projectile-switch-project-by-name project)))
 
+(defun my/embark-projectile-switch-project-action-agent-shell (project)
+  "Start or reuse an `agent-shell' for PROJECT."
+  (interactive "s")
+  (let ((projectile-switch-project-action #'agent-shell))
+    (my/embark-projectile-switch-project-by-name project)))
+
+(defun my/embark-projectile-switch-project-action-agent-shell-new (project)
+  "Start a new `agent-shell' for PROJECT, even if one already exists."
+  (interactive "s")
+  (let ((projectile-switch-project-action #'agent-shell-new-shell))
+    (my/embark-projectile-switch-project-by-name project)))
+
+(defvar-keymap my/embark-projectile-agent-map
+  :doc "Keymap for agentic projectile actions."
+  "a" #'my/embark-projectile-switch-project-action-agent-shell
+  "n" #'my/embark-projectile-switch-project-action-agent-shell-new)
+
+(fset 'my/embark-projectile-agent-map my/embark-projectile-agent-map)
+
 (defvar-keymap my/embark-projectile-extended-map
   :doc "Keymap for extended projectile actions."
   "v" #'my/embark-projectile-switch-project-action-run-vterm
@@ -562,6 +581,7 @@ action."
     "v" #'my/embark-projectile-switch-project-action-vc
     "s" #'my/embark-projectile-switch-project-action-rg
     "b" #'my/embark-projectile-switch-project-action-switch-buffer
+    "a" #'my/embark-projectile-agent-map
     "x" #'my/embark-projectile-extended-map)
 
   (add-to-list 'embark-keymap-alist '(projectile-project . (projectile-map embark-file-map))))
