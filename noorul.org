@@ -168,6 +168,13 @@ startup again.
 (defun noorul/work-system-p ()
   "Return non-nil when running on the work laptop."
   (string= (system-name) "HPE-FHPMJKN7TQ"))
+
+(defun noorul/work-config-file (name)
+  "Return the path of NAME in the private work-emacs-config checkout, or nil.
+The checkout is found under any owner directory
+\(~/github.com/<owner>/work-emacs-config/), so its location is not hardcoded."
+  (car (file-expand-wildcards
+        (concat "~/github.com/*/work-emacs-config/" name))))
 #+end_src
 
 ** Display
@@ -297,23 +304,26 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 *** Mac OS X specific configuration
 #+BEGIN_SRC emacs-lisp
 (require 'cl-lib)
+(defvar my/shell-env-common
+  '("PATH" "MANPATH" "PYTHONPATH" "ASPELL_CONF" "NVM_DIR" "BUILDKIT_PROGRESS"
+    "JAVA_HOME" "LANG" "KUBECONFIG" "GITHUB_TOKEN" "ANTHROPIC_API_KEY"
+    "PUSHBULLET_TOKEN" "AWS_DEFAULT_REGION" "AWS_ACCOUNT_ID"
+    "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
+  "Shell variables imported into Emacs on every machine.")
+
+(defvar noorul/shell-env-extra nil
+  "Extra shell variables to import, set by the private shell-env.el.")
+
+;; Must be loaded before `exec-path-from-shell-initialize' below so that all
+;; variables are fetched with a single shell invocation.
+(when-let* ((file (noorul/work-config-file "shell-env.el")))
+  (load file nil t))
+
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
   :config
   (setq exec-path-from-shell-variables
-        (list "PATH" "MANPATH" "PYTHONPATH" "JFROG_USERNAME" "ASPELL_CONF"
-              "JFROG_PASSWORD" "GVT_WORKSPACE" "BITBUCKET_TOKEN" "GITHUB_TOKEN"
-              "JIRA_TOKEN" "KUBECONFIG" "GVT_COMPOSE_FILE" "AWS_DEFAULT_REGION"
-              "AWS_ACCOUNT_ID" "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY"
-              "COMPOSE_FILE" "DEVENV_DIR" "LOCAL_GITHUB_ACCESS_TOKEN" "SSH_AUTH_SOCK_PATH"
-              "DOCKER_AUTH_SOCK_PATH" "PUSHBULLET_TOKEN" "ANTHROPIC_API_KEY" "NVM_DIR"
-              "JIRA_TOKEN" "JIRA_KEY" "BITBUCKET_KEY" "CONFLUENCE_KEY" "JENKINS_USERNAME"
-              "JENKINS_KEY" "BUILDKIT_PROGRESS" "LOGSCALE_KEY" "LOGSCALE_KEY_AQUA"
-              "LOGSCALE_KEY_BROOKE" "LOGSCALE_KEY_USWEST4" "LOGSCALE_KEY_UAENORTH1"
-              "LOGSCALE_KEY_THDNAAS" "NODE_EXTRA_CA_CERTS" "MCP_BITBUCKET_AUTH"
-              "MCP_JIRA_AUTH" "MCP_CONFLUENCE_AUTH" "MCP_AITOOLS_API_KEY"
-              "LOGSCALE_KEY_US_EAST1" "LOGSCALE_KEY_EVIAN3" "LOGSCALE_KEY_INTERNAL2"
-              "LOGSCALE_KEY_UKWEST1" "LOGSCALE_KEY_BERGREN"))
+        (append my/shell-env-common noorul/shell-env-extra))
   (exec-path-from-shell-initialize)
   (if (and (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -5018,15 +5028,13 @@ COMMAND: Shell command or script to execute"
 #+end_src
 ** Work configuration
 #+begin_src emacs-lisp
-(let ((work-config-file "~/github.com/noorul/work-emacs-config/work.el"))
- (if (file-exists-p work-config-file)
-     (load-file work-config-file)))
+(when-let* ((work-config-file (noorul/work-config-file "work.el")))
+  (load-file work-config-file))
 #+end_src
 ** Personal configuration
 #+begin_src emacs-lisp
-(let ((personal-config-file "~/github.com/noorul/work-emacs-config/personal.el"))
- (if (file-exists-p personal-config-file)
-     (load-file personal-config-file)))
+(when-let* ((personal-config-file (noorul/work-config-file "personal.el")))
+  (load-file personal-config-file))
 
 (defalias 'noorul/record-exercise
    (kmacro "C-SPC <down> <down> M-w C-p C-e <return> C-a C-y C-k C-p M-f M-f M-f M-f C-f S-<down> M-f M-f M-f M-f M-f M-f C-f S-<down> C-p M-f M-f M-f C-f S-<down> C-n C-a C-p"))
