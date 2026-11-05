@@ -3392,6 +3392,17 @@ Late deadlines first, then scheduled, then non-late deadlines"
                 ('org-mode ".org") ('markdown-mode ".md") (_ ".txt")))))
       (rename-buffer (file-name-nondirectory buffer-file-name) t)))
 
+  (defun gptel-mark-region-role (start end role)
+    "Mark region from START to END with the llm or user role."
+    (interactive (list (region-beginning) (region-end)
+                       (completing-read "Mark region role as: " '(response prompt))))
+    (if (or (not transient-mark-mode)
+            (use-region-p))
+        (with-silent-modifications
+          (put-text-property start end 'gptel (and (equal role "response") 'response))
+          (message "Region marked as %s" role))
+      (message "No region specified, action canceled")))
+
 
 (use-package gptel-rewrite
   :after gptel
