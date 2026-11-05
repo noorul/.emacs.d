@@ -625,7 +625,7 @@ action."
          ("M-g e" . consult-error)
          ;; M-s bindings (search-map)
          ("M-s f" . consult-find)
-         ("M-s L" . consult-locate)
+         ("M-s F" . consult-locate)
          ("M-s g" . consult-grep)
          ("M-s G" . consult-git-grep)
          ("M-s r" . consult-ripgrep)
@@ -636,8 +636,7 @@ action."
          ;; Isearch integration
          ("M-s e" . consult-isearch)
          ("M-g l" . consult-line)
-         ("M-s m" . consult-multi-occur)
-         ("C-x c o" . consult-multi-occur)
+         ("M-s L" . consult-line-multi)
          ("C-x c SPC" . consult-mark)
          :map isearch-mode-map
          ("M-e" . consult-isearch)                 ;; orig. isearch-edit-string
