@@ -305,7 +305,7 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 #+BEGIN_SRC emacs-lisp
 (require 'cl-lib)
 (defvar my/shell-env-common
-  '("PATH" "MANPATH" "PYTHONPATH" "ASPELL_CONF" "NVM_DIR" "BUILDKIT_PROGRESS"
+  '("PATH" "MANPATH" "PYTHONPATH" "PYENV_ROOT" "ASPELL_CONF" "NVM_DIR" "BUILDKIT_PROGRESS"
     "JAVA_HOME" "LANG" "KUBECONFIG" "GITHUB_TOKEN" "ANTHROPIC_API_KEY"
     "PUSHBULLET_TOKEN" "AWS_DEFAULT_REGION" "AWS_ACCOUNT_ID"
     "AWS_ACCESS_KEY_ID" "AWS_SECRET_ACCESS_KEY")
