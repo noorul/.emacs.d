@@ -322,6 +322,9 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns x pgtk))
   :config
+  ;; Non-interactive login shell: env is set in .zshenv/.zprofile (see
+  ;; flake.nix), so skipping -i avoids the slow .zshrc (~1.8s vs ~0.02s).
+  (setq exec-path-from-shell-arguments '("-l"))
   (setq exec-path-from-shell-variables
         (append my/shell-env-common noorul/shell-env-extra))
   (exec-path-from-shell-initialize)
