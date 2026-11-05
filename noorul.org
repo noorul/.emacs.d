@@ -4067,6 +4067,8 @@ https://github.com/amake/.emacs.d/blob/master/init.el
 (with-eval-after-load 'embark
   (define-key projectile-map (kbd "G") #'my/embark-projectile-github-map))
 
+(use-package consult-gh-with-pr-review
+  :after consult-gh)
 #+end_src
 ** AI
 *** Copilot chat

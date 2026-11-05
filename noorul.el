@@ -3336,6 +3336,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
 (with-eval-after-load 'embark
   (define-key projectile-map (kbd "G") #'my/embark-projectile-github-map))
 
+(use-package consult-gh-with-pr-review
+  :after consult-gh)
+
 (use-package copilot-chat
   :defer t
   :config
