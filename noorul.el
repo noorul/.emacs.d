@@ -4140,8 +4140,8 @@ unset variable is skipped with a warning."
 (use-package elfeed
   :ensure t
   :commands (elfeed elfeed-update elfeed-search-bookmark-handler)
-  :config
-  (setq elfeed-db-directory (user-data "elfeed")))
+  :custom
+  (elfeed-db-directory (user-data "elfeed")))
 
 (defun get-timezone-description (zone)
   "Get a descriptive name for the time zone ZONE."

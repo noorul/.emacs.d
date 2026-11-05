@@ -4941,8 +4941,8 @@ unset variable is skipped with a warning."
 (use-package elfeed
   :ensure t
   :commands (elfeed elfeed-update elfeed-search-bookmark-handler)
-  :config
-  (setq elfeed-db-directory (user-data "elfeed")))
+  :custom
+  (elfeed-db-directory (user-data "elfeed")))
 #+end_src
 ** Time
 #+begin_src emacs-lisp
