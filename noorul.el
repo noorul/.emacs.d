@@ -2444,18 +2444,30 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :commands rainbow-delimiters-mode
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package flycheck
-  :diminish
-  :commands (flycheck-mode
-             flycheck-next-error
-             flycheck-previous-error)
-  :init (global-flycheck-mode)
+(use-package flymake
+  :commands (flymake-mode)
+  :bind (:map
+         flymake-mode-map
+         ("M-n" . flymake-goto-next-error)
+         ("M-p" . flymake-goto-prev-error))
+  :hook
+  (emacs-lisp-mode . flymake-mode)
   :custom
-  (flycheck-disabled-checkers '(org-lint)))
+  (flymake-fringe-indicator-position 'left-fringe)
+  (flymake-suppress-zero-counters t)
+  (flymake-start-on-flymake-mode t)
+  (flymake-no-changes-timeout nil)
+  (flymake-start-on-save-buffer t)
+  (flymake-proc-compilation-prevents-syntax-check t)
+  (flymake-wrap-around nil)
+  :custom-face
+  (flymake-note ((t nil)))
+  (flymake-warning ((t (:underline nil)))))
 
 (use-package lsp-mode
   :custom
   (lsp-completion-provider :none)
+  (lsp-diagnostics-provider :flymake)
   :init
   (defun my/lsp-mode-setup-completion ()
     (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
@@ -2486,8 +2498,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :commands lsp
   :hook  (scala-mode . lsp)
          (terraform-mode . lsp-deferred)
-         (lsp-mode . lsp-lens-mode)
-  :config (setq lsp-prefer-flymake nil))
+         (lsp-mode . lsp-lens-mode))
 
 ;; Add metals backend for lsp-mode
 ;; (use-package lsp-metals
@@ -2571,9 +2582,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
   :after lsp-mode
   :init
   (setq lsp-java-jdt-download-url "https://download.eclipse.org/jdtls/milestones/1.12.0/jdt-language-server-1.12.0-202206011637.tar.gz")
-  (add-hook 'java-mode-hook (lambda ()
-                              (flycheck-mode +1)
-                              (lsp)))
+  (add-hook 'java-mode-hook #'lsp)
   :config
 
   ;; Do not organize imports on file save
@@ -2979,8 +2988,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
       'c-indent-new-comment-line)
     (setq indent-tabs-mode nil)
     (setq imenu-create-index-function 'nl-js-imenu-make-index)
-    (prettier-js-mode)
-    (flycheck-mode t))
+    (prettier-js-mode))
 
   ;;(eval-after-load 'js2-mode
   ;;  '(define-key js2-mode-map (kbd "RET") 'js2-line-break))
@@ -3030,7 +3038,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (typescript-mode . nl/typescript-mode)
   :preface
   (defun nl/typescript-mode ()
-    (flycheck-mode +1)
     (eldoc-mode +1)
     (prettier-js-mode)
     (nl/common-prog-mode-settings)
@@ -3045,8 +3052,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
     (prettify-symbols-mode))
   :config
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
-  (setq prettify-symbols-unprettify-at-point 'right-edge
-        flycheck-check-syntax-automatically '(save mode-enabled))
+  (setq prettify-symbols-unprettify-at-point 'right-edge)
   (setq-default typescript-indent-level 2)
 
   (defconst nl-typescript-prettify-symbols
@@ -3061,7 +3067,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
       ("||" . ?∨))))
 
 (use-package tide
-  :after (typescript-mode flycheck)
+  :after typescript-mode
   :bind (:map tide-mode-map
               ("C-c C-t f" . tide-fix)
               ("C-c C-t n" . tide-nav)
@@ -3075,14 +3081,9 @@ Late deadlines first, then scheduled, then non-late deadlines"
   (setq tide-sync-request-timeout 5
         tide-server-max-response-length 204800)
 
-  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
-  (flycheck-add-next-checker 'javascript-eslint 'jsx-tide 'append)
-
   (defun nl-tide-mode-hook ()
     (interactive)
     (tide-setup)
-    (flycheck-mode +1)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
     (eldoc-mode +1)
     (tide-hl-identifier-mode +1)
     (prettier-js-mode)
@@ -3125,10 +3126,7 @@ Late deadlines first, then scheduled, then non-late deadlines"
         web-mode-enable-auto-quoting t
         web-mode-ac-sources-alist
         '(("css" . (ac-source-css-property))
-          ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (flycheck-add-mode 'typescript-tslint 'web-mode))
+          ("html" . (ac-source-words-in-buffer ac-source-abbrev)))))
 
 (use-package csv-mode
   :mode "\\.csv$")
